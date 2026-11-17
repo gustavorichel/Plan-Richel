@@ -340,10 +340,11 @@ var ITEM_PRESETS=[
   ['Sofá 3 lugares',200,90,85,'#8fa88f'],['Mesa de jantar',160,80,75,'#c9a66b'],['Escrivaninha',120,60,75,'#c9a66b'],
   ['Armário aéreo',80,35,70,'#c8b08a',140],
   ['Porta',80,15,210,'#b08968',0,1,'door','left','in'],
+  ['Porta com arco',80,15,210,'#b08968',0,1,'arch_door','left','in'],
+  ['Abertura em arco',90,15,210,'#d4a373',0,1,'arch','left','in'],
   ['Janela padrão',120,15,120,'#8ecae6',90,0.5,'window','left','in'],
   ['Janela grande',180,15,120,'#8ecae6',90,0.5,'window','left','in'],
   ['Janela banheiro',60,15,60,'#8ecae6',150,0.5,'window','left','in'],
-  ['Arco de passagem',90,15,210,'#d4a373',0,1,'arch','left','in'],
   ['Escada reta',90,240,260,'#a3b18a',0,1,'straight_stairs','left','in'],
   ['Escada caracol',120,120,260,'#606c38',0,1,'spiral_stairs','left','in'],
   ['Caixa genérica',50,50,50,'#a8b5c4']
@@ -447,7 +448,7 @@ function fits(it,r){
 function itemsIn(r){return state.items.filter(function(i){return roomOf(i)===r;});}
 
 function overlaps(a,b){
-  if(a.type==='door'||a.type==='arch'||a.type==='window'||b.type==='door'||b.type==='arch'||b.type==='window') return false;
+  if(a.type==='door'||a.type==='arch_door'||a.type==='arch'||a.type==='window'||b.type==='door'||b.type==='arch_door'||b.type==='arch'||b.type==='window') return false;
   var fa=fp(a),fb=fp(b),za0=a.z||0,za1=za0+a.h,zb0=b.z||0,zb1=zb0+b.h,e=0.01;
   return a.x<b.x+fb.w-e&&b.x<a.x+fa.w-e&&a.y<b.y+fb.d-e&&b.y<a.y+fa.d-e&&za0<zb1-e&&zb0<za1-e;
 }
@@ -458,7 +459,7 @@ function isBad(it){
   return (state.rooms.length>0&&(!r||!fits(it,r)||(it.z||0)+it.h>r.h))||collidingWith(it).length>0;
 }
 function slideItem(it,tx,ty,room){
-  if(room&&it.type!=='door'&&it.type!=='window'&&it.type!=='arch'){var f=fp(it);tx=Math.max(room.x,Math.min(tx,room.x+room.w-f.w));ty=Math.max(room.y,Math.min(ty,room.y+room.l-f.d));}
+  if(room&&it.type!=='door'&&it.type!=='arch_door'&&it.type!=='window'&&it.type!=='arch'){var f=fp(it);tx=Math.max(room.x,Math.min(tx,room.x+room.w-f.w));ty=Math.max(room.y,Math.min(ty,room.y+room.l-f.d));}
   if(collidingWith(it).length) return [tx,ty];
   var x=it.x,y=it.y,dx=tx-x,dy=ty-y,n=Math.max(1,Math.ceil(Math.max(Math.abs(dx),Math.abs(dy))/4)),sx=dx/n,sy=dy/n,blocked=false;
   for(var i=0;i<n;i++){
@@ -570,14 +571,15 @@ function render2D(){
       var f=fp(it),bad=isBad(it);
       var cls='it'+((it.z||0)>0?' air':'')+(isSel('item',it.id)?' sel':'')+(bad?' bad':'');
       var cx=it.x+f.w/2,cy=it.y+f.d/2,showDims=f.d*k>=34;
+      var tc=lum(it.color)>0.58?'#14201b':'#ffffff';
 
-      if(it.type==='door'){
+      if(it.type==='door'||it.type==='arch_door'){
+        var isArchDoor=(it.type==='arch_door');
         var side=it.doorSide||'left';
         var flip=it.doorFlip||'in';
         var w=f.w, r=(it.rot||0)%4;
         var pathArc='';
         
-        // Precise door swing arcs for all 4 rotations and left/right/in/out combinations
         if(r===0){
           if(side==='left'){
             if(flip==='in') pathArc='M'+it.x+' '+(it.y+w)+'A'+w+' '+w+' 0 0 1 '+(it.x+w)+' '+it.y;
@@ -592,7 +594,7 @@ function render2D(){
             else pathArc='M'+it.x+' '+it.y+'A'+w+' '+w+' 0 0 1 '+(it.x+w)+' '+(it.y+w);
           } else {
             if(flip==='in') pathArc='M'+it.x+' '+(it.y+w)+'A'+w+' '+w+' 0 0 1 '+(it.x+w)+' '+it.y;
-            else pathArc='M'+(it.x+w)+' '+(it.y+w)+'A'+w+' '+w+' 0 0 1 '+it.x+' '+it.y;
+            else pathArc='M'+(it.x+w)+' '+it.y+'A'+w+' '+w+' 0 0 1 '+it.x+' '+it.y;
           }
         } else if(r===2){
           if(side==='left'){
@@ -600,20 +602,24 @@ function render2D(){
             else pathArc='M'+(it.x+w)+' '+(it.y+w)+'A'+w+' '+w+' 0 0 1 '+it.x+' '+it.y;
           } else {
             if(flip==='in') pathArc='M'+it.x+' '+(it.y+w)+'A'+w+' '+w+' 0 0 1 '+(it.x+w)+' '+it.y;
-            else pathArc='M'+it.x+' '+it.y+'A'+w+' '+w+' 0 0 1 '+(it.x+w)+' '+(it.y+w);
+            else pathArc='M'+it.x+' '+it.y+'A'+w+' '+w+' 0 0 1 '+(it.x+w)+' '+it.y;
           }
         } else {
           if(side==='left'){
             if(flip==='in') pathArc='M'+it.x+' '+it.y+'A'+w+' '+w+' 0 0 1 '+(it.x+w)+' '+(it.y+w);
             else pathArc='M'+it.x+' '+(it.y+w)+'A'+w+' '+w+' 0 0 1 '+(it.x+w)+' '+it.y;
           } else {
-            if(flip==='in') pathArc='M'+(it.x+w)+' '+(it.y+w)+'A'+w+' '+w+' 0 0 1 '+it.x+' '+it.y;
+            if(flip==='in') pathArc='M'+(it.x+w)+' '+it.y+'A'+w+' '+w+' 0 0 1 '+it.x+' '+it.y;
             else pathArc='M'+(it.x+w)+' '+it.y+'A'+w+' '+w+' 0 0 1 '+it.x+' '+it.y;
           }
         }
 
         out.push('<g data-t="item" data-id="'+it.id+'">');
         out.push('<rect class="'+cls+'" x="'+it.x+'" y="'+it.y+'" width="'+f.w+'" height="'+f.d+'" fill="'+it.color+'" fill-opacity="0.85"/>');
+        if(isArchDog || isArchDoor){
+          // Draw arch hint on top in 2D
+          out.push('<path d="M '+it.x+' '+(it.y+f.d*0.25)+' Q '+(it.x+f.w/2)+' '+(it.y-f.d*0.15)+' '+(it.x+f.w)+' '+(it.y+f.d*0.25)+'" stroke="var(--accent)" stroke-width="1.5" fill="none"/>');
+        }
         out.push('<path d="'+pathArc+'" stroke="var(--accent)" stroke-width="1.5" fill="none" stroke-dasharray="3 3"/>');
         out.push('<text class="lbl" x="'+cx+'" y="'+cy+'" text-anchor="middle" font-size="'+fs+'" font-weight="600" fill="#fff">'+esc(it.name)+'</text>');
         out.push('</g>');
@@ -843,33 +849,15 @@ function build3D(){
   if(state.showItems){
     state.items.forEach(function(it){
       var f=fp(it),on=isSel('item',it.id);
-      if(it.type==='straight_stairs'){
-        var stepsCount=10, sh=it.h/stepsCount, swd=f.d/stepsCount;
-        var smat=new THREE.MeshLambertMaterial({color:new THREE.Color(it.color)});
-        for(var s=0; s<stepsCount; s++){
-          var stH=sh*(s+1);
-          box(f.w, stH, swd, it.x+f.w/2, stH/2, it.y+f.d - swd/2 - s*swd, smat, cEdge, 0.5);
-        }
-      } else if(it.type==='spiral_stairs'){
-        var cx=it.x+f.w/2, cy=it.y+f.d/2, r=Math.min(f.w,f.d)/2;
-        var smat=new THREE.MeshLambertMaterial({color:new THREE.Color(it.color)});
-        box(12, it.h, 12, cx, it.h/2, cy, smat, cEdge, 0.8);
-        var stepsC=14;
-        for(var i=0; i<stepsC; i++){
-          var ang=(i/stepsC)*Math.PI*2;
-          var stH=(i/stepsC)*it.h;
-          var st=box(r*0.8, 6, 15, cx+Math.cos(ang)*(r*0.4), stH+3, cy+Math.sin(ang)*(r*0.4), smat, cEdge, 0.5);
-          st.rotation.y = -ang;
-        }
-      } else if(it.type==='window'){
-        var wmat=new THREE.MeshLambertMaterial({color:new THREE.Color(it.color),transparent:true,opacity:0.5});
-        box(f.w,it.h,f.d,it.x+f.w/2,(it.z||0)+it.h/2,it.y+f.d/2,wmat,on?cAcc:cEdge,on?1:0.5);
-      } else if(it.type==='door'||it.type==='arch'){
+      var op=it.op==null?1:it.op;
+      if(it.type==='door'||it.type==='arch_door'||it.type==='arch'){
         if(it.type==='arch') return;
-        var dmat=new THREE.MeshLambertMaterial({color:new THREE.Color(it.color),transparent:true,opacity:0.75});
-        box(f.w,it.h,f.d,it.x+f.w/2,(it.z||0)+it.h/2,it.y+f.d/2,dmat,on?cAcc:cEdge,on?1:0.6);
+        var im=new THREE.MeshLambertMaterial({color:new THREE.Color(it.color),transparent:true,opacity:0.65});
+        box(f.w,it.h,f.d,it.x+f.w/2,(it.z||0)+it.h/2,it.y+f.d/2,im,on?cAcc:cEdge,on?1:0.5);
+      } else if(it.type==='straight_stairs'||it.type==='spiral_stairs'){
+        var im=new THREE.MeshLambertMaterial({color:new THREE.Color(it.color)});
+        box(f.w,it.h,f.d,it.x+f.w/2,(it.z||0)+it.h/2,it.y+f.d/2,im,on?cAcc:cEdge,on?1:0.6);
       } else {
-        var op=it.op==null?1:it.op;
         var im=new THREE.MeshLambertMaterial({color:new THREE.Color(it.color),transparent:op<1,opacity:op,depthWrite:op>=1});
         box(f.w,it.h,f.d,it.x+f.w/2,(it.z||0)+it.h/2,it.y+f.d/2,im,on?cAcc:cEdge,on?1:Math.max(0.25,0.6*op));
       }
@@ -907,10 +895,10 @@ function syncInspector(){
   $('#lbH').textContent=isItem?'Altura':'Pé-direito';
   $('#fRot').hidden=!isItem; $('#fMir').hidden=!isItem; $('#colorWrap').hidden=!isItem; $('#wallWrap').hidden=isItem; $('#zWrap').hidden=!isItem; $('#roomWrap').hidden=!isItem; $('#opWrap').hidden=!isItem;
   
-  var isOpening=isItem&&(o.type==='door'||o.type==='window');
+  var isOpening=isItem&&(o.type==='door'||o.type==='arch_door'||o.type==='window');
   $('#doorWrap').hidden=!isOpening;
   if(isOpening){
-    $('#openingLabel').textContent=o.type==='door'?'Configuração de Porta':'Configuração de Janela';
+    $('#openingLabel').textContent=o.type==='door'?'Configuração de Porta':(o.type==='arch_door'?'Configuração de Porta com Arco':'Configuração de Janela');
     setVal($('#fDoorSide'), o.doorSide||'left');
     setVal($('#fDoorFlip'), o.doorFlip||'in');
   }
