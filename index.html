@@ -145,9 +145,19 @@ textarea{font-family:var(--font-mono); font-size:11px; height:90px; resize:verti
 #insForm[data-kind="room"]>.f-name{grid-column:span 3}
 #insForm[data-kind="room"]>.f-dims{grid-column:span 3}
 #insForm[data-kind="room"]>.f-pos{grid-column:span 2}
-#insForm[data-kind="room"]>.wallgrp{grid-column:span 4}
+#insForm[data-kind="room"]>.f-rwall{grid-column:span 4}
+#insForm[data-kind="room"]>.wallgrp{grid-column:span 6}
 #insForm[data-kind="room"]>.note{grid-column:1/-1}
 #insForm[data-kind="room"]>.btns{grid-column:1/-1}
+.swatches{display:flex; align-items:center; gap:4px; flex-wrap:wrap}
+.swatch{width:18px; height:18px; border-radius:999px; border:1px solid var(--line); padding:0; cursor:pointer; flex:0 0 auto; transition:transform .12s}
+.swatch:hover{transform:scale(1.15); border-color:var(--accent)}
+.swatch.on{outline:2px solid var(--accent); outline-offset:1px}
+.fp-hud{position:absolute; bottom:10px; left:10px; right:10px; z-index:3; display:flex; justify-content:space-between; align-items:center; gap:8px; pointer-events:none; flex-wrap:wrap}
+.fp-hud>*{pointer-events:auto}
+.fp-badge{background:color-mix(in srgb,var(--panel) 92%,transparent); border:1px solid var(--accent); border-radius:6px; padding:4px 8px; font-size:11px; color:var(--ink); display:flex; align-items:center; gap:6px}
+.fp-pad{display:flex; gap:4px; background:color-mix(in srgb,var(--panel) 92%,transparent); border:1px solid var(--line); border-radius:6px; padding:3px}
+.fp-pad button{padding:3px 7px; font-size:11px; min-width:26px}
 #insForm .field{font-size:11px; gap:1px}
 #insForm .grid3,#insForm .grid2,#insForm .grid4{gap:4px}
 #insForm input[type=text],#insForm input[type=number],#insForm select{padding:2px 4px; font-size:11px; height:24px}
@@ -229,12 +239,26 @@ input[type=range]{padding:0; accent-color:var(--accent); width:100%; background:
           <label class="cut" id="wallOpWrap" title="Opacidade das paredes no 3D">Opac. <input type="range" id="wallOp" min="5" max="100" step="5" value="14" style="width:64px;height:18px" aria-label="Opacidade das paredes"><span class="mono" id="wallOpVal">14%</span></label>
           <label class="cut" title="Cor das paredes no 3D">Paredes <input type="color" id="wallColor" aria-label="Cor das paredes"></label>
           <button type="button" class="btn sm" id="wallAuto" title="Cor automática" hidden>Cor auto</button>
+          <label class="cut" title="Exibir laje de teto no 3D"><input type="checkbox" id="tgCeiling" style="width:auto;height:auto;accent-color:var(--accent);margin:0"> Teto</label>
+          <button type="button" class="btn sm primary" id="enterRoom3d" title="Simular visão por dentro do cômodo">Entrar no cômodo</button>
           <button type="button" class="btn sm" id="top3d">De cima</button>
           <button type="button" class="btn sm" id="iso3d">Perspectiva</button>
           <button type="button" class="btn sm" id="fit3d">Ajustar</button>
         </div>
       </div>
       <div id="cv"></div>
+      <div class="fp-hud" id="fpHud" hidden>
+        <div class="fp-badge">
+          <span>Dentro de: <b id="fpRoomName">Cômodo</b> · Arraste para olhar 360° · WASD/Setas para andar</span>
+          <button type="button" class="btn xs primary" id="exitRoom3d">Sair da visão interna</button>
+        </div>
+        <div class="fp-pad" aria-label="Controles de movimento interno">
+          <button type="button" class="btn xs" data-fp-move="fwd" title="Andar para frente (W)">↑</button>
+          <button type="button" class="btn xs" data-fp-move="back" title="Andar para trás (S)">↓</button>
+          <button type="button" class="btn xs" data-fp-move="left" title="Passo à esquerda (A)">←</button>
+          <button type="button" class="btn xs" data-fp-move="right" title="Passo à direita (D)">→</button>
+        </div>
+      </div>
       <p id="noGL" hidden></p>
     </section>
   </main>
@@ -290,6 +314,21 @@ input[type=range]{padding:0; accent-color:var(--accent); width:100%; background:
         <div class="grid2 f-pos">
           <label class="field">Posição X<input type="number" id="fX" step="1" inputmode="decimal"></label>
           <label class="field">Posição Y<input type="number" id="fY" step="1" inputmode="decimal"></label>
+        </div>
+        <div class="field f-rwall" id="roomWallColorWrap" hidden>
+          <span>Cor parede interna (exclusiva deste cômodo)</span>
+          <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
+            <input type="color" id="fRoomWallColor" value="#e5d7be" style="width:32px" aria-label="Cor da parede interna">
+            <div class="swatches" id="roomWallSwatches">
+              <button type="button" class="swatch" data-col="#e5d7be" style="background:#e5d7be" title="Areia"></button>
+              <button type="button" class="swatch" data-col="#9eb399" style="background:#9eb399" title="Verde Sálvia"></button>
+              <button type="button" class="swatch" data-col="#f2f3f0" style="background:#f2f3f0" title="Branco Gelo"></button>
+              <button type="button" class="swatch" data-col="#cfd4d2" style="background:#cfd4d2" title="Cinza Claro"></button>
+              <button type="button" class="swatch" data-col="#d69a82" style="background:#d69a82" title="Terracota Suave"></button>
+              <button type="button" class="swatch" data-col="#9cb3c2" style="background:#9cb3c2" title="Azul Acinzentado"></button>
+            </div>
+            <button type="button" class="btn xs" id="fRoomWallReset" title="Voltar à cor padrão">Padrão</button>
+          </div>
         </div>
         <label class="field f-room" id="roomWrap">Cômodo<select id="fRoom"></select></label>
         <label class="field f-z" id="zWrap">Base (cm)<input type="number" id="fZ" min="0" step="1" inputmode="decimal"></label>
@@ -383,10 +422,10 @@ var KEY='planta-simples-v11';
 
 var ROOM_PRESETS=[['Quarto',300,350,260],['Sala',450,400,260],['Cozinha',250,300,260],['Banheiro',150,220,260],['Corredor',100,300,260],['Cômodo vazio',300,300,260]];
 var ITEM_PRESETS=[
-  ['Geladeira',70,70,180,'#d4dce3',0,1,'geladeira','left','in'],
-  ['Bebedouro com garrafão',35,35,135,'#e8ecee',0,1,'bebedouro','left','in'],
-  ['Fogão',60,60,90,'#e2e6e9',0,1,'fogao','left','in'],
-  ['Pia / Gabinete (2 portas + 3 gavetas)',120,60,85,'#c7d0d6',0,1,'pia','left','in'],
+  ['Geladeira duplex inox',70,70,180,'#c6cdd3',0,1,'geladeira','left','in'],
+  ['Bebedouro com garrafão',35,35,135,'#e9ece9',0,1,'bebedouro','left','in'],
+  ['Fogão inox mesa de vidro',60,60,90,'#cdd3d8',0,1,'fogao','left','in'],
+  ['Pia / Gabinete (3 gavetas + 2 portas)',120,60,85,'#eef0ef',0,1,'pia','left','in'],
   ['Balcão pia banheiro (mármore + espelho)',80,48,185,'#e9ecee',0,1,'pia_banheiro','left','in'],
   ['Máquina de lavar',60,60,85,'#e5e9ec',0,1,'maquina','left','in'],
   ['Vaso sanitário + chuveirinho',48,66,78,'#f2f4f5',0,1,'vaso','left','in'],
@@ -397,8 +436,8 @@ var ITEM_PRESETS=[
   ['Ventilador de teto',110,110,38,'#d8dee2',222,1,'ventilador_teto','left','in'],
   ['Cama de casal',140,190,50,'#d8b4a0',0,1,'cama','left','in'],
   ['Cama de solteiro',90,190,50,'#d8b4a0',0,1,'cama','left','in'],
-  ['Guarda-roupa',200,60,220,'#b89b72',0,1,'guardaroupa','left','in'],
-  ['Sofá 3 lugares',200,90,85,'#7c947c',0,1,'sofa','left','in'],
+  ['Guarda-roupa 2 portas (espelho)',200,60,220,'#9e6234',0,1,'guardaroupa','left','in'],
+  ['Sofá moderno almofadas',200,90,85,'#2b7a85',0,1,'sofa','left','in'],
   ['Cadeira',45,45,88,'#b5835a',0,1,'cadeira','left','in'],
   ['Mesa de jantar',160,80,75,'#c9a66b',0,1,'mesa','left','in'],
   ['Mesa de centro',100,60,40,'#b89b72',0,1,'mesa_centro','left','in'],
@@ -406,7 +445,8 @@ var ITEM_PRESETS=[
   ['Escrivaninha',120,60,75,'#c9a66b',0,1,'mesa','left','in'],
   ['TV',120,14,72,'#222629',85,1,'tv','left','in'],
   ['Prateleira',100,28,4,'#c9a66b',150,1,'prateleira','left','in'],
-  ['Armário aéreo',80,35,70,'#c8b08a',140,1,'armario','left','in'],
+  ['Armário aéreo maior (basculante + nicho)',120,38,75,'#9c6438',155,1,'armario_maior','left','in'],
+  ['Armário aéreo menor (2 portas)',75,35,68,'#eff1f0',155,1,'armario_menor','left','in'],
   ['Porta reta',80,15,210,'#b08968',0,1,'door','left','in'],
   ['Porta com arco superior',80,15,210,'#b08968',0,1,'arch_door','left','in'],
   ['Abertura em arco (só vão)',90,15,210,'#d4a373',0,1,'arch','left','in'],
@@ -424,18 +464,19 @@ function demo(){
   uidN=1;
   var q=nid('r'),s=nid('r'),c=nid('r');
   var st={rooms:[
-    {id:q,name:'Quarto',x:0,y:0,w:350,l:300,h:260},
-    {id:s,name:'Sala',x:360,y:0,w:450,l:400,h:260,wt:{n:10,s:10,w:0,e:10}},
-    {id:c,name:'Cozinha',x:0,y:310,w:350,l:250,h:260,wt:{n:0,s:10,w:10,e:10}}
+    {id:q,name:'Quarto',x:0,y:0,w:350,l:300,h:260,wallColor:'#d8c7a8'},
+    {id:s,name:'Sala',x:360,y:0,w:450,l:400,h:260,wt:{n:10,s:10,w:0,e:10},wallColor:null},
+    {id:c,name:'Cozinha',x:0,y:310,w:350,l:250,h:260,wt:{n:0,s:10,w:10,e:10},wallColor:null}
   ],items:[
     {id:nid('m'),name:'Cama de casal',x:20,y:20,w:140,d:190,h:50,rot:0,rotDeg:0,color:'#d8b4a0',type:'cama'},
-    {id:nid('m'),name:'Guarda-roupa',x:130,y:240,w:200,d:60,h:220,rot:0,rotDeg:0,color:'#b89b72',type:'guardaroupa'},
+    {id:nid('m'),name:'Guarda-roupa 2 portas (espelho)',x:130,y:240,w:200,d:60,h:220,rot:0,rotDeg:0,color:'#9e6234',type:'guardaroupa'},
     {id:nid('m'),name:'Tapete',x:470,y:155,w:220,d:150,h:2,rot:0,rotDeg:0,color:'#c2b5a3',type:'tapete'},
-    {id:nid('m'),name:'Sofá 3 lugares',x:480,y:40,w:200,d:90,h:85,rot:0,rotDeg:0,color:'#7c947c',type:'sofa'},
+    {id:nid('m'),name:'Sofá moderno almofadas',x:480,y:40,w:200,d:90,h:85,rot:0,rotDeg:0,color:'#2b7a85',type:'sofa'},
     {id:nid('m'),name:'Mesa de centro',x:530,y:180,w:100,d:60,h:40,rot:0,rotDeg:0,color:'#b89b72',type:'mesa_centro'},
-    {id:nid('m'),name:'Geladeira',x:20,y:320,w:70,d:70,h:180,rot:0,rotDeg:0,color:'#d4dce3',type:'geladeira'},
-    {id:nid('m'),name:'Fogão',x:100,y:320,w:60,d:60,h:90,rot:0,rotDeg:0,color:'#e2e6e9',type:'fogao'},
-    {id:nid('m'),name:'Pia / Gabinete (2 portas + 3 gavetas)',x:170,y:320,w:120,d:60,h:85,rot:0,rotDeg:0,color:'#c7d0d6',type:'pia'},
+    {id:nid('m'),name:'Geladeira duplex inox',x:20,y:320,w:70,d:70,h:180,rot:0,rotDeg:0,color:'#c6cdd3',type:'geladeira'},
+    {id:nid('m'),name:'Fogão inox mesa de vidro',x:100,y:320,w:60,d:60,h:90,rot:0,rotDeg:0,color:'#cdd3d8',type:'fogao'},
+    {id:nid('m'),name:'Pia / Gabinete (3 gavetas + 2 portas)',x:170,y:320,w:120,d:60,h:85,rot:0,rotDeg:0,color:'#eef0ef',type:'pia'},
+    {id:nid('m'),name:'Armário aéreo maior (basculante + nicho)',x:170,y:320,w:120,d:38,h:75,z:155,rot:0,rotDeg:0,color:'#9c6438',type:'armario_maior'},
     {id:nid('m'),name:'Porta com arco superior',x:350,y:120,w:80,d:15,h:210,rot:0,rotDeg:0,color:'#b08968',type:'arch_door',doorSide:'left',doorFlip:'in',doorOpen:'closed'},
     {id:nid('m'),name:'Abertura em arco',x:180,y:310,w:90,d:15,h:210,rot:0,rotDeg:0,color:'#d4a373',type:'arch',doorSide:'left',doorFlip:'in'},
     {id:nid('m'),name:'Janela com arco superior',x:500,y:0,w:120,d:15,h:120,z:90,rot:0,rotDeg:0,color:'#8ecae6',type:'arch_window',doorSide:'left',doorFlip:'in'},
@@ -446,7 +487,7 @@ function demo(){
 }
 function readWt(t){t=t||{};function g(k){return Math.max(0,num(t[k],10));}return {n:g('n'),s:g('s'),w:g('w'),e:g('e')};}
 
-var state={rooms:[],items:[],sel:null,showItems:true,snap:5,edgeSnap:true,wallMode:'trans',cutH:100,wallOp:0.14,wallColor:null,dock:'bottom',view:'both'};
+var state={rooms:[],items:[],sel:null,showItems:true,snap:5,edgeSnap:true,wallMode:'trans',cutH:100,wallOp:0.14,wallColor:null,showCeiling:false,dock:'bottom',view:'both'};
 var sel=null;
 
 function loadSaved(){
@@ -461,6 +502,7 @@ function loadSaved(){
     if(num(d.cutH,0)>=10) state.cutH=num(d.cutH,100);
     if(isFinite(parseFloat(d.wallOp))) state.wallOp=clamp(parseFloat(d.wallOp),0.05,1);
     state.wallColor=/^#[0-9a-f]{6}$/i.test(d.wallColor||'')?d.wallColor:null;
+    if(typeof d.showCeiling==='boolean') state.showCeiling=d.showCeiling;
     if(d.dock==='top'||d.dock==='bottom') state.dock=d.dock;
     if(['2d','3d','both'].indexOf(d.view)>=0) state.view=d.view; else if(window.innerWidth<760) state.view='2d';
     return true;
@@ -470,7 +512,9 @@ function num(v,def){v=parseFloat(v);return isFinite(v)?v:def;}
 function applyData(d){
   var rooms=[],items=[],maxId=0;
   (d.rooms||[]).forEach(function(r){
-    rooms.push({id:String(r.id||nid('r')),name:String(r.name||'Cômodo'),x:num(r.x,0),y:num(r.y,0),w:Math.max(1,num(r.w,300)),l:Math.max(1,num(r.l,300)),h:Math.max(1,num(r.h,260)),wt:readWt(r.wt),visible:r.visible!==false});
+    var rawIc=r.wallColor||r.innerColor||'';
+    var ic=/^#[0-9a-f]{6}$/i.test(rawIc)?rawIc:null;
+    rooms.push({id:String(r.id||nid('r')),name:String(r.name||'Cômodo'),x:num(r.x,0),y:num(r.y,0),w:Math.max(1,num(r.w,300)),l:Math.max(1,num(r.l,300)),h:Math.max(1,num(r.h,260)),wt:readWt(r.wt),visible:r.visible!==false,wallColor:ic});
   });
   (d.items||[]).forEach(function(i){
     var r90=Math.floor(num(i.rot,0))%4;
@@ -494,7 +538,7 @@ var saveT=0;
 function save(){
   clearTimeout(saveT);
   saveT=setTimeout(function(){
-    try{localStorage.setItem(KEY,JSON.stringify({rooms:state.rooms,items:state.items,showItems:state.showItems,snap:state.snap,edgeSnap:state.edgeSnap,wallMode:state.wallMode,cutH:state.cutH,wallOp:state.wallOp,wallColor:state.wallColor,dock:state.dock,view:state.view}));}catch(e){}
+    try{localStorage.setItem(KEY,JSON.stringify({rooms:state.rooms,items:state.items,showItems:state.showItems,snap:state.snap,edgeSnap:state.edgeSnap,wallMode:state.wallMode,cutH:state.cutH,wallOp:state.wallOp,wallColor:state.wallColor,showCeiling:state.showCeiling,dock:state.dock,view:state.view}));}catch(e){}
   },250);
 }
 
@@ -701,7 +745,12 @@ function render2D(){
     var wt=r.wt,on=isSel('room',r.id),wc='wallr'+(on?' sel':'');
     var ow=r.w+wt.w+wt.e;
     function wr(x,y,w,h){return w>0&&h>0?'<rect class="'+wc+'" x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'"/>':'';}
-    out.push('<g data-t="room" data-id="'+r.id+'"><rect class="roomfill'+(on?' sel':'')+'" x="'+r.x+'" y="'+r.y+'" width="'+r.w+'" height="'+r.l+'"/>'+
+    var innerRim='';
+    if(r.wallColor){
+      var rim=Math.min(8, r.w*0.08, r.l*0.08);
+      innerRim='<rect x="'+(r.x+rim/2)+'" y="'+(r.y+rim/2)+'" width="'+Math.max(1,r.w-rim)+'" height="'+Math.max(1,r.l-rim)+'" fill="none" stroke="'+r.wallColor+'" stroke-width="'+rim+'" stroke-opacity="0.78" pointer-events="none"/>';
+    }
+    out.push('<g data-t="room" data-id="'+r.id+'"><rect class="roomfill'+(on?' sel':'')+'" x="'+r.x+'" y="'+r.y+'" width="'+r.w+'" height="'+r.l+'"/>'+innerRim+
       wr(r.x-wt.w,r.y-wt.n,ow,wt.n)+wr(r.x-wt.w,r.y+r.l,ow,wt.s)+wr(r.x-wt.w,r.y,wt.w,r.l)+wr(r.x+r.w,r.y,wt.e,r.l)+'</g>');
   });
 
@@ -974,6 +1023,7 @@ function snapAxis(vals,targets,th){
 /* ---------- 3D ---------- */
 var renderer=null,scene=null,camera=null,group=null;
 var orb={theta:-0.7,phi:0.95,r:1200,t:null,fitted:false};
+var fpMode={active:false,roomId:null,x:0,y:165,z:0,yaw:0,pitch:0,fov:68,prevCeiling:false};
 function noGL(msg){var n=$('#noGL');n.textContent=msg;n.hidden=false;}
 function cssv(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
 function init3D(){
@@ -995,6 +1045,14 @@ function init3D(){
   cnv.addEventListener('pointerdown',function(e){try{cnv.setPointerCapture(e.pointerId);}catch(x){} P3.set(e.pointerId,{x:e.clientX,y:e.clientY}); cnv.style.cursor='grabbing';});
   cnv.addEventListener('pointermove',function(e){
     var p=P3.get(e.pointerId); if(!p) return;
+    if(fpMode.active){
+      if(P3.size===1){
+        var dx=e.clientX-p.x,dy=e.clientY-p.y;
+        fpMode.yaw-=dx*0.0055;
+        fpMode.pitch=clamp(fpMode.pitch-dy*0.0045,-1.25,1.25);
+      }
+      p.x=e.clientX;p.y=e.clientY; req({draw:true}); return;
+    }
     if(P3.size===1){
       var dx=e.clientX-p.x,dy=e.clientY-p.y;
       if(e.shiftKey||(e.buttons&2)){
@@ -1012,7 +1070,15 @@ function init3D(){
   });
   function up(e){P3.delete(e.pointerId); if(P3.size===0) cnv.style.cursor='grab';}
   cnv.addEventListener('pointerup',up); cnv.addEventListener('pointercancel',up);
-  cnv.addEventListener('wheel',function(e){e.preventDefault();orb.r=clamp(orb.r*Math.exp(e.deltaY*0.001),100,60000);req({draw:true});},{passive:false});
+  cnv.addEventListener('wheel',function(e){
+    e.preventDefault();
+    if(fpMode.active){
+      fpMode.fov=clamp(fpMode.fov+e.deltaY*0.03,35,95);
+      camera.fov=fpMode.fov; camera.updateProjectionMatrix();
+      req({draw:true}); return;
+    }
+    orb.r=clamp(orb.r*Math.exp(e.deltaY*0.001),100,60000);req({draw:true});
+  },{passive:false});
   new ResizeObserver(sizeRenderer).observe(cv);
   sizeRenderer();
 }
@@ -1025,16 +1091,78 @@ function sizeRenderer(){
 }
 function fit3D(){
   if(!renderer) return;
+  if(fpMode.active) exitRoomFP(false);
   var b=bounds(); orb.t.set(b.x+b.w/2,60,b.y+b.h/2);
   var span=Math.max(b.w,b.h,250);
   orb.r=span*1.5/Math.min(1,camera.aspect||1); orb.fitted=true; req({draw:true});
 }
-function disposeObj(o){o.traverse(function(c){if(c.geometry)c.geometry.dispose(); if(c.material)c.material.dispose();});}
+function enterRoomFP(targetRoom){
+  if(!renderer) return;
+  var r=targetRoom||((sel&&sel.t==='room')?selObj():null)||(sel&&sel.t==='item'?roomOf(selObj()):null)||visibleRooms()[0]||state.rooms[0];
+  if(!r) return;
+  fpMode.active=true;
+  fpMode.roomId=r.id;
+  fpMode.x=r.x+r.w/2;
+  fpMode.z=r.y+r.l/2;
+  fpMode.y=Math.min(165, Math.max(90, r.h*0.64));
+  fpMode.yaw=0;
+  fpMode.pitch=-0.04;
+  fpMode.fov=68;
+  fpMode.prevCeiling=!!state.showCeiling;
+  state.showCeiling=true;
+  if($('#tgCeiling')) $('#tgCeiling').checked=true;
+  if(state.view==='2d') setView('both');
+  camera.fov=fpMode.fov;
+  camera.updateProjectionMatrix();
+  $('#fpRoomName').textContent=r.name;
+  $('#fpHud').hidden=false;
+  $('#enterRoom3d').hidden=true;
+  req({scene:true});
+}
+function exitRoomFP(restoreCeiling){
+  if(!fpMode.active) return;
+  fpMode.active=false;
+  fpMode.roomId=null;
+  if(restoreCeiling){
+    state.showCeiling=fpMode.prevCeiling;
+    if($('#tgCeiling')) $('#tgCeiling').checked=state.showCeiling;
+  }
+  camera.fov=38;
+  camera.updateProjectionMatrix();
+  $('#fpHud').hidden=true;
+  $('#enterRoom3d').hidden=false;
+  req({scene:true});
+}
+function stepFP(fwd,strafe){
+  if(!fpMode.active) return;
+  var step=24;
+  var sinY=Math.sin(fpMode.yaw), cosY=Math.cos(fpMode.yaw);
+  var nx=fpMode.x + (-sinY*fwd + cosY*strafe)*step;
+  var nz=fpMode.z + (-cosY*fwd - sinY*strafe)*step;
+  var r=state.rooms.filter(function(x){return x.id===fpMode.roomId;})[0];
+  if(r){
+    var margin=18;
+    nx=clamp(nx, r.x+margin, r.x+Math.max(margin, r.w-margin));
+    nz=clamp(nz, r.y+margin, r.y+Math.max(margin, r.l-margin));
+  }
+  fpMode.x=nx;
+  fpMode.z=nz;
+  req({draw:true});
+}
+function disposeObj(o){o.traverse(function(c){if(c.geometry)c.geometry.dispose(); if(c.material){if(Array.isArray(c.material))c.material.forEach(function(m){m.dispose();});else c.material.dispose();}});}
 
 function detectKind(it){
   var t=(it.type||'').toLowerCase();
   var nm=(it.name||'').toLowerCase();
-  if(['door','arch_door','arch','window','arch_window','straight_stairs','spiral_stairs','vaso','box_chuveiro','cadeira','tv','prateleira','ar_condicionado','ar_caixa','ventilador','ventilador_teto','pia_banheiro','tapete','mesa_centro'].indexOf(t)>=0) return t;
+  if(['door','arch_door','arch','window','arch_window','straight_stairs','spiral_stairs','vaso','box_chuveiro','cadeira','tv','prateleira','ar_condicionado','ar_caixa','ventilador','ventilador_teto','pia_banheiro','tapete','mesa_centro','armario_maior','armario_menor'].indexOf(t)>=0) return t;
+  if(t==='armario'){
+    if(nm.indexOf('menor')>=0||nm.indexOf('2 portas')>=0) return 'armario_menor';
+    return 'armario_maior';
+  }
+  if(nm.indexOf('armário')>=0||nm.indexOf('armario')>=0){
+    if(nm.indexOf('menor')>=0||nm.indexOf('2 portas')>=0) return 'armario_menor';
+    if(nm.indexOf('aéreo')>=0||nm.indexOf('aereo')>=0||nm.indexOf('maior')>=0||nm.indexOf('nicho')>=0||nm.indexOf('basculante')>=0) return 'armario_maior';
+  }
   if(nm.indexOf('ventilador de teto')>=0||nm.indexOf('teto')>=0&&nm.indexOf('ventilador')>=0) return 'ventilador_teto';
   if(nm.indexOf('ventilador')>=0||nm.indexOf('circulador')>=0) return 'ventilador';
   if((nm.indexOf('ar-condicionado')>=0||nm.indexOf('ar condicionado')>=0)&&(nm.indexOf('caixa')>=0||nm.indexOf('janela')>=0)) return 'ar_caixa';
@@ -1053,7 +1181,7 @@ function detectKind(it){
   if(t==='pia'||nm.indexOf('pia')>=0||nm.indexOf('bancada')>=0||nm.indexOf('lavatório')>=0) return 'pia';
   if(t==='maquina'||nm.indexOf('máquina')>=0||nm.indexOf('maquina')>=0||nm.indexOf('lavadora')>=0) return 'maquina';
   if(t==='cama'||nm.indexOf('cama')>=0||nm.indexOf('beliche')>=0) return 'cama';
-  if(t==='guardaroupa'||t==='armario'||nm.indexOf('guarda-roupa')>=0||nm.indexOf('guarda roupa')>=0||nm.indexOf('armário')>=0||nm.indexOf('armario')>=0||nm.indexOf('roupeiro')>=0||nm.indexOf('estante')>=0) return 'guardaroupa';
+  if(t==='guardaroupa'||nm.indexOf('guarda-roupa')>=0||nm.indexOf('guarda roupa')>=0||nm.indexOf('roupeiro')>=0||nm.indexOf('estante')>=0) return 'guardaroupa';
   if(t==='sofa'||nm.indexOf('sofá')>=0||nm.indexOf('sofa')>=0||nm.indexOf('poltrona')>=0) return 'sofa';
   if(t==='mesa'||nm.indexOf('mesa')>=0||nm.indexOf('escrivaninha')>=0) return 'mesa';
   return t||'box';
@@ -1086,18 +1214,33 @@ function build3D(){
   }
 
   var floorMat=new THREE.MeshLambertMaterial({color:cFloor});
+  var ceilMat=new THREE.MeshLambertMaterial({color:new THREE.Color(0xf4f5f2),side:THREE.DoubleSide,transparent:true,opacity:fpMode.active?1:0.92});
   visibleRooms().forEach(function(r){
     var on=isSel('room',r.id);
     box(r.w,2,r.l,r.x+r.w/2,-1,r.y+r.l/2,floorMat,on?cAcc:cEdge,on?1:0.35);
-    if(state.wallMode==='none') return;
-    var H=state.wallMode==='half'?Math.min(state.cutH,r.h):r.h,wt=r.wt,ow=r.w+wt.w+wt.e,ocx=r.x+(r.w+wt.e-wt.w)/2;
-    var wOp=state.wallOp!=null?state.wallOp:(state.wallMode==='half'?0.55:0.14);
-    var mat=new THREE.MeshLambertMaterial({color:cWall,transparent:wOp<1,opacity:wOp,depthWrite:wOp>=0.85});
+    if(state.showCeiling){
+      var cThick=4;
+      box(r.w+r.wt.w+r.wt.e, cThick, r.l+r.wt.n+r.wt.s, r.x+(r.w+r.wt.e-r.wt.w)/2, r.h+cThick/2, r.y+(r.l+r.wt.s-r.wt.n)/2, ceilMat, on?cAcc:cEdge, on?0.9:0.25);
+    }
+    if(state.wallMode==='none'&&!fpMode.active) return;
+    var H=(state.wallMode==='half'&&!fpMode.active)?Math.min(state.cutH,r.h):r.h,wt=r.wt,ow=r.w+wt.w+wt.e,ocx=r.x+(r.w+wt.e-wt.w)/2;
+    var wOp=fpMode.active?1:(state.wallOp!=null?state.wallOp:(state.wallMode==='half'?0.55:0.14));
+    var outerMat=new THREE.MeshLambertMaterial({color:cWall,transparent:wOp<1,opacity:wOp,depthWrite:wOp>=0.85});
+    var hasInner=!!r.wallColor;
+    var innerOp=hasInner?Math.max(wOp, fpMode.active?1:0.88):wOp;
+    var innerMat=hasInner?new THREE.MeshLambertMaterial({color:new THREE.Color(r.wallColor),transparent:innerOp<1,opacity:innerOp,depthWrite:innerOp>=0.85}):outerMat;
     var ec=on?cAcc:cWall.clone().multiplyScalar(0.6),eo=on?1:Math.max(0.35,Math.min(0.95,wOp+0.35));
-    if(wt.n>0) box(ow,H,wt.n,ocx,H/2,r.y-wt.n/2,mat,ec,eo);
-    if(wt.s>0) box(ow,H,wt.s,ocx,H/2,r.y+r.l+wt.s/2,mat,ec,eo);
-    if(wt.w>0) box(wt.w,H,r.l,r.x-wt.w/2,H/2,r.y+r.l/2,mat,ec,eo);
-    if(wt.e>0) box(wt.e,H,r.l,r.x+r.w+wt.e/2,H/2,r.y+r.l/2,mat,ec,eo);
+    // BoxGeometry faces: 0:+X(Dir), 1:-X(Esq), 2:+Y(Topo), 3:-Y(Base), 4:+Z(Sul/Baixo), 5:-Z(Norte/Cima)
+    function wallMatFor(innerFaceIdx){
+      if(!hasInner) return outerMat;
+      var arr=[outerMat,outerMat,outerMat,outerMat,outerMat,outerMat];
+      arr[innerFaceIdx]=innerMat;
+      return arr;
+    }
+    if(wt.n>0) box(ow,H,wt.n,ocx,H/2,r.y-wt.n/2,wallMatFor(4),ec,eo);
+    if(wt.s>0) box(ow,H,wt.s,ocx,H/2,r.y+r.l+wt.s/2,wallMatFor(5),ec,eo);
+    if(wt.w>0) box(wt.w,H,r.l,r.x-wt.w/2,H/2,r.y+r.l/2,wallMatFor(0),ec,eo);
+    if(wt.e>0) box(wt.e,H,r.l,r.x+r.w+wt.e/2,H/2,r.y+r.l/2,wallMatFor(1),ec,eo);
   });
 
   if(state.showItems){
@@ -1249,22 +1392,36 @@ function build3D(){
       var gap=1.5;
 
       if(kind==='geladeira'){
+        // Geladeira duplex inox escovado (foto 6): freezer superior, refrigerador inferior, fenda horizontal e puxadores verticais embutidos escuros à esquerda
         var bodyD=D*0.86;
         var doorD=D*0.12;
         var bodyZ=-D/2+bodyD/2;
         var doorZ=D/2-doorD/2;
-        var baseH=Math.min(5, H*0.04);
+        var baseH=Math.min(5, H*0.035);
         addPart(ig, W-4, baseH, bodyD-4, 0, baseH/2, bodyZ, mkMat(darkerCol), edgeCol, edgeOp);
         var mainH=H-baseH;
-        addPart(ig, W, mainH, bodyD, 0, baseH+mainH/2, bodyZ, mkMat(baseCol), edgeCol, edgeOp);
-        var refH=mainH*0.65 - gap/2;
-        var frzH=mainH*0.35 - gap/2;
-        addPart(ig, W-2, refH, doorD, 0, baseH+refH/2, doorZ, mkMat(lightCol), edgeCol, edgeOp);
-        addPart(ig, W-2, frzH, doorD, 0, baseH+refH+gap+frzH/2, doorZ, mkMat(lightCol), edgeCol, edgeOp);
-        var hX=-W/2+Math.max(5, W*0.1);
-        var hZ=doorZ+doorD/2+1.2;
-        addPart(ig, 2.2, refH*0.42, 2.2, hX, baseH+refH*0.62, hZ, mkMat(darkerCol), null);
-        addPart(ig, 2.2, frzH*0.52, 2.2, hX, baseH+refH+gap+frzH*0.45, hZ, mkMat(darkerCol), null);
+        addPart(ig, W, mainH, bodyD, 0, baseH+mainH/2, bodyZ, mkMat(darkCol), edgeCol, edgeOp);
+        var frzH=mainH*0.33 - gap;
+        var refH=mainH*0.67 - gap;
+        var refY=baseH + refH/2;
+        var frzY=baseH + refH + gap*2 + frzH/2;
+        // Duas portas em inox escovado claro
+        addPart(ig, W-1.6, refH, doorD, 0, refY, doorZ, mkMat(lightCol), edgeCol, edgeOp);
+        addPart(ig, W-1.6, frzH, doorD, 0, frzY, doorZ, mkMat(lightCol), edgeCol, edgeOp);
+        // Puxadores verticais embutidos preto/grafite brilhante na borda esquerda das duas portas (próximos à divisão central)
+        var recW=Math.min(8.5, W*0.13);
+        var recX=-W/2 + recW/2 + 0.8;
+        var recZ=doorZ + doorD/2 - 0.6;
+        var handleDark=mkMat(new THREE.Color(0x1f2428));
+        var handleTrim=mkMat(new THREE.Color(0x4a5258));
+        // Puxador do freezer (parte inferior da porta superior)
+        var frzRecH=frzH*0.72;
+        addPart(ig, recW, frzRecH, 1.8, recX, baseH+refH+gap*2+frzRecH/2+1, recZ, handleDark, edgeCol, 0.45);
+        addPart(ig, 1.4, frzRecH, 2.2, recX+recW/2, baseH+refH+gap*2+frzRecH/2+1, recZ, handleTrim, null);
+        // Puxador do refrigerador (parte superior da porta inferior)
+        var refRecH=refH*0.44;
+        addPart(ig, recW, refRecH, 1.8, recX, baseH+refH-refRecH/2-1, recZ, handleDark, edgeCol, 0.45);
+        addPart(ig, 1.4, refRecH, 2.2, recX+recW/2, baseH+refH-refRecH/2-1, recZ, handleTrim, null);
 
       } else if(kind==='cama'){
         var legH=Math.min(10, H*0.22);
@@ -1298,87 +1455,206 @@ function build3D(){
         }
 
       } else if(kind==='guardaroupa'){
-        var baseH=Math.min(7, H*0.04);
-        var bodyD=D-3.5;
-        var bodyZ=-1.75;
-        var doorD=2.5;
-        var doorZ=D/2-doorD/2;
-        var doorAreaH=H-baseH-2;
-        addPart(ig, W-2, baseH, bodyD-2, 0, baseH/2, bodyZ, mkMat(darkerCol), edgeCol, edgeOp);
-        addPart(ig, W, H-baseH, bodyD, 0, baseH+(H-baseH)/2, bodyZ, mkMat(darkCol), edgeCol, edgeOp);
-        var doors=W>=170?4:(W>=110?3:2);
-        var dw=(W - gap*(doors+1))/doors;
-        for(var dIdx=0; dIdx<doors; dIdx++){
-          var dx=-W/2 + gap + dw/2 + dIdx*(dw+gap);
-          addPart(ig, dw, doorAreaH, doorD, dx, baseH+1+doorAreaH/2, doorZ, mkMat(baseCol), edgeCol, edgeOp);
-          var handleOffset=(dIdx%2===0)?(dw*0.34):(-dw*0.34);
-          if(doors===3 && dIdx===2) handleOffset=-dw*0.34;
-          addPart(ig, 1.8, Math.min(26, doorAreaH*0.22), 2.2, dx+handleOffset, baseH+doorAreaH*0.48, doorZ+doorD/2+1.1, mkMat(darkerCol), null);
+        // Guarda-roupa 2 portas de correr baseado na foto 1: moldura robusta em madeira amadeirada, painel esquerdo fosco off-white com friso horizontal, painel direito com espelho central e friso horizontal
+        var frameT=Math.min(8, W*0.045, H*0.045);
+        var plinthH=Math.min(6, H*0.03);
+        var woodMat=mkMat(baseCol);
+        var woodDarkMat=mkMat(darkCol);
+        var panelMat=mkMat(new THREE.Color(0xeae6df));
+        var mirrorMat=mkMat(new THREE.Color(0xc4d8de), Math.min(op, 0.92));
+        var alumMat=mkMat(new THREE.Color(0xc5cdd1));
+
+        // Caixa interna e costas do guarda-roupa
+        addPart(ig, W-frameT*1.6, H-plinthH-frameT, D-4, 0, plinthH+(H-plinthH-frameT)/2, -1, woodDarkMat, edgeCol, edgeOp);
+        // Rodapé inferior em madeira
+        addPart(ig, W, plinthH, D, 0, plinthH/2, 0, woodMat, edgeCol, edgeOp);
+        // Moldura externa robusta (laterais esquerda/direita e chapéu superior)
+        addPart(ig, frameT, H-plinthH, D, -W/2+frameT/2, plinthH+(H-plinthH)/2, 0, woodMat, edgeCol, edgeOp);
+        addPart(ig, frameT, H-plinthH, D, W/2-frameT/2, plinthH+(H-plinthH)/2, 0, woodMat, edgeCol, edgeOp);
+        addPart(ig, W, frameT, D+1.5, 0, H-frameT/2, 0.5, woodMat, edgeCol, edgeOp);
+
+        // Vão interno para as 2 portas de correr
+        var innerW=W - frameT*2;
+        var innerH=H - plinthH - frameT;
+        var baseDoorY=plinthH;
+        var doorW=innerW*0.51;
+        var doorD=2.2;
+        var leftZ=D/2 - 3.6;
+        var rightZ=D/2 - 1.6;
+
+        // Folha esquerda (recuada no trilho): painel liso off-white/bege claro com perfil puxador vertical em madeira e friso metálico horizontal no meio
+        var leftCx=-innerW/2 + doorW/2;
+        addPart(ig, doorW, innerH-1, doorD, leftCx, baseDoorY+innerH/2, leftZ, panelMat, edgeCol, edgeOp);
+        // Perfil puxador vertical em madeira na borda direita da porta esquerda
+        addPart(ig, 3.8, innerH-1, doorD+0.8, leftCx+doorW/2-1.9, baseDoorY+innerH/2, leftZ+0.3, woodMat, edgeCol, 0.5);
+        // Friso metálico fino dividindo a folha esquerda ao meio
+        addPart(ig, doorW-3.8, 1.2, 0.8, leftCx-1.9, baseDoorY+innerH*0.48, leftZ+doorD/2+0.3, alumMat, null);
+
+        // Folha direita (frontal no trilho): moldura clara + grande espelho central com friso metálico horizontal
+        var rightCx=innerW/2 - doorW/2;
+        addPart(ig, doorW, innerH-1, doorD, rightCx, baseDoorY+innerH/2, rightZ, panelMat, edgeCol, edgeOp);
+        // Perfil puxador vertical em madeira na borda direita
+        addPart(ig, 3.8, innerH-1, doorD+0.8, rightCx+doorW/2-1.9, baseDoorY+innerH/2, rightZ+0.3, woodMat, edgeCol, 0.5);
+        // Espelho central alto
+        var mirW=doorW*0.76;
+        var mirH=innerH*0.78;
+        var mirCx=rightCx - 1.2;
+        var mirCy=baseDoorY + innerH*0.48;
+        addPart(ig, mirW, mirH, 1.0, mirCx, mirCy, rightZ+doorD/2+0.4, mirrorMat, edgeCol, 0.45);
+        // Friso metálico horizontal cruzando o espelho ao meio (como na foto 1)
+        addPart(ig, doorW-3.8, 1.2, 0.9, rightCx-1.9, mirCy, rightZ+doorD/2+0.95, alumMat, null);
+
+      } else if(kind==='armario_maior'){
+        // Armário aéreo maior baseado na foto 2: módulo duplo com metade superior fechada por porta basculante branca lisa com perfil alumínio inferior e metade inferior em nicho aberto de madeira com divisória central
+        var boardT=2.2;
+        var woodMat=mkMat(baseCol);
+        var woodInnerMat=mkMat(darkCol);
+        var whiteDoorMat=mkMat(new THREE.Color(0xf2f4f3));
+        var alumMat=mkMat(new THREE.Color(0xc5cdd1));
+
+        // Laterais, topo, base, fundo e divisória vertical central em madeira
+        addPart(ig, boardT, H, D, -W/2+boardT/2, H/2, 0, woodMat, edgeCol, edgeOp);
+        addPart(ig, boardT, H, D, W/2-boardT/2, H/2, 0, woodMat, edgeCol, edgeOp);
+        addPart(ig, W, boardT, D, 0, H-boardT/2, 0, woodMat, edgeCol, edgeOp);
+        addPart(ig, W, boardT, D, 0, boardT/2, 0, woodMat, edgeCol, edgeOp);
+        addPart(ig, W-boardT*2, H-boardT*2, 1.4, 0, H/2, -D/2+0.7, woodInnerMat, edgeCol, 0.4);
+        // Prateleira horizontal central dividindo nicho inferior e compartimento superior
+        var midY=H*0.48;
+        addPart(ig, W-boardT*2, boardT, D-1.5, 0, midY, 0.5, woodMat, edgeCol, edgeOp);
+        // Divisória vertical central nos nichos
+        addPart(ig, boardT, H-boardT*2, D-2, 0, H/2, 0.2, woodMat, edgeCol, edgeOp);
+
+        // Porta basculante branca lisa cobrindo a metade superior inteira + perfil metálico puxador na borda inferior
+        var topDoorH=H - midY - 0.5;
+        var topDoorCy=midY + topDoorH/2;
+        addPart(ig, W, topDoorH, 2.2, 0, topDoorCy, D/2+1.1, whiteDoorMat, edgeCol, edgeOp);
+        // Perfil puxador de alumínio na borda inferior da porta basculante
+        addPart(ig, W, 2.6, 2.8, 0, midY+1.3, D/2+1.4, alumMat, edgeCol, 0.45);
+
+      } else if(kind==='armario_menor'){
+        // Armário aéreo menor com 2 portas baseado na foto 9: caixa branca compacta, 2 portas de abrir brancas lisas e puxadores em perfil de alumínio horizontais na base inferior
+        var boardT=2.0;
+        var bodyMat=mkMat(baseCol);
+        var doorMat=mkMat(lightCol);
+        var alumMat=mkMat(new THREE.Color(0xc2cacf));
+
+        // Caixa estrutural branca
+        addPart(ig, boardT, H, D-2, -W/2+boardT/2, H/2, -1, bodyMat, edgeCol, edgeOp);
+        addPart(ig, boardT, H, D-2, W/2-boardT/2, H/2, -1, bodyMat, edgeCol, edgeOp);
+        addPart(ig, W, boardT, D-2, 0, H-boardT/2, -1, bodyMat, edgeCol, edgeOp);
+        addPart(ig, W, boardT, D-2, 0, boardT/2, -1, bodyMat, edgeCol, edgeOp);
+        addPart(ig, W-boardT*2, H-boardT*2, 1.4, 0, H/2, -D/2+0.7, bodyMat, edgeCol, 0.35);
+
+        // 2 portas frontais lisas com vão central e perfil puxador em alumínio na borda inferior de cada porta
+        var dw=(W - gap)/2;
+        for(var dIdx=0; dIdx<2; dIdx++){
+          var dx=(dIdx===0)?(-dw/2 - gap/2):(dw/2 + gap/2);
+          addPart(ig, dw, H-1, 2.0, dx, H/2, D/2-0.5, doorMat, edgeCol, edgeOp);
+          addPart(ig, dw, 2.4, 2.6, dx, 1.4, D/2-0.2, alumMat, edgeCol, 0.45);
         }
 
       } else if(kind==='fogao'){
-        var baseH=Math.min(6, H*0.07);
-        var topH=Math.min(4, H*0.05);
-        var bodyH=H-baseH-topH;
-        var panelH=Math.min(12, bodyH*0.18);
-        var ovenH=bodyH-panelH-gap;
-        addPart(ig, W-3, baseH, D-3, 0, baseH/2, 0, mkMat(darkerCol), edgeCol, edgeOp);
-        addPart(ig, W, bodyH, D-2, 0, baseH+bodyH/2, -1, mkMat(baseCol), edgeCol, edgeOp);
-        addPart(ig, W-3, ovenH, 2.5, 0, baseH+ovenH/2, D/2-1.25, mkMat(lightCol), edgeCol, edgeOp);
-        addPart(ig, W*0.66, ovenH*0.54, 1.2, 0, baseH+ovenH*0.52, D/2+0.2, mkMat(new THREE.Color(0x232927)), null);
-        addPart(ig, W*0.72, 2, 2.6, 0, baseH+ovenH*0.86, D/2+1.4, mkMat(darkerCol), null);
-        var panelY=baseH+ovenH+gap+panelH/2;
-        addPart(ig, W-2, panelH, 2.5, 0, panelY, D/2-1.25, mkMat(darkCol), edgeCol, edgeOp);
+        // Fogão inox de piso com mesa de vidro preto temperado (foto 8): 4 bocas com trempes individuais, 5 botões manípulos na frente da mesa e porta do forno ampla em vidro preto fumê com puxador curvo inox
+        var baseH=Math.min(5, H*0.06);
+        var topGlassH=2.4;
+        var bodyH=H-baseH-topGlassH;
+        var inoxMat=mkMat(baseCol);
+        var inoxLightMat=mkMat(lightCol);
+        var blackGlassMat=mkMat(new THREE.Color(0x181c1f));
+        var smokedGlassMat=mkMat(new THREE.Color(0x283036), Math.min(op, 0.85));
+
+        // Pés e corpo principal em inox
+        addPart(ig, W-4, baseH, D-4, 0, baseH/2, 0, mkMat(darkerCol), edgeCol, edgeOp);
+        addPart(ig, W, bodyH, D-2, 0, baseH+bodyH/2, -1, inoxMat, edgeCol, edgeOp);
+
+        // Porta ampla do forno com moldura preta e visor central fumê
+        var ovenH=bodyH*0.76;
+        var ovenY=baseH + bodyH*0.48;
+        addPart(ig, W-4, ovenH, 2.2, 0, ovenY, D/2-1.1, blackGlassMat, edgeCol, edgeOp);
+        addPart(ig, W-12, ovenH*0.64, 1.2, 0, ovenY-1, D/2+0.1, smokedGlassMat, edgeCol, 0.4);
+        // Puxador inferior curvo/barra em inox na base da porta do forno
+        addPart(ig, W-6, 2.6, 3.2, 0, ovenY-ovenH/2+2.2, D/2+1.2, inoxLightMat, edgeCol, 0.45);
+
+        // Mesa superior de vidro preto temperado (cooktop de vidro)
+        var topY=baseH+bodyH+topGlassH/2;
+        addPart(ig, W+0.8, topGlassH, D+0.8, 0, topY, 0.4, blackGlassMat, edgeCol, edgeOp);
+
+        // 5 botões manípulos pretos na parte frontal da mesa de vidro (como na foto 8)
         var knobs=5;
         for(var k=0;k<knobs;k++){
-          var kx=-W*0.34 + (k/(knobs-1))*(W*0.68);
-          var kg=new THREE.CylinderGeometry(1.6, 1.6, 2.5, 10);
-          var km=new THREE.Mesh(kg, mkMat(darkerCol));
-          km.rotation.x=Math.PI/2;
-          km.position.set(kx, panelY, D/2+1.2);
+          var kx=-W*0.36 + (k/(knobs-1))*(W*0.72);
+          var kg=new THREE.CylinderGeometry(2.0, 2.3, 2.6, 12);
+          var km=new THREE.Mesh(kg, mkMat(new THREE.Color(0x101214)));
+          km.position.set(kx, topY+topGlassH/2+1.2, D/2-5.5);
           ig.add(km);
         }
-        var topY=baseH+bodyH+topH/2;
-        addPart(ig, W, topH, D, 0, topY, 0, mkMat(new THREE.Color(0x2d3331)), edgeCol, edgeOp);
-        var bOffX=W*0.24, bOffZ=D*0.24, bRad=Math.min(W,D)*0.11;
-        [[-bOffX,-bOffZ],[bOffX,-bOffZ],[-bOffX,bOffZ],[bOffX,bOffZ]].forEach(function(bp){
-          var bg=new THREE.CylinderGeometry(bRad, bRad*1.12, 1.8, 14);
-          var bm=new THREE.Mesh(bg, mkMat(new THREE.Color(0x141716)));
-          bm.position.set(bp[0], topY+topH/2+0.8, bp[1]);
+
+        // 4 queimadores e trempes pretas individuais na parte traseira/central da mesa
+        var bOffX=W*0.23, bStartZ=-D*0.26, bEndZ=D*0.12;
+        [[-bOffX,bStartZ],[bOffX,bStartZ],[-bOffX,bEndZ],[bOffX,bEndZ]].forEach(function(bp){
+          var bg=new THREE.CylinderGeometry(Math.min(W,D)*0.11, Math.min(W,D)*0.12, 2.0, 14);
+          var bm=new THREE.Mesh(bg, mkMat(new THREE.Color(0x2a2f33)));
+          bm.position.set(bp[0], topY+topGlassH/2+0.9, bp[1]);
           ig.add(bm);
+          // Trempe cruzeta em ferro fundido preto
+          addPart(ig, Math.min(W,D)*0.32, 2.4, 1.6, bp[0], topY+topGlassH/2+1.4, bp[1], blackGlassMat, null);
+          addPart(ig, 1.6, 2.4, Math.min(W,D)*0.32, bp[0], topY+topGlassH/2+1.4, bp[1], blackGlassMat, null);
         });
 
       } else if(kind==='sofa'){
-        var legH=Math.min(6, H*0.08);
-        var armW=clamp(W*0.11, 10, 22);
-        var armH=Math.min(H*0.72, 62);
-        var backD=clamp(D*0.24, 14, 24);
+        // Sofá moderno baseado na foto 7: braços largos retos, assento único inteiro com costuras quadriculadas, encosto baixo e 2 almofadas soltas grandes com costuras quadriculadas
+        var legH=Math.min(4, H*0.05);
+        var armW=clamp(W*0.12, 12, 24);
+        var armH=Math.min(H*0.76, 64);
+        var backD=clamp(D*0.18, 12, 20);
         var backH=H-legH;
-        var seatD=D-backD-gap;
-        var seatH=Math.min(H*0.46, 42)-legH;
-        var innerW=Math.max(20, W-armW*2-gap*2);
-        var lw=5;
-        [[-W/2+lw,-D/2+lw],[W/2-lw,-D/2+lw],[-W/2+lw,D/2-lw],[W/2-lw,D/2-lw]].forEach(function(pt){
-          addPart(ig, lw, legH, lw, pt[0], legH/2, pt[1], mkMat(darkerCol), null);
-        });
-        addPart(ig, armW, armH, D, -W/2+armW/2, legH+armH/2, 0, mkMat(darkCol), edgeCol, edgeOp);
-        addPart(ig, armW, armH, D, W/2-armW/2, legH+armH/2, 0, mkMat(darkCol), edgeCol, edgeOp);
-        addPart(ig, innerW, seatH*0.55, seatD, 0, legH+seatH*0.275, backD/2+gap/2, mkMat(darkCol), edgeCol, edgeOp);
-        var seats=W>=165?3:(W>=105?2:1);
-        var sw=(innerW - gap*(seats-1))/seats;
-        var cushH=seatH*0.55;
-        for(var sIdx=0;sIdx<seats;sIdx++){
-          var sx=-innerW/2 + sw/2 + sIdx*(sw+gap);
-          addPart(ig, sw, cushH, seatD+1.5, sx, legH+seatH*0.5+cushH/2, backD/2+gap/2+0.5, mkMat(lightCol), edgeCol, edgeOp);
-          var bk=addPart(ig, sw, backH*0.82, backD*0.85, sx, legH+backH*0.48, -D/2+backD*0.52, mkMat(baseCol), edgeCol, edgeOp);
-          bk.rotation.x=-0.13;
+        var seatD=D-backD;
+        var seatH=Math.min(H*0.48, 42)-legH;
+        var innerW=Math.max(24, W-armW*2);
+
+        // Base e pés discretos
+        addPart(ig, W-4, legH, D-4, 0, legH/2, 0, mkMat(darkerCol), null);
+        // Braços largos e retos nas duas extremidades
+        addPart(ig, armW, armH, D, -W/2+armW/2, legH+armH/2, 0, mkMat(baseCol), edgeCol, edgeOp);
+        addPart(ig, armW, armH, D, W/2-armW/2, legH+armH/2, 0, mkMat(baseCol), edgeCol, edgeOp);
+        // Encosto reto traseiro
+        addPart(ig, innerW, backH, backD, 0, legH+backH/2, -D/2+backD/2, mkMat(darkCol), edgeCol, edgeOp);
+        // Assento único inteiro
+        var seatY=legH+seatH/2;
+        var seatZ=backD/2;
+        addPart(ig, innerW, seatH, seatD, 0, seatY, seatZ, mkMat(baseCol), edgeCol, edgeOp);
+
+        // Costuras quadriculadas (matelassê) no assento único
+        var seamMat=mkMat(lightCol);
+        var cols=Math.max(4, Math.round(innerW/26));
+        for(var cIdx=1; cIdx<cols; cIdx++){
+          var sx=-innerW/2 + (cIdx/cols)*innerW;
+          addPart(ig, 0.7, 0.5, seatD-4, sx, legH+seatH+0.2, seatZ, seamMat, null);
         }
+        addPart(ig, innerW-4, 0.5, 0.7, 0, legH+seatH+0.2, seatZ, seamMat, null);
+
+        // 2 almofadas soltas grandes apoiadas no encosto com costuras quadriculadas (como na foto 7)
+        var pilW=innerW*0.44;
+        var pilH=Math.min(42, backH*0.64);
+        var pilD=Math.min(16, seatD*0.24);
+        var pilY=legH+seatH+pilH*0.44;
+        var pilZ=-D/2+backD+pilD*0.55;
+        [-innerW*0.24, innerW*0.24].forEach(function(px){
+          var pil=addPart(ig, pilW, pilH, pilD, px, pilY, pilZ, mkMat(lightCol), edgeCol, edgeOp);
+          pil.rotation.x=-0.16;
+          // Costura vertical e horizontal na almofada
+          var stV=addPart(ig, 0.7, pilH-4, pilD+0.4, px, pilY, pilZ, mkMat(darkCol), null);
+          stV.rotation.x=-0.16;
+          var stH=addPart(ig, pilW-4, 0.7, pilD+0.4, px, pilY, pilZ, mkMat(darkCol), null);
+          stH.rotation.x=-0.16;
+        });
 
       } else if(kind==='pia'){
-        // Molde de Armário/Gabinete de Pia com 3 gavetas na lateral esquerda (~34%) e 2 portas à direita (~66%)
-        var baseH=Math.min(7, H*0.08);
-        var topH=Math.min(4.5, H*0.055);
+        // Molde de Armário/Gabinete de Pia baseado na foto 5: 3 gavetas com puxadores perfil alumínio horizontais à esquerda (~34%) e 2 portas brancas à direita (~66%), bancada inox com cuba e torneira + filtro
+        var baseH=Math.min(6, H*0.07);
+        var topH=Math.min(4.2, H*0.05);
         var cabH=H-baseH-topH;
+        var alumMat=mkMat(new THREE.Color(0xc2cacf));
         // Rodapé recuado e caixa estrutural do gabinete
         addPart(ig, W-4, baseH, D-4, 0, baseH/2, -1, mkMat(darkerCol), edgeCol, edgeOp);
         addPart(ig, W-2, cabH, D-3, 0, baseH+cabH/2, -1.5, mkMat(darkCol), edgeCol, edgeOp);
@@ -1389,32 +1665,29 @@ function build3D(){
         var drwW=drwTotalW - gap*1.5;
         var drwCx=leftStart + gap + drwW/2;
 
-        // 3 gavetas empilhadas na lateral esquerda
+        // 3 gavetas empilhadas na lateral esquerda com puxadores em perfil de alumínio horizontais no topo de cada frente
         var drwCount=3;
         var drwH=(cabH - gap*(drwCount+1))/drwCount;
         for(var gIdx=0; gIdx<drwCount; gIdx++){
           var gy=baseH + gap + drwH/2 + gIdx*(drwH+gap);
           addPart(ig, drwW, drwH, 2.2, drwCx, gy, D/2-1.9, mkMat(lightCol), edgeCol, edgeOp);
-          // Puxador horizontal centralizado em cada gaveta
-          addPart(ig, Math.min(16, drwW*0.48), 1.6, 1.8, drwCx, gy, D/2-0.1, mkMat(darkerCol), null);
+          addPart(ig, drwW, 2.0, 2.6, drwCx, gy+drwH/2-1.0, D/2-1.6, alumMat, edgeCol, 0.45);
         }
 
         // Divisória vertical interna entre gaveteiro e módulo das portas
         addPart(ig, 1.6, cabH-1, D-4, leftStart+drwTotalW, baseH+cabH/2, -1.5, mkMat(darkerCol), null);
 
-        // 2 portas de abrir na parte direita (~66% da largura)
+        // 2 portas de abrir na parte direita (~66% da largura) com puxador perfil horizontal superior
         var doorsAreaStart=leftStart + drwTotalW;
         var doorsAreaW=innerW - drwTotalW;
         var dw=(doorsAreaW - gap*3)/2;
         for(var pIdx=0; pIdx<2; pIdx++){
           var px=doorsAreaStart + gap + dw/2 + pIdx*(dw+gap);
           addPart(ig, dw, cabH-2*gap, 2.2, px, baseH+cabH/2, D/2-1.9, mkMat(baseCol), edgeCol, edgeOp);
-          // Puxadores verticais próximos ao encontro central das 2 portas
-          var hOff=(pIdx===0)?(dw*0.34):(-dw*0.34);
-          addPart(ig, 1.6, Math.min(18, cabH*0.26), 1.8, px+hOff, baseH+cabH*0.68, D/2-0.1, mkMat(darkerCol), null);
+          addPart(ig, dw, 2.0, 2.6, px, baseH+cabH-gap-1.0, D/2-1.6, alumMat, edgeCol, 0.45);
         }
 
-        // Bancada superior em inox com frontão traseiro e cuba alinhada sobre as 2 portas (direita)
+        // Bancada superior em inox com frontão traseiro e cuba alinhada à direita
         var topY=baseH+cabH+topH/2;
         var inoxMat=mkMat(new THREE.Color(0xdde4e8));
         var inoxRimMat=mkMat(new THREE.Color(0xc5cfd4));
@@ -1434,9 +1707,13 @@ function build3D(){
         var drainM=new THREE.Mesh(drainG, inoxMat);
         drainM.position.set(basinCx, topY+topH/2+1.9, 2);
         ig.add(drainM);
-        // Torneira bica alta centralizada na cuba
-        addPart(ig, 2.6, 16, 2.6, basinCx, topY+topH/2+8, -D*0.32, inoxRimMat, null);
-        addPart(ig, 2.4, 2.4, 13, basinCx, topY+topH/2+16, -D*0.21, inoxRimMat, null);
+        // Torneira bica alta + copo de filtro cromado ao lado (como na foto 5)
+        addPart(ig, 2.6, 18, 2.6, basinCx+3, topY+topH/2+9, -D*0.32, inoxRimMat, null);
+        addPart(ig, 2.4, 2.4, 13, basinCx+3, topY+topH/2+18, -D*0.21, inoxRimMat, null);
+        var filterG=new THREE.CylinderGeometry(3.2, 3.2, 16, 14);
+        var filterM=new THREE.Mesh(filterG, inoxRimMat);
+        filterM.position.set(basinCx-5, topY+topH/2+8, -D*0.32);
+        ig.add(filterM);
 
       } else if(kind==='pia_banheiro'){
         // Balcão de pia de banheiro estilo mármore com gabinete suspenso, cuba de apoio, torneira e espelho na parede
@@ -1627,38 +1904,50 @@ function build3D(){
         ig.add(drumM);
 
       } else if(kind==='bebedouro'){
+        // Bebedouro de coluna branco com detalhes cinza-taupe no topo e cintura, nicho com 2 torneiras e garrafão com capa (foto 4)
         var jugH=Math.min(44, H*0.34);
-        var neckH=Math.min(7, jugH*0.16);
         var bodyH=H-jugH;
         var baseH=Math.min(4, bodyH*0.05);
+        var taupeMat=mkMat(new THREE.Color(0x9a9189));
+        var bodyMat=mkMat(baseCol);
         addPart(ig, W-2, baseH, D-2, 0, baseH/2, 0, mkMat(darkerCol), edgeCol, edgeOp);
-        addPart(ig, W, bodyH-baseH, D-1.5, 0, baseH+(bodyH-baseH)/2, -0.75, mkMat(baseCol), edgeCol, edgeOp);
-        var recessH=Math.min(24, bodyH*0.28);
-        var recessY=baseH+(bodyH-baseH)*0.68;
-        addPart(ig, W*0.74, recessH, 3, 0, recessY, D/2-1.2, mkMat(darkCol), edgeCol, edgeOp);
-        addPart(ig, W*0.78, 2.2, 7, 0, recessY-recessH/2+1.1, D/2+1.5, mkMat(darkerCol), edgeCol, edgeOp);
-        addPart(ig, 2.4, 4, 4.5, -W*0.16, recessY+recessH/2-2.5, D/2+1, mkMat(new THREE.Color(0xd94e4e)), null);
-        addPart(ig, 2.4, 4, 4.5, W*0.16, recessY+recessH/2-2.5, D/2+1, mkMat(new THREE.Color(0x2b8cbe)), null);
-        var ringR=Math.min(W,D)*0.38;
-        var ringG=new THREE.CylinderGeometry(ringR*1.04, ringR*1.08, 3.5, 18);
-        var ringM=new THREE.Mesh(ringG, mkMat(lightCol));
-        ringM.position.set(0, bodyH+1.75, 0);
-        ig.add(ringM);
-        var neckG=new THREE.CylinderGeometry(ringR*0.36, ringR*0.42, neckH, 14);
-        var waterMat=mkMat(new THREE.Color(0x38a3d1), Math.min(op, 0.62));
-        var neckM=new THREE.Mesh(neckG, waterMat);
-        neckM.position.set(0, bodyH+neckH/2, 0);
-        ig.add(neckM);
-        var cylH=Math.max(8, jugH-neckH-3);
-        var jugG=new THREE.CylinderGeometry(ringR, ringR, cylH, 18);
-        var jugM=new THREE.Mesh(jugG, waterMat);
-        jugM.position.set(0, bodyH+neckH+cylH/2, 0);
-        jugM.add(new THREE.LineSegments(new THREE.EdgesGeometry(jugG, 24),new THREE.LineBasicMaterial({color:new THREE.Color(0x7fd4f5),transparent:true,opacity:0.45})));
+        // Metade inferior da coluna + cinta cinza-taupe + metade superior
+        var lowerH=(bodyH-baseH)*0.46;
+        var upperH=(bodyH-baseH)*0.50;
+        addPart(ig, W, lowerH, D-1.5, 0, baseH+lowerH/2, -0.75, bodyMat, edgeCol, edgeOp);
+        addPart(ig, W+0.4, 2.6, D-1.0, 0, baseH+lowerH+1.3, -0.5, taupeMat, edgeCol, 0.45);
+        addPart(ig, W, upperH, D-1.5, 0, baseH+lowerH+2.6+upperH/2, -0.75, bodyMat, edgeCol, edgeOp);
+        // Tampo superior cinza-taupe
+        addPart(ig, W+0.8, 3.2, D+0.4, 0, bodyH-1.6, 0, taupeMat, edgeCol, edgeOp);
+
+        // Nicho frontal rebaixado com bandeja pingadeira grelhada e duas torneiras
+        var recessH=Math.min(24, upperH*0.56);
+        var recessY=baseH+lowerH+2.6+recessH/2+2;
+        addPart(ig, W*0.72, recessH, 3.2, 0, recessY, D/2-1.4, mkMat(new THREE.Color(0xd5d8d6)), edgeCol, edgeOp);
+        addPart(ig, W*0.76, 2.4, 6.5, 0, recessY-recessH/2+1.2, D/2+1.2, taupeMat, edgeCol, edgeOp);
+        // Botão seletor central acima do nicho
+        var dialG=new THREE.CylinderGeometry(2.6, 2.6, 1.8, 14);
+        var dialM=new THREE.Mesh(dialG, taupeMat);
+        dialM.rotation.x=Math.PI/2;
+        dialM.position.set(0, recessY+recessH/2+4.5, D/2-0.3);
+        ig.add(dialM);
+        // Duas torneiras (natural e gelada)
+        addPart(ig, 2.6, 4.5, 4.8, -W*0.16, recessY+recessH/2-2.8, D/2+0.8, mkMat(new THREE.Color(0x2a2f32)), null);
+        addPart(ig, 2.6, 4.5, 4.8, W*0.16, recessY+recessH/2-2.8, D/2+0.8, mkMat(new THREE.Color(0x2a2f32)), null);
+
+        // Garrafão superior com capa de tecido claro/esverdeado (foto 4)
+        var ringR=Math.min(W,D)*0.40;
+        var coverMat=mkMat(new THREE.Color(0xdbe3d3));
+        var coverTrimMat=mkMat(new THREE.Color(0x95a888));
+        var jugG=new THREE.CylinderGeometry(ringR*0.95, ringR, jugH-2, 18);
+        var jugM=new THREE.Mesh(jugG, coverMat);
+        jugM.position.set(0, bodyH+(jugH-2)/2, 0);
+        jugM.add(new THREE.LineSegments(new THREE.EdgesGeometry(jugG, 24),new THREE.LineBasicMaterial({color:edgeCol,transparent:true,opacity:0.4})));
         ig.add(jugM);
-        var capG=new THREE.CylinderGeometry(ringR*0.78, ringR, 3, 18);
-        var capM=new THREE.Mesh(capG, waterMat);
-        capM.position.set(0, bodyH+neckH+cylH+1.5, 0);
-        ig.add(capM);
+        var bandG=new THREE.CylinderGeometry(ringR*0.98, ringR*0.98, 2.5, 18);
+        var bandM=new THREE.Mesh(bandG, coverTrimMat);
+        bandM.position.set(0, bodyH+jugH*0.55, 0);
+        ig.add(bandM);
 
       } else if(kind==='vaso'){
         // Vaso sanitário com caixa acoplada, pedestal, bojo, tampa articulada e chuveirinho (ducha higiênica) acoplado
@@ -1808,6 +2097,16 @@ function build3D(){
 }
 function draw3D(){
   if(!renderer||!orb.t) return;
+  if(fpMode.active){
+    camera.position.set(fpMode.x, fpMode.y, fpMode.z);
+    var cosP=Math.cos(fpMode.pitch);
+    var lx=fpMode.x - Math.sin(fpMode.yaw)*cosP*100;
+    var ly=fpMode.y + Math.sin(fpMode.pitch)*100;
+    var lz=fpMode.z - Math.cos(fpMode.yaw)*cosP*100;
+    camera.lookAt(lx, ly, lz);
+    renderer.render(scene,camera);
+    return;
+  }
   var r=orb.r,sp=Math.sin(orb.phi);
   camera.position.set(orb.t.x+r*sp*Math.sin(orb.theta),orb.t.y+r*Math.cos(orb.phi),orb.t.z+r*sp*Math.cos(orb.theta));
   camera.lookAt(orb.t);
@@ -1866,7 +2165,7 @@ function syncInspector(){
   $('#insForm').setAttribute('data-kind', isItem?'item':'room');
   $('#lbL').textContent=isItem?'Profundidade':'Comprimento';
   $('#lbH').textContent=isItem?'Altura':'Pé-direito';
-  $('#fRot').hidden=!isItem; $('#fDiag').hidden=!isItem; $('#fMir').hidden=!isItem; $('#colorWrap').hidden=!isItem; $('#opWrap').hidden=!isItem; $('#wallWrap').hidden=isItem; $('#zWrap').hidden=!isItem; $('#roomWrap').hidden=!isItem; $('#angWrap').hidden=!isItem;
+  $('#fRot').hidden=!isItem; $('#fDiag').hidden=!isItem; $('#fMir').hidden=!isItem; $('#colorWrap').hidden=!isItem; $('#opWrap').hidden=!isItem; $('#wallWrap').hidden=isItem; $('#roomWallColorWrap').hidden=isItem; $('#zWrap').hidden=!isItem; $('#roomWrap').hidden=!isItem; $('#angWrap').hidden=!isItem;
   
   var isOpening=(isItem&&(o.type==='door'||o.type==='arch_door'||o.type==='arch'));
   var isDoorLeaf=(isItem&&(o.type==='door'||o.type==='arch_door'));
@@ -1888,7 +2187,14 @@ function syncInspector(){
     setVal($('#fAng'),deg);
     $('#angVal').textContent=deg+'°';
   }
-  if(!isItem){setVal($('#wN'),o.wt.n);setVal($('#wS'),o.wt.s);setVal($('#wW'),o.wt.w);setVal($('#wE'),o.wt.e);}
+  if(!isItem){
+    setVal($('#wN'),o.wt.n);setVal($('#wS'),o.wt.s);setVal($('#wW'),o.wt.w);setVal($('#wE'),o.wt.e);
+    var curIc=o.wallColor||'#d8c7a8';
+    $('#fRoomWallColor').value=curIc;
+    document.querySelectorAll('#roomWallSwatches .swatch').forEach(function(sw){
+      sw.classList.toggle('on', (o.wallColor||'').toLowerCase()===sw.getAttribute('data-col').toLowerCase());
+    });
+  }
   setVal($('#fName'),o.name); setVal($('#fW'),o.w); setVal($('#fL'),isItem?o.d:o.l); setVal($('#fH'),o.h);
   syncPos();
   if(isItem) $('#fColor').value=o.color;
@@ -1904,7 +2210,7 @@ function updateNote(){
   var o=selObj(),n=$('#insNote'); if(!o){n.textContent='';return;}
   var msg='',warn=false;
   if(sel.t==='room'){
-    msg='Área interna '+fmt(o.w*o.l/10000)+' m² · volume '+fmt(o.w*o.l*o.h/1000000)+' m³.';
+    msg='Área interna '+fmt(o.w*o.l/10000)+' m² · volume '+fmt(o.w*o.l*o.h/1000000)+' m³'+(o.wallColor?' · parede interna '+o.wallColor.toUpperCase():'')+'.';
   }else{
     var f=fp(o),r=roomOf(o);
     var openings=['door','arch_door','window','arch_window','arch','straight_stairs','spiral_stairs'];
@@ -1951,7 +2257,7 @@ function addRoom(){
   checkpoint();
   var x=0; state.rooms.forEach(function(r){x=Math.max(x,r.x+r.w+r.wt.e+10);});
   var baseName=customName||p[0];
-  var r={id:nid('r'),name:uniqueName(baseName,state.rooms),x:x,y:0,w:rw,l:rl,h:p[3],wt:{n:10,s:10,w:10,e:10},visible:true};
+  var r={id:nid('r'),name:uniqueName(baseName,state.rooms),x:x,y:0,w:rw,l:rl,h:p[3],wt:{n:10,s:10,w:10,e:10},visible:true,wallColor:null};
   state.rooms.push(r); sel={t:'room',id:r.id};
   $('#roomCustomName').value='';
   v2.fitted=false; orb.fitted=false; fit3D(); refreshAll();
@@ -2054,6 +2360,7 @@ function syncControls(){
   var wop=Math.round((state.wallOp!=null?state.wallOp:0.14)*100);
   $('#wallOp').value=wop; $('#wallOpVal').textContent=wop+'%';
   $('#wallOpWrap').hidden=state.wallMode==='none';
+  if($('#tgCeiling')) $('#tgCeiling').checked=!!state.showCeiling;
 }
 
 function wire(){
@@ -2137,8 +2444,20 @@ function wire(){
   $('#vboth').addEventListener('click',function(){setView('both');});
   $('#fit2d').addEventListener('click',function(){fit2D();req({d2:true});});
   $('#fit3d').addEventListener('click',function(){fit3D();});
-  $('#top3d').addEventListener('click',function(){orb.phi=0.02;orb.theta=0;req({draw:true});});
-  $('#iso3d').addEventListener('click',function(){orb.phi=0.95;orb.theta=-0.7;req({draw:true});});
+  $('#top3d').addEventListener('click',function(){if(fpMode.active)exitRoomFP(false);orb.phi=0.02;orb.theta=0;req({draw:true});});
+  $('#iso3d').addEventListener('click',function(){if(fpMode.active)exitRoomFP(false);orb.phi=0.95;orb.theta=-0.7;req({draw:true});});
+  $('#tgCeiling').addEventListener('change',function(e){state.showCeiling=e.target.checked;req({scene:true});save();});
+  $('#enterRoom3d').addEventListener('click',function(){enterRoomFP();});
+  $('#exitRoom3d').addEventListener('click',function(){exitRoomFP(true);});
+  document.querySelectorAll('[data-fp-move]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var dir=btn.getAttribute('data-fp-move');
+      if(dir==='fwd') stepFP(1,0);
+      else if(dir==='back') stepFP(-1,0);
+      else if(dir==='left') stepFP(0,-1);
+      else if(dir==='right') stepFP(0,1);
+    });
+  });
   $('#tgItems').addEventListener('change',function(e){
     state.showItems=e.target.checked;
     if(!state.showItems&&sel&&sel.t==='item'){sel=null;renderLists();syncInspector();}
@@ -2170,6 +2489,19 @@ function wire(){
   $('#wEq').addEventListener('click',function(){
     var o=selObj(); if(!o||sel.t!=='room') return;
     checkpoint(); var v=o.wt.n; o.wt={n:v,s:v,w:v,e:v}; syncInspector(); reqAll(); save();
+  });
+  $('#fRoomWallColor').addEventListener('input',function(e){
+    var o=selObj(); if(!o||sel.t!=='room') return;
+    o.wallColor=e.target.value; syncInspector(); reqAll(); save();
+  });
+  $('#roomWallSwatches').addEventListener('click',function(e){
+    var sw=e.target.closest('.swatch'); if(!sw) return;
+    var o=selObj(); if(!o||sel.t!=='room') return;
+    checkpoint(); o.wallColor=sw.getAttribute('data-col'); syncInspector(); reqAll(); save();
+  });
+  $('#fRoomWallReset').addEventListener('click',function(){
+    var o=selObj(); if(!o||sel.t!=='room') return;
+    checkpoint(); o.wallColor=null; syncInspector(); reqAll(); save();
   });
 
   $('#insForm').addEventListener('focusin',function(){checkpoint();});
@@ -2213,6 +2545,13 @@ function wire(){
     var tag=((e.target&&e.target.tagName)||'').toLowerCase();
     if(tag==='input'||tag==='select'||tag==='textarea') return;
     if((e.ctrlKey||e.metaKey)&&(e.key==='z'||e.key==='Z')){e.preventDefault();undo();return;}
+    if(fpMode.active){
+      if(e.key==='Escape'){e.preventDefault();exitRoomFP(true);return;}
+      if(e.key==='w'||e.key==='W'||e.key==='ArrowUp'){e.preventDefault();stepFP(1,0);return;}
+      if(e.key==='s'||e.key==='S'||e.key==='ArrowDown'){e.preventDefault();stepFP(-1,0);return;}
+      if(e.key==='a'||e.key==='A'||e.key==='ArrowLeft'){e.preventDefault();stepFP(0,-1);return;}
+      if(e.key==='d'||e.key==='D'||e.key==='ArrowRight'){e.preventDefault();stepFP(0,1);return;}
+    }
     var o=selObj(); if(!o) return;
     var st=e.shiftKey?10:1;
     
