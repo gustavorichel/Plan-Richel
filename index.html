@@ -1,71 +1,180 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Planejador Richel</title>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Planejador RICHEL</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#eff1ee; --panel:#fafbf9; --ink:#1b2420; --muted:#66716b; --line:#d3d9d4;
+  --bg:#eff1ee; --panel:#fafbf9; --panel-alt:#f2f4f1; --ink:#1b2420; --muted:#66716b; --line:#d3d9d4;
   --grid:#e0e5e0; --gridstrong:#c9d1ca; --room:#ffffff; --wall:#26302b;
-  --accent:#0b7a63; --accentink:#ffffff; --warn:#c2410c;
+  --accent:#0b7a63; --accent-soft:rgba(11,122,99,0.12); --accentink:#ffffff; --warn:#c2410c;
   --floor3d:#e6ebe7; --wall3d:#7d8a83; --edge3d:#2b3631;
+  --shadow:0 4px 16px rgba(27,36,32,0.06);
   --font-head:'Space Grotesk',system-ui,sans-serif;
   --font-body:'Inter',system-ui,sans-serif;
   --font-mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#101513; --panel:#171e1b; --ink:#e4eae6; --muted:#8e9c94; --line:#2a3430;
+    --bg:#101513; --panel:#171e1b; --panel-alt:#1d2622; --ink:#e4eae6; --muted:#8e9c94; --line:#2a3430;
     --grid:#1d2622; --gridstrong:#2a3530; --room:#1c2420; --wall:#c9d3cd;
-    --accent:#3fd0a0; --accentink:#06130e; --warn:#fb923c;
+    --accent:#3fd0a0; --accent-soft:rgba(63,208,160,0.14); --accentink:#06130e; --warn:#fb923c;
     --floor3d:#2a3530; --wall3d:#8b9a92; --edge3d:#b7c4bc;
+    --shadow:0 6px 20px rgba(0,0,0,0.28);
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#101513; --panel:#171e1b; --ink:#e4eae6; --muted:#8e9c94; --line:#2a3430;
+  --bg:#101513; --panel:#171e1b; --panel-alt:#1d2622; --ink:#e4eae6; --muted:#8e9c94; --line:#2a3430;
   --grid:#1d2622; --gridstrong:#2a3530; --room:#1c2420; --wall:#c9d3cd;
-  --accent:#3fd0a0; --accentink:#06130e; --warn:#fb923c;
+  --accent:#3fd0a0; --accent-soft:rgba(63,208,160,0.14); --accentink:#06130e; --warn:#fb923c;
   --floor3d:#2a3530; --wall3d:#8b9a92; --edge3d:#b7c4bc;
+  --shadow:0 6px 20px rgba(0,0,0,0.28);
   color-scheme:dark;
 }
 *{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px); height:100%}
 body{
+  margin:0; height:100%;
   background:var(--bg); color:var(--ink); font-family:var(--font-body); font-size:14px; line-height:1.45;
-  padding-left:max(16px,env(safe-area-inset-left,0px));
-  padding-right:max(16px,env(safe-area-inset-right,0px));
-  padding-block:16px;
+  padding-left:max(14px,env(safe-area-inset-left,0px));
+  padding-right:max(14px,env(safe-area-inset-right,0px));
+  padding-block:12px;
 }
-h1,h2{font-family:var(--font-head); margin:0}
-h1{font-size:24px; letter-spacing:-.01em; text-wrap:balance}
-h2{font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:700}
+img{max-width:100%}
+[hidden]:not([hidden=until-found i]){display:none!important}
+h1,h2,h3{font-family:var(--font-head); margin:0}
+h1{font-size:22px; letter-spacing:-.015em; text-wrap:balance; display:flex; align-items:center; gap:8px}
+h2{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:700}
 .mono{font-family:var(--font-mono); font-variant-numeric:tabular-nums}
-.sub{margin:2px 0 0; color:var(--muted)}
+.sub{margin:1px 0 0; color:var(--muted); font-size:12.5px}
 
-html,body{height:100%}
-.app{display:flex; flex-direction:column; gap:12px; height:100%; min-height:560px; max-width:1560px; margin:0 auto}
-.top{order:0; flex:0 0 auto; display:flex; flex-wrap:wrap; gap:8px 20px; align-items:center; justify-content:space-between}
-.stage{order:1; flex:1 1 0; min-height:300px; min-width:0; display:grid; gap:12px; grid-template-columns:repeat(2,minmax(0,1fr)); grid-template-rows:minmax(0,1fr)}
+.app{display:flex; flex-direction:column; gap:10px; height:100%; min-height:560px; max-width:1620px; margin:0 auto}
+.top{order:0; flex:0 0 auto; display:flex; flex-wrap:wrap; gap:8px 16px; align-items:center; justify-content:space-between}
+.stage{order:1; flex:1 1 0; min-height:270px; min-width:0; display:grid; gap:10px; grid-template-columns:repeat(2,minmax(0,1fr)); grid-template-rows:minmax(0,1fr)}
 @media (max-width:760px){.stage{grid-template-columns:minmax(0,1fr); grid-template-rows:repeat(2,minmax(0,1fr))}}
 .stage[data-view="2d"],.stage[data-view="3d"]{grid-template-columns:minmax(0,1fr); grid-template-rows:minmax(0,1fr)}
 .stage[data-view="2d"] #pane3d{display:none}
 .stage[data-view="3d"] #pane2d{display:none}
 
-.dock{order:2; flex:0 0 auto; height:clamp(240px,40vh,420px); display:flex; gap:12px; overflow-x:auto; overflow-y:hidden; padding-bottom:6px; overscroll-behavior-x:contain; scroll-snap-type:x proximity}
-.app[data-dock="top"] .dock{order:1}
+/* Dock & Tabs Container */
+.dock-wrap{
+  order:2; flex:0 0 auto; display:flex; flex-direction:column;
+  background:var(--panel); border:1px solid var(--line); border-radius:10px;
+  box-shadow:var(--shadow); overflow:hidden;
+}
+.app[data-dock="top"] .dock-wrap{order:1}
 .app[data-dock="top"] .stage{order:2}
-.dock>.panel{flex:0 0 min(340px,88vw); height:100%; min-height:0; overflow-y:auto; scroll-snap-align:start}
-.dock ul.list{max-height:none; overflow:visible}
-#insPanel{order:-1; flex-basis:min(540px,92vw)}
-.dock>.panel>*{flex-shrink:0}
-.dock>.panel .panel-h{position:sticky; top:-12px; z-index:1; background:var(--panel); margin:-12px -12px 0; padding:12px 12px 6px}
-@media (max-width:760px){.sub{display:none} h1{font-size:20px}}
-.tools{display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center}
-.chk,.sel{display:flex; align-items:center; gap:6px; color:var(--ink); cursor:pointer}
-.chk input{accent-color:var(--accent); width:16px; height:16px; margin:0}
 
-.btn{font:inherit; border:1px solid var(--line); background:var(--panel); color:var(--ink); padding:6px 10px; border-radius:6px; cursor:pointer; line-height:1.2}
+/* Tab Navigation Header */
+.dock-nav{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:6px 10px; background:var(--panel-alt); border-bottom:1px solid var(--line);
+  flex-wrap:wrap;
+}
+.tab-bar{
+  display:flex; align-items:center; gap:4px; overflow-x:auto; max-width:100%;
+  scrollbar-width:none;
+}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab-btn{
+  display:inline-flex; align-items:center; gap:6px;
+  font:inherit; font-size:12.5px; font-weight:500;
+  padding:6px 11px; border-radius:7px; border:1px solid transparent;
+  background:transparent; color:var(--muted); cursor:pointer; white-space:nowrap;
+  transition:all .15s ease; position:relative;
+}
+.tab-btn svg{width:15px; height:15px; flex-shrink:0; opacity:.8}
+.tab-btn:hover{color:var(--ink); background:color-mix(in srgb,var(--ink) 5%,transparent)}
+.tab-btn.active{
+  background:var(--panel); color:var(--ink); font-weight:600;
+  border-color:var(--line); box-shadow:0 1px 3px rgba(0,0,0,0.06);
+}
+.tab-btn.active svg{color:var(--accent); opacity:1}
+.tab-badge{
+  font-family:var(--font-mono); font-size:10.5px; font-weight:600;
+  padding:1px 6px; border-radius:999px;
+  background:color-mix(in srgb,var(--ink) 8%,transparent); color:var(--muted);
+}
+.tab-btn.active .tab-badge{
+  background:var(--accent-soft); color:var(--accent);
+}
+.tab-dot{
+  width:7px; height:7px; border-radius:50%; background:var(--accent);
+  display:inline-block; box-shadow:0 0 0 2px var(--accent-soft);
+}
+.tab-btn.pulse{animation:tabPulse .55s ease}
+@keyframes tabPulse{
+  0%{transform:scale(1)}
+  40%{transform:scale(1.04); border-color:var(--accent); background:var(--accent-soft)}
+  100%{transform:scale(1)}
+}
+.dock-actions{display:flex; align-items:center; gap:8px; margin-left:auto}
+.chk-inline{display:inline-flex; align-items:center; gap:5px; font-size:11.5px; color:var(--muted); cursor:pointer; user-select:none}
+.chk-inline input{accent-color:var(--accent); width:14px; height:14px; margin:0}
+
+/* Dock Body - Tabs Mode vs Split Side-by-Side Mode */
+.dock{
+  height:clamp(220px,34vh,350px);
+  display:flex; gap:12px; padding:10px 12px;
+  overflow-x:auto; overflow-y:hidden; overscroll-behavior-x:contain;
+}
+.dock-wrap[data-layout="tabs"] .tab-bar{display:flex}
+.dock-wrap[data-layout="tabs"] .dock{overflow-x:hidden; padding:10px 12px}
+.dock-wrap[data-layout="tabs"] .dock>.panel{
+  display:none; flex:1 1 100%; max-width:100%; height:100%;
+  border:0; padding:0; background:transparent; box-shadow:none;
+}
+.dock-wrap[data-layout="tabs"] .dock>.panel.tab-active{display:flex}
+
+.dock-wrap[data-layout="split"] .tab-bar{display:none}
+.dock-wrap[data-layout="split"] .dock{scroll-snap-type:x proximity}
+.dock-wrap[data-layout="split"] .dock>.panel{
+  flex:0 0 min(340px,88vw); height:100%; min-height:0; overflow-y:auto; scroll-snap-align:start;
+  background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:10px 12px;
+}
+.dock-wrap[data-layout="split"] #insPanel{order:-1; flex-basis:min(560px,92vw)}
+
+.panel{display:flex; flex-direction:column; gap:8px; min-height:0; overflow-y:auto}
+.panel>*{flex-shrink:0}
+.panel-h{display:flex; justify-content:space-between; align-items:center; gap:8px; padding-bottom:4px; border-bottom:1px solid var(--line)}
+.meta{margin:0; color:var(--muted); font-size:11.5px}
+
+/* Tab Internal Grid Layouts for Clean Organization */
+.tab-split-grid{
+  display:grid; grid-template-columns:1.25fr 1fr; gap:14px; height:100%; min-height:0;
+}
+.dock-wrap[data-layout="split"] .tab-split-grid{
+  display:flex; flex-direction:column; gap:8px; height:auto;
+}
+.tab-col{display:flex; flex-direction:column; gap:8px; min-height:0; overflow-y:auto; padding-right:2px}
+.dock-wrap[data-layout="split"] .tab-col{overflow:visible; padding-right:0}
+.card-box{
+  background:var(--panel-alt); border:1px solid var(--line); border-radius:8px; padding:9px 10px;
+  display:flex; flex-direction:column; gap:7px;
+}
+.card-box h3{font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:700}
+
+@media (max-width:820px){
+  .tab-split-grid{grid-template-columns:1fr; overflow-y:auto}
+  .tab-col{overflow:visible}
+  .sub{display:none} h1{font-size:19px}
+}
+
+.tools{display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center}
+.chk,.sel{display:flex; align-items:center; gap:6px; color:var(--ink); cursor:pointer; font-size:13px}
+.chk input{accent-color:var(--accent); width:15px; height:15px; margin:0}
+
+.btn{font:inherit; border:1px solid var(--line); background:var(--panel); color:var(--ink); padding:5px 10px; border-radius:6px; cursor:pointer; line-height:1.25; transition:border-color .12s,background .12s}
 .btn:hover{border-color:var(--accent)}
 .btn.primary{background:var(--accent); color:var(--accentink); border-color:var(--accent); font-weight:600}
 .btn.sm{padding:4px 8px; font-size:12px}
@@ -73,54 +182,56 @@ html,body{height:100%}
 .btn.danger:hover{border-color:var(--warn); color:var(--warn)}
 button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,textarea:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
 .seg{display:inline-flex; border:1px solid var(--line); border-radius:6px; overflow:hidden; background:var(--panel)}
-.seg button{font:inherit; border:0; background:transparent; color:var(--ink); padding:6px 12px; cursor:pointer}
+.seg button{font:inherit; font-size:12.5px; border:0; background:transparent; color:var(--ink); padding:5px 10px; cursor:pointer}
 .seg button+button{border-left:1px solid var(--line)}
 .seg button[aria-pressed="true"]{background:var(--accent); color:var(--accentink); font-weight:600}
 
-.panel{background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:10px}
-.panel-h{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
-.meta{margin:0; color:var(--muted); font-size:12px}
-ul.list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:2px; max-height:190px; overflow:auto}
-ul.list .none{color:var(--muted); padding:4px 2px; font-size:13px}
-.list-filter-bar{display:flex; align-items:center; justify-content:space-between; gap:6px; padding:4px 8px; margin-bottom:4px; border-radius:6px; background:color-mix(in srgb,var(--accent) 12%,transparent); border:1px solid color-mix(in srgb,var(--accent) 35%,transparent); font-size:12px}
+ul.list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:2px; overflow-y:auto; flex:1 1 auto; min-height:60px}
+ul.list .none{color:var(--muted); padding:6px 4px; font-size:12.5px}
+.list-filter-bar{display:flex; align-items:center; justify-content:space-between; gap:6px; padding:4px 8px; margin-bottom:4px; border-radius:6px; background:var(--accent-soft); border:1px solid color-mix(in srgb,var(--accent) 35%,transparent); font-size:12px}
 .list-filter-bar .flt-lbl{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:500; color:var(--ink)}
-.list-group-hd{font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); padding:6px 6px 2px; margin-top:4px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center}
+.list-group-hd{font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); padding:6px 6px 2px; margin-top:4px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center}
 .list-group-hd:first-child{margin-top:0}
 .list-group-hd .cnt{font-family:var(--font-mono); font-size:10px; opacity:.85}
-.row{display:flex; justify-content:space-between; align-items:baseline; gap:8px; width:100%; text-align:left; padding:6px 8px; border:1px solid transparent; border-radius:6px; background:transparent; color:inherit; font:inherit; cursor:pointer; min-width:0}
+.row{display:flex; justify-content:space-between; align-items:baseline; gap:8px; width:100%; text-align:left; padding:5px 8px; border:1px solid transparent; border-radius:6px; background:transparent; color:inherit; font:inherit; font-size:13px; cursor:pointer; min-width:0}
 .row:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
-.row.on{border-color:var(--accent); background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.row.on{border-color:var(--accent); background:var(--accent-soft)}
 .row .nm{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0}
-.row .mono{color:var(--muted); font-size:12px; white-space:nowrap}
+.row .mono{color:var(--muted); font-size:11.5px; white-space:nowrap}
 .room-li{display:flex; align-items:center; gap:6px; min-width:0}
 .room-li .vis-chk{accent-color:var(--accent); width:15px; height:15px; margin:0; cursor:pointer; flex:0 0 auto}
 .room-li .row{flex:1; min-width:0}
 .room-li.hidden-room .nm{opacity:0.5; text-decoration:line-through}
+
+.search-box{position:relative; display:flex; align-items:center}
+.search-box input{padding-left:28px; font-size:12.5px; height:30px; background:var(--panel)}
+.search-box svg{position:absolute; left:8px; width:14px; height:14px; color:var(--muted); pointer-events:none}
+
 .add{display:flex; gap:6px; flex-direction:column}
 .add-row{display:flex; gap:6px; width:100%}
 .add select{flex:1; min-width:0}
-select,input[type=text],input[type=number],textarea{font:inherit; color:var(--ink); background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:6px 8px; width:100%}
+select,input[type=text],input[type=number],textarea{font:inherit; color:var(--ink); background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:5px 8px; width:100%}
 select{width:auto}
 .sel select{padding:4px 6px}
-.field{display:flex; flex-direction:column; gap:3px; font-size:12px; color:var(--muted); min-width:0}
-.field input{font-family:var(--font-mono); font-size:13px}
-.field input[type=text]{font-family:var(--font-body); font-size:14px}
-.grid3{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px}
-.grid2{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px}
-#insForm{gap:4px 6px}
+.field{display:flex; flex-direction:column; gap:2px; font-size:11.5px; color:var(--muted); min-width:0}
+.field input{font-family:var(--font-mono); font-size:12.5px}
+.field input[type=text]{font-family:var(--font-body); font-size:13px}
+.grid3{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px}
+.grid2{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px}
+.grid4{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px}
 #insForm[hidden],#insEmpty[hidden]{display:none}
-input[type=color]{padding:2px; height:32px; cursor:pointer}
-.note{margin:0; font-size:13px}
+input[type=color]{padding:2px; height:28px; cursor:pointer}
+.note{margin:0; font-size:12.5px}
 .note.warn{color:var(--warn); font-weight:500}
 .btns{display:flex; flex-wrap:wrap; gap:6px}
-details summary{cursor:pointer; color:var(--muted); font-size:13px}
-textarea{font-family:var(--font-mono); font-size:11px; height:90px; resize:vertical; margin:6px 0}
+details summary{cursor:pointer; color:var(--muted); font-size:12.5px}
+textarea{font-family:var(--font-mono); font-size:11px; height:76px; resize:vertical; margin:4px 0}
 
-/* stage */
-.pane{position:relative; min-height:260px; min-width:0; background:var(--room); border:1px solid var(--line); border-radius:8px; overflow:hidden}
+/* Stage */
+.pane{position:relative; min-height:240px; min-width:0; background:var(--room); border:1px solid var(--line); border-radius:10px; overflow:hidden; box-shadow:var(--shadow)}
 .bar{position:absolute; top:8px; left:8px; right:8px; z-index:2; display:flex; justify-content:space-between; align-items:flex-start; gap:8px; pointer-events:none; flex-wrap:wrap}
 .bar>*{pointer-events:auto}
-.bar-r{display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end}
+.bar-r{display:flex; gap:5px; flex-wrap:wrap; justify-content:flex-end}
 .cap{font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:4px 8px}
 .bar select{background:var(--panel); padding:4px 6px; font-size:12px}
 #svg{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none; background:var(--room)}
@@ -129,26 +240,28 @@ textarea{font-family:var(--font-mono); font-size:11px; height:90px; resize:verti
 #noGL{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:24px; text-align:center; color:var(--muted); margin:0}
 #noGL[hidden]{display:none}
 
-/* editor form - compact layout */
-#insForm{display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:4px 6px; align-items:end}
-#insForm>.f-name{grid-column:span 2}
-#insForm>.f-dims{grid-column:span 4}
-#insForm>.f-pos{grid-column:span 2}
-#insForm>.f-room{grid-column:span 2}
-#insForm>.f-z{grid-column:span 1}
-#insForm>.f-col{grid-column:span 1}
-#insForm>.f-op{grid-column:span 2}
-#insForm>.f-ang{grid-column:span 4}
-#insForm>.wallgrp{grid-column:span 6}
-#insForm>.note{grid-column:span 6; align-self:center; font-size:11px; line-height:1.25}
-#insForm>.btns{grid-column:span 6; justify-content:flex-start; gap:4px}
-#insForm[data-kind="room"]>.f-name{grid-column:span 3}
-#insForm[data-kind="room"]>.f-dims{grid-column:span 3}
-#insForm[data-kind="room"]>.f-pos{grid-column:span 2}
-#insForm[data-kind="room"]>.f-rwall{grid-column:span 4}
-#insForm[data-kind="room"]>.wallgrp{grid-column:span 6}
-#insForm[data-kind="room"]>.note{grid-column:1/-1}
-#insForm[data-kind="room"]>.btns{grid-column:1/-1}
+/* Inspector Form - Grouped & Clean */
+#insForm{display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:8px 10px; align-items:start}
+#insForm>.ins-sec-id{grid-column:span 4}
+#insForm>.ins-sec-dim{grid-column:span 4}
+#insForm>.ins-sec-app{grid-column:span 4}
+#insForm>.ins-sec-open{grid-column:span 12}
+#insForm>.ins-sec-wall{grid-column:span 12}
+#insForm>.ins-sec-foot{grid-column:span 12; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; padding-top:4px; border-top:1px solid var(--line)}
+
+.dock-wrap[data-layout="split"] #insForm{grid-template-columns:repeat(6,minmax(0,1fr)); gap:6px}
+.dock-wrap[data-layout="split"] #insForm>.ins-sec-id,
+.dock-wrap[data-layout="split"] #insForm>.ins-sec-dim,
+.dock-wrap[data-layout="split"] #insForm>.ins-sec-app,
+.dock-wrap[data-layout="split"] #insForm>.ins-sec-open,
+.dock-wrap[data-layout="split"] #insForm>.ins-sec-wall,
+.dock-wrap[data-layout="split"] #insForm>.ins-sec-foot{grid-column:span 6}
+
+@media (max-width:920px){
+  #insForm{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #insForm>.ins-sec-id,#insForm>.ins-sec-dim,#insForm>.ins-sec-app,#insForm>.ins-sec-open,#insForm>.ins-sec-wall,#insForm>.ins-sec-foot{grid-column:span 2}
+}
+
 .swatches{display:flex; align-items:center; gap:4px; flex-wrap:wrap}
 .swatch{width:18px; height:18px; border-radius:999px; border:1px solid var(--line); padding:0; cursor:pointer; flex:0 0 auto; transition:transform .12s}
 .swatch:hover{transform:scale(1.15); border-color:var(--accent)}
@@ -158,16 +271,10 @@ textarea{font-family:var(--font-mono); font-size:11px; height:90px; resize:verti
 .fp-badge{background:color-mix(in srgb,var(--panel) 92%,transparent); border:1px solid var(--accent); border-radius:6px; padding:4px 8px; font-size:11px; color:var(--ink); display:flex; align-items:center; gap:6px}
 .fp-pad{display:flex; gap:4px; background:color-mix(in srgb,var(--panel) 92%,transparent); border:1px solid var(--line); border-radius:6px; padding:3px}
 .fp-pad button{padding:3px 7px; font-size:11px; min-width:26px}
-#insForm .field{font-size:11px; gap:1px}
-#insForm .grid3,#insForm .grid2,#insForm .grid4{gap:4px}
-#insForm input[type=text],#insForm input[type=number],#insForm select{padding:2px 4px; font-size:11px; height:24px}
-#insForm input[type=color]{height:24px; padding:1px}
-#insForm input[type=range]{height:18px}
-@media (max-width:760px){
-  #insForm{grid-template-columns:repeat(2,minmax(0,1fr))}
-  #insForm>.f-name,#insForm>.f-dims,#insForm>.f-pos,#insForm>.f-room,#insForm>.f-op,#insForm>.f-ang,#insForm>.wallgrp,#insForm>.note,#insForm>.btns{grid-column:span 2}
-  #insForm>.f-z,#insForm>.f-col{grid-column:span 1}
-}
+#insForm .field{font-size:11px; gap:2px}
+#insForm input[type=text],#insForm input[type=number],#insForm select{padding:3px 6px; font-size:12px; height:26px}
+#insForm input[type=color]{height:26px; padding:1px}
+#insForm input[type=range]{height:20px}
 
 .roomfill{fill:var(--room); stroke:var(--line); stroke-width:1px; vector-effect:non-scaling-stroke; cursor:move}
 .roomfill.sel{stroke:var(--accent); stroke-width:2px}
@@ -175,17 +282,16 @@ textarea{font-family:var(--font-mono); font-size:11px; height:90px; resize:verti
 .wallr.sel{stroke:var(--accent); stroke-width:1}
 .bar .cut{display:flex; align-items:center; gap:4px; background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:2px 6px; font-size:12px; color:var(--muted)}
 .bar .cut[hidden]{display:none}
-.bar .cut input{width:60px; padding:2px 4px; font-family:var(--font-mono); font-size:12px}
-.wallgrp{display:flex; flex-direction:column; gap:3px}
+.bar .cut input{width:56px; padding:2px 4px; font-family:var(--font-mono); font-size:12px}
+.wallgrp{display:flex; flex-direction:column; gap:4px}
 .wallgrp[hidden]{display:none}
-.wallgrp .gl{font-size:11px; color:var(--muted)}
-.grid4{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px}
-.it{stroke:var(--wall); stroke-width:1.5px; vector-effect:non-scaling-stroke; cursor:move; fill-opacity:.9}
-.it.sel{stroke:var(--accent); stroke-width:3.5px}
-.it.air{stroke-dasharray:3 2; fill-opacity:.6}
+.wallgrp .gl{font-size:11px; color:var(--muted); font-weight:600}
+.it{stroke:var(--wall); stroke-width:1.4px; vector-effect:non-scaling-stroke; cursor:move; fill-opacity:.9}
+.it.sel{stroke:var(--accent); stroke-width:3.2px}
+.it.air{stroke-dasharray:3 2; fill-opacity:.65}
 .wm{color:var(--warn); font-weight:600}
 input[type=range]{padding:0; accent-color:var(--accent); width:100%; background:transparent; border:0; height:24px}
-.bar .cut input[type=color]{width:30px; height:22px; padding:0; border:1px solid var(--line); background:transparent}
+.bar .cut input[type=color]{width:28px; height:22px; padding:0; border:1px solid var(--line); background:transparent}
 #fRoom{width:100%}
 .it.bad{stroke:var(--warn); stroke-width:2.5px; stroke-dasharray:6 3}
 .lbl{pointer-events:none; font-family:var(--font-body)}
@@ -195,12 +301,14 @@ input[type=range]{padding:0; accent-color:var(--accent); width:100%; background:
 .gmin{stroke:var(--grid); stroke-width:1px; vector-effect:non-scaling-stroke; fill:none}
 .gmaj{stroke:var(--gridstrong); stroke-width:1px; vector-effect:non-scaling-stroke; fill:none}
 </style>
+</head>
+<body>
 
 <div class="app" data-dock="bottom">
   <header class="top">
     <div>
       <h1>Planejador RICHEL</h1>
-      <p class="sub">Cômodos, móveis detalhados, portas, arcos, janelas e escadas giratórias. Medidas em cm.</p>
+      <p class="sub">Cômodos, móveis detalhados, portas, arcos, janelas e escadas. Medidas em cm.</p>
     </div>
     <div class="tools">
       <div class="seg" role="group" aria-label="Visualização">
@@ -209,12 +317,12 @@ input[type=range]{padding:0; accent-color:var(--accent); width:100%; background:
         <button type="button" id="vboth" aria-pressed="true">Planta + 3D</button>
       </div>
       <div class="seg" role="group" aria-label="Posição dos painéis">
-        <button type="button" id="dBottom" aria-pressed="true">Painéis embaixo</button>
-        <button type="button" id="dTop" aria-pressed="false">Painéis em cima</button>
+        <button type="button" id="dBottom" aria-pressed="true">Embaixo</button>
+        <button type="button" id="dTop" aria-pressed="false">Em cima</button>
       </div>
-      <label class="chk"><input type="checkbox" id="tgItems" checked> Mostrar elementos</label>
+      <label class="chk"><input type="checkbox" id="tgItems" checked> Elementos</label>
       <label class="sel">Passo <select id="snap"><option value="1">1</option><option value="5" selected>5</option><option value="10">10</option></select> cm</label>
-      <label class="chk"><input type="checkbox" id="tgEdge" checked> Encaixar nas bordas</label>
+      <label class="chk"><input type="checkbox" id="tgEdge" checked> Encaixar bordas</label>
     </div>
   </header>
 
@@ -236,7 +344,7 @@ input[type=range]{padding:0; accent-color:var(--accent); width:100%; background:
             <option value="none">Sem paredes</option>
           </select>
           <label class="cut" id="cutWrap" hidden>em <input type="number" id="cutH" min="10" step="10" value="100" inputmode="decimal" aria-label="Altura de corte"> cm</label>
-          <label class="cut" id="wallOpWrap" title="Opacidade das paredes no 3D">Opac. <input type="range" id="wallOp" min="5" max="100" step="5" value="14" style="width:64px;height:18px" aria-label="Opacidade das paredes"><span class="mono" id="wallOpVal">14%</span></label>
+          <label class="cut" id="wallOpWrap" title="Opacidade das paredes no 3D">Opac. <input type="range" id="wallOp" min="5" max="100" step="5" value="14" style="width:60px;height:18px" aria-label="Opacidade das paredes"><span class="mono" id="wallOpVal">14%</span></label>
           <label class="cut" title="Cor das paredes no 3D">Paredes <input type="color" id="wallColor" aria-label="Cor das paredes"></label>
           <button type="button" class="btn sm" id="wallAuto" title="Cor automática" hidden>Cor auto</button>
           <label class="cut" title="Exibir laje de teto no 3D"><input type="checkbox" id="tgCeiling" style="width:auto;height:auto;accent-color:var(--accent);margin:0"> Teto</label>
@@ -263,149 +371,258 @@ input[type=range]{padding:0; accent-color:var(--accent); width:100%; background:
     </section>
   </main>
 
-  <aside class="dock" aria-label="Painéis de edição">
-    <section class="panel">
-      <div class="panel-h"><h2>Cômodos</h2><div style="display:flex;align-items:center;gap:6px"><button type="button" class="btn sm" id="showAllRooms" title="Marcar todos os cômodos" hidden>Todos</button><span class="meta">Total <span class="mono" id="totalArea">0 m²</span></span></div></div>
-      <ul class="list" id="roomList"></ul>
-      <div class="add">
-        <div class="add-row">
-          <select id="roomPreset" aria-label="Tipo de cômodo"></select>
-        </div>
-        <div class="grid2">
-          <label class="field">Largura <input type="number" id="newRoomW" min="50" step="10" value="300"></label>
-          <label class="field">Comprimento <input type="number" id="newRoomL" min="50" step="10" value="350"></label>
-        </div>
-        <div class="add-row">
-          <input type="text" id="roomCustomName" placeholder="Nome personalizado" autocomplete="off">
-          <button type="button" class="btn primary" id="addRoom">Adicionar</button>
+  <aside class="dock-wrap" id="dockWrap" data-layout="tabs" aria-label="Painéis de edição">
+    <nav class="dock-nav">
+      <div class="tab-bar" role="tablist" aria-label="Abas de ferramentas">
+        <button type="button" class="tab-btn active" role="tab" data-tab="tab-rooms" aria-selected="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 12h18M12 3v18"/></svg>
+          <span>Cômodos</span>
+          <span class="tab-badge" id="badgeRooms">0</span>
+        </button>
+        <button type="button" class="tab-btn" role="tab" data-tab="tab-items" aria-selected="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18v-5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5"/><path d="M2 18h20"/><path d="M6 11V7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4"/></svg>
+          <span>Móveis &amp; Aberturas</span>
+          <span class="tab-badge" id="badgeItems">0</span>
+        </button>
+        <button type="button" class="tab-btn" role="tab" data-tab="tab-edit" id="tabBtnEdit" aria-selected="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          <span>Editar <span id="tabEditTarget">Seleção</span></span>
+          <span class="tab-dot" id="tabEditDot" hidden></span>
+        </button>
+        <button type="button" class="tab-btn" role="tab" data-tab="tab-proj" aria-selected="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          <span>Projeto &amp; Backup</span>
+        </button>
+      </div>
+      <div class="dock-actions">
+        <label class="chk-inline" id="autoTabWrap" title="Alternar automaticamente para a aba Editar ao selecionar um item ou cômodo">
+          <input type="checkbox" id="tgAutoTab" checked> Abrir Editar ao clicar
+        </label>
+        <div class="seg" role="group" aria-label="Modo de exibição dos painéis">
+          <button type="button" id="lyTabs" aria-pressed="true" title="Visualizar em abas organizadas">Abas</button>
+          <button type="button" id="lySplit" aria-pressed="false" title="Visualizar todos os painéis lado a lado">Lado a lado</button>
         </div>
       </div>
-    </section>
+    </nav>
 
-    <section class="panel">
-      <div class="panel-h"><h2>Móveis & Aberturas</h2><span class="meta">largura × prof. × altura</span></div>
-      <ul class="list" id="itemList"></ul>
-      <div class="add">
-        <div class="add-row">
-          <select id="itemPreset" aria-label="Tipo de elemento"></select>
-        </div>
-        <div class="grid3">
-          <label class="field">Largura <input type="number" id="newItemW" min="5" step="5" value="80"></label>
-          <label class="field">Profundidade <input type="number" id="newItemD" min="5" step="5" value="15"></label>
-          <label class="field">Altura <input type="number" id="newItemH" min="5" step="10" value="210"></label>
-        </div>
-        <div class="add-row">
-          <input type="text" id="itemCustomName" placeholder="Nome personalizado" autocomplete="off">
-          <button type="button" class="btn primary" id="addItem">Adicionar</button>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel" id="insPanel">
-      <div class="panel-h"><h2>Editar <span id="insType">seleção</span></h2></div>
-      <p class="note" id="insEmpty" style="color:var(--muted)">Clique em um elemento na planta ou listas. Arraste para mover. Setas <b>←/↑/→/↓</b> movem nas 4 direções (com <b>Shift</b> movem 10 cm). Com <b>Shift + Seta Cima/Baixo</b> eleva ou abaixa o item. Tecla <b>R</b> gira 90°. Tecla <b>M</b> espelha. Ctrl+Z desfaz.</p>
-      <form id="insForm" hidden>
-        <label class="field f-name">Nome<input type="text" id="fName" autocomplete="off"></label>
-        <div class="grid3 f-dims">
-          <label class="field"><span id="lbW">Largura</span><input type="number" id="fW" min="1" step="1" inputmode="decimal"></label>
-          <label class="field"><span id="lbL">Profundidade</span><input type="number" id="fL" min="1" step="1" inputmode="decimal"></label>
-          <label class="field"><span id="lbH">Altura</span><input type="number" id="fH" min="1" step="1" inputmode="decimal"></label>
-        </div>
-        <div class="grid2 f-pos">
-          <label class="field">Posição X<input type="number" id="fX" step="1" inputmode="decimal"></label>
-          <label class="field">Posição Y<input type="number" id="fY" step="1" inputmode="decimal"></label>
-        </div>
-        <div class="field f-rwall" id="roomWallColorWrap" hidden>
-          <span>Cor parede interna (exclusiva deste cômodo)</span>
-          <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
-            <input type="color" id="fRoomWallColor" value="#e5d7be" style="width:32px" aria-label="Cor da parede interna">
-            <div class="swatches" id="roomWallSwatches">
-              <button type="button" class="swatch" data-col="#e5d7be" style="background:#e5d7be" title="Areia"></button>
-              <button type="button" class="swatch" data-col="#9eb399" style="background:#9eb399" title="Verde Sálvia"></button>
-              <button type="button" class="swatch" data-col="#f2f3f0" style="background:#f2f3f0" title="Branco Gelo"></button>
-              <button type="button" class="swatch" data-col="#cfd4d2" style="background:#cfd4d2" title="Cinza Claro"></button>
-              <button type="button" class="swatch" data-col="#d69a82" style="background:#d69a82" title="Terracota Suave"></button>
-              <button type="button" class="swatch" data-col="#9cb3c2" style="background:#9cb3c2" title="Azul Acinzentado"></button>
+    <div class="dock">
+      <!-- ABA 1: CÔMODOS -->
+      <section class="panel tab-active" id="tab-rooms" role="tabpanel">
+        <div class="tab-split-grid">
+          <div class="tab-col">
+            <div class="panel-h">
+              <h2>Cômodos da Planta</h2>
+              <div style="display:flex;align-items:center;gap:6px">
+                <button type="button" class="btn xs" id="showAllRooms" title="Marcar todos os cômodos" hidden>Mostrar todos</button>
+                <span class="meta">Área total <span class="mono" id="totalArea">0 m²</span></span>
+              </div>
             </div>
-            <button type="button" class="btn xs" id="fRoomWallReset" title="Voltar à cor padrão">Padrão</button>
+            <ul class="list" id="roomList"></ul>
+          </div>
+          <div class="tab-col">
+            <div class="card-box">
+              <h3>Adicionar Novo Cômodo</h3>
+              <div class="add">
+                <div class="add-row">
+                  <select id="roomPreset" aria-label="Tipo de cômodo"></select>
+                </div>
+                <div class="grid2">
+                  <label class="field">Largura (cm) <input type="number" id="newRoomW" min="50" step="10" value="300"></label>
+                  <label class="field">Comprimento (cm) <input type="number" id="newRoomL" min="50" step="10" value="350"></label>
+                </div>
+                <div class="add-row">
+                  <input type="text" id="roomCustomName" placeholder="Nome personalizado (ex.: Suíte)" autocomplete="off">
+                  <button type="button" class="btn primary" id="addRoom">Adicionar</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <label class="field f-room" id="roomWrap">Cômodo<select id="fRoom"></select></label>
-        <label class="field f-z" id="zWrap">Base (cm)<input type="number" id="fZ" min="0" step="1" inputmode="decimal"></label>
-        <label class="field f-col" id="colorWrap">Cor<input type="color" id="fColor">
-          <span class="note warn" id="colorHint" hidden>Cor parecida com as paredes.</span></label>
-        <label class="field f-op" id="opWrap"><span>Opacidade: <span class="mono" id="opVal">100%</span></span><input type="range" id="fOp" min="10" max="100" step="5" value="100"></label>
-        <div class="field f-ang" id="angWrap">
-          <span>Ângulo: <span class="mono" id="angVal">0°</span></span>
-          <div style="display:flex;gap:3px;align-items:center">
-            <button type="button" class="btn sm" id="fAngMinus" title="Girar -5°" style="padding:2px 5px">-5°</button>
-            <input type="range" id="fAngRange" min="0" max="355" step="5" value="0">
-            <button type="button" class="btn sm" id="fAngPlus" title="Girar +5°" style="padding:2px 5px">+5°</button>
-            <input type="number" id="fAng" min="0" max="359" step="1" value="0" style="width:46px;padding:2px 4px">
-          </div>
-        </div>
-        
-        <div class="wallgrp" id="doorWrap" hidden>
-          <span class="gl" id="openingLabel">Configuração de Abertura</span>
-          <div class="grid3">
-            <label class="field">Lado da dobradiça
-              <select id="fDoorSide">
-                <option value="left">Esquerda / Início</option>
-                <option value="right">Direita / Fim</option>
-              </select>
-            </label>
-            <label class="field">Sentido de abertura
-              <select id="fDoorFlip">
-                <option value="in">Para dentro</option>
-                <option value="out">Para fora</option>
-              </select>
-            </label>
-            <label class="field" id="doorOpenWrap">Estado da porta
-              <select id="fDoorOpen">
-                <option value="closed">Fechada</option>
-                <option value="open">Aberta 90°</option>
-              </select>
-            </label>
-          </div>
-        </div>
+      </section>
 
-        <div class="wallgrp" id="wallWrap">
-          <span class="gl">Espessura das paredes em cm</span>
-          <div class="grid4">
-            <label class="field">Cima<input type="number" id="wN" min="0" step="1" inputmode="decimal"></label>
-            <label class="field">Baixo<input type="number" id="wS" min="0" step="1" inputmode="decimal"></label>
-            <label class="field">Esquerda<input type="number" id="wW" min="0" step="1" inputmode="decimal"></label>
-            <label class="field">Direita<input type="number" id="wE" min="0" step="1" inputmode="decimal"></label>
+      <!-- ABA 2: MÓVEIS & ABERTURAS -->
+      <section class="panel" id="tab-items" role="tabpanel">
+        <div class="tab-split-grid">
+          <div class="tab-col">
+            <div class="panel-h">
+              <h2>Itens na Planta</h2>
+              <span class="meta">largura × prof. × altura</span>
+            </div>
+            <ul class="list" id="itemList"></ul>
           </div>
-          <div class="btns"><button type="button" class="btn sm" id="wEq">Igualar tudo</button></div>
+          <div class="tab-col">
+            <div class="card-box">
+              <h3>Adicionar Móvel ou Abertura</h3>
+              <div class="search-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input type="text" id="itemSearch" placeholder="Filtrar catálogo (ex.: mesa, porta, janela)..." autocomplete="off">
+              </div>
+              <div class="add">
+                <div class="add-row">
+                  <select id="itemPreset" aria-label="Tipo de elemento"></select>
+                </div>
+                <div class="grid3">
+                  <label class="field">Largura <input type="number" id="newItemW" min="5" step="5" value="80"></label>
+                  <label class="field">Profundidade <input type="number" id="newItemD" min="5" step="5" value="15"></label>
+                  <label class="field">Altura <input type="number" id="newItemH" min="5" step="10" value="210"></label>
+                </div>
+                <div class="add-row">
+                  <input type="text" id="itemCustomName" placeholder="Nome personalizado" autocomplete="off">
+                  <button type="button" class="btn primary" id="addItem">Adicionar</button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <p class="note" id="insNote"></p>
-        <div class="btns">
-          <button type="button" class="btn sm" id="fRot">Girar 90° (R)</button>
-          <button type="button" class="btn sm" id="fDiag">Girar 45°</button>
-          <button type="button" class="btn sm" id="fMir">Espelhar (M)</button>
-          <button type="button" class="btn sm" id="fDup">Duplicar</button>
-          <button type="button" class="btn sm danger" id="fDel">Excluir</button>
-        </div>
-      </form>
-    </section>
+      </section>
 
-    <section class="panel">
-      <div class="panel-h"><h2>Projeto</h2><span class="meta">salvo no navegador</span></div>
-      <div class="btns">
-        <button type="button" class="btn" id="bUndo">Desfazer</button>
-        <button type="button" class="btn" id="bDemo">Carregar exemplo</button>
-        <button type="button" class="btn danger" id="bClear">Recomeçar</button>
-      </div>
-      <details>
-        <summary>Backup em texto</summary>
-        <textarea id="bk" spellcheck="false" aria-label="Backup"></textarea>
-        <div class="btns">
-          <button type="button" class="btn sm" id="bkOut">Gerar texto</button>
-          <button type="button" class="btn sm" id="bkIn">Carregar texto</button>
+      <!-- ABA 3: EDITAR SELEÇÃO -->
+      <section class="panel" id="insPanel" data-tab-id="tab-edit" role="tabpanel">
+        <div class="panel-h">
+          <h2>Propriedades: <span id="insType">nenhuma seleção</span></h2>
+          <span class="meta">Atalhos: R gira · M espelha · Setas movem · Ctrl+Z desfaz</span>
         </div>
-      </details>
-    </section>
+        <p class="note" id="insEmpty" style="color:var(--muted);padding:8px 0">Clique em qualquer cômodo, móvel, porta ou janela na planta ou nas listas para editar suas medidas, posição, cor e abertura.</p>
+        <form id="insForm" hidden>
+          <!-- Bloco 1: Identificação & Localização -->
+          <div class="card-box ins-sec-id">
+            <h3>Identificação &amp; Posição</h3>
+            <label class="field">Nome<input type="text" id="fName" autocomplete="off"></label>
+            <div class="grid2">
+              <label class="field">Posição X (cm)<input type="number" id="fX" step="1" inputmode="decimal"></label>
+              <label class="field">Posição Y (cm)<input type="number" id="fY" step="1" inputmode="decimal"></label>
+            </div>
+            <label class="field" id="roomWrap">Cômodo pertencente<select id="fRoom"></select></label>
+          </div>
+
+          <!-- Bloco 2: Dimensões & Elevação -->
+          <div class="card-box ins-sec-dim">
+            <h3>Dimensões (cm)</h3>
+            <div class="grid3">
+              <label class="field"><span id="lbW">Largura</span><input type="number" id="fW" min="1" step="1" inputmode="decimal"></label>
+              <label class="field"><span id="lbL">Profundidade</span><input type="number" id="fL" min="1" step="1" inputmode="decimal"></label>
+              <label class="field"><span id="lbH">Altura</span><input type="number" id="fH" min="1" step="1" inputmode="decimal"></label>
+            </div>
+            <div class="grid2" id="zAngRow">
+              <label class="field" id="zWrap">Elevação Base (cm)<input type="number" id="fZ" min="0" step="1" inputmode="decimal"></label>
+              <div class="field" id="angWrap">
+                <span>Ângulo: <span class="mono" id="angVal">0°</span></span>
+                <div style="display:flex;gap:3px;align-items:center">
+                  <button type="button" class="btn xs" id="fAngMinus" title="Girar -5°">-5°</button>
+                  <input type="range" id="fAngRange" min="0" max="355" step="5" value="0">
+                  <button type="button" class="btn xs" id="fAngPlus" title="Girar +5°">+5°</button>
+                  <input type="number" id="fAng" min="0" max="359" step="1" value="0" style="width:46px;padding:2px 4px">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bloco 3: Aparência & Materiais -->
+          <div class="card-box ins-sec-app">
+            <h3>Aparência &amp; Acabamento</h3>
+            <div class="grid2" id="itemStyleWrap">
+              <label class="field" id="colorWrap">Cor principal<input type="color" id="fColor">
+                <span class="note warn" id="colorHint" hidden>Cor parecida com as paredes.</span>
+              </label>
+              <label class="field" id="opWrap"><span>Opacidade: <span class="mono" id="opVal">100%</span></span><input type="range" id="fOp" min="10" max="100" step="5" value="100"></label>
+            </div>
+            <div class="field" id="roomWallColorWrap" hidden>
+              <span>Cor parede interna exclusiva deste cômodo</span>
+              <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
+                <input type="color" id="fRoomWallColor" value="#e5d7be" style="width:32px" aria-label="Cor da parede interna">
+                <div class="swatches" id="roomWallSwatches">
+                  <button type="button" class="swatch" data-col="#e5d7be" style="background:#e5d7be" title="Areia"></button>
+                  <button type="button" class="swatch" data-col="#9eb399" style="background:#9eb399" title="Verde Sálvia"></button>
+                  <button type="button" class="swatch" data-col="#f2f3f0" style="background:#f2f3f0" title="Branco Gelo"></button>
+                  <button type="button" class="swatch" data-col="#cfd4d2" style="background:#cfd4d2" title="Cinza Claro"></button>
+                  <button type="button" class="swatch" data-col="#d69a82" style="background:#d69a82" title="Terracota Suave"></button>
+                  <button type="button" class="swatch" data-col="#9cb3c2" style="background:#9cb3c2" title="Azul Acinzentado"></button>
+                </div>
+                <button type="button" class="btn xs" id="fRoomWallReset" title="Voltar à cor padrão">Padrão</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bloco 4: Configuração de Portas e Aberturas -->
+          <div class="card-box wallgrp ins-sec-open" id="doorWrap" hidden>
+            <span class="gl" id="openingLabel">Configuração da Porta / Abertura</span>
+            <div class="grid3">
+              <label class="field">Lado da dobradiça
+                <select id="fDoorSide">
+                  <option value="left">Esquerda / Início</option>
+                  <option value="right">Direita / Fim</option>
+                </select>
+              </label>
+              <label class="field">Sentido de abertura
+                <select id="fDoorFlip">
+                  <option value="in">Para dentro</option>
+                  <option value="out">Para fora</option>
+                </select>
+              </label>
+              <label class="field" id="doorOpenWrap">Estado da folha
+                <select id="fDoorOpen">
+                  <option value="closed">Fechada</option>
+                  <option value="open">Aberta 90°</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <!-- Bloco 5: Paredes do Cômodo -->
+          <div class="card-box wallgrp ins-sec-wall" id="wallWrap">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span class="gl">Espessura das paredes em cm</span>
+              <button type="button" class="btn xs" id="wEq">Igualar todas</button>
+            </div>
+            <div class="grid4">
+              <label class="field">Cima<input type="number" id="wN" min="0" step="1" inputmode="decimal"></label>
+              <label class="field">Baixo<input type="number" id="wS" min="0" step="1" inputmode="decimal"></label>
+              <label class="field">Esquerda<input type="number" id="wW" min="0" step="1" inputmode="decimal"></label>
+              <label class="field">Direita<input type="number" id="wE" min="0" step="1" inputmode="decimal"></label>
+            </div>
+          </div>
+
+          <!-- Rodapé: Status e Ações Rápidas -->
+          <div class="ins-sec-foot">
+            <p class="note" id="insNote"></p>
+            <div class="btns">
+              <button type="button" class="btn sm" id="fRot">Girar 90° (R)</button>
+              <button type="button" class="btn sm" id="fDiag">Girar 45°</button>
+              <button type="button" class="btn sm" id="fMir">Espelhar (M)</button>
+              <button type="button" class="btn sm" id="fDup">Duplicar</button>
+              <button type="button" class="btn sm danger" id="fDel">Excluir</button>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <!-- ABA 4: PROJETO & BACKUP -->
+      <section class="panel" id="tab-proj" role="tabpanel">
+        <div class="tab-split-grid">
+          <div class="tab-col">
+            <div class="card-box">
+              <h3>Ações do Projeto</h3>
+              <p class="meta">Todas as alterações são salvas automaticamente no navegador.</p>
+              <div class="btns">
+                <button type="button" class="btn" id="bUndo">Desfazer (Ctrl+Z)</button>
+                <button type="button" class="btn" id="bDemo">Carregar exemplo</button>
+                <button type="button" class="btn danger" id="bClear">Recomeçar do zero</button>
+              </div>
+            </div>
+          </div>
+          <div class="tab-col">
+            <div class="card-box">
+              <h3>Exportar / Importar Backup JSON</h3>
+              <textarea id="bk" spellcheck="false" placeholder="Clique em 'Gerar texto' para copiar o código da planta ou cole aqui para restaurar..." aria-label="Backup"></textarea>
+              <div class="btns">
+                <button type="button" class="btn sm primary" id="bkOut">Gerar texto</button>
+                <button type="button" class="btn sm" id="bkIn">Carregar texto</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   </aside>
 </div>
 
@@ -422,31 +639,32 @@ var KEY='planta-simples-v11';
 
 var ROOM_PRESETS=[['Quarto',300,350,260],['Sala',450,400,260],['Cozinha',250,300,260],['Banheiro',150,220,260],['Corredor',100,300,260],['Cômodo vazio',300,300,260]];
 var ITEM_PRESETS=[
+  ['Mesa de jantar (vidro + pés metálicos)',160,85,75,'#9ad1d4',0,0.68,'mesa_jantar','left','in'],
+  ['Mesa redonda compacta (madeira + 3 pés)',90,90,75,'#7c5338',0,1,'mesa_redonda','left','in'],
+  ['Escrivaninha de madeira',120,60,75,'#c9a66b',0,1,'escrivaninha','left','in'],
+  ['Mesa de centro',100,60,40,'#b89b72',0,1,'mesa_centro','left','in'],
+  ['Cadeira',45,45,88,'#b5835a',0,1,'cadeira','left','in'],
+  ['Sofá moderno almofadas',200,90,85,'#2b7a85',0,1,'sofa','left','in'],
+  ['Tapete',200,150,2,'#c2b5a3',0,1,'tapete','left','in'],
+  ['TV',120,14,72,'#222629',85,1,'tv','left','in'],
+  ['Cama de casal',140,190,50,'#d8b4a0',0,1,'cama','left','in'],
+  ['Cama de solteiro',90,190,50,'#d8b4a0',0,1,'cama','left','in'],
+  ['Guarda-roupa 2 portas (espelho)',200,60,220,'#9e6234',0,1,'guardaroupa','left','in'],
   ['Geladeira duplex inox',70,70,180,'#c6cdd3',0,1,'geladeira','left','in'],
   ['Bebedouro com garrafão',35,35,135,'#e9ece9',0,1,'bebedouro','left','in'],
   ['Fogão inox mesa de vidro',60,60,90,'#cdd3d8',0,1,'fogao','left','in'],
   ['Pia / Gabinete (3 gavetas + 2 portas)',120,60,85,'#eef0ef',0,1,'pia','left','in'],
-  ['Balcão pia banheiro (mármore + espelho)',80,48,185,'#e9ecee',0,1,'pia_banheiro','left','in'],
+  ['Armário aéreo maior (basculante + nicho)',120,38,75,'#9c6438',155,1,'armario_maior','left','in'],
+  ['Armário aéreo menor (2 portas)',75,35,68,'#eff1f0',155,1,'armario_menor','left','in'],
   ['Máquina de lavar',60,60,85,'#e5e9ec',0,1,'maquina','left','in'],
+  ['Balcão pia banheiro (mármore + espelho)',80,48,185,'#e9ecee',0,1,'pia_banheiro','left','in'],
   ['Vaso sanitário + chuveirinho',48,66,78,'#f2f4f5',0,1,'vaso','left','in'],
   ['Box com chuveiro (2 vidros)',90,90,200,'#a8dadc',0,1,'box_chuveiro','left','in'],
   ['Ar-condicionado Split',90,22,30,'#f4f6f8',215,1,'ar_condicionado','left','in'],
   ['Ar-condicionado de caixa (janela)',66,58,42,'#dfe4e8',160,1,'ar_caixa','left','in'],
   ['Ventilador de coluna',45,45,135,'#2c3338',0,1,'ventilador','left','in'],
   ['Ventilador de teto',110,110,38,'#d8dee2',222,1,'ventilador_teto','left','in'],
-  ['Cama de casal',140,190,50,'#d8b4a0',0,1,'cama','left','in'],
-  ['Cama de solteiro',90,190,50,'#d8b4a0',0,1,'cama','left','in'],
-  ['Guarda-roupa 2 portas (espelho)',200,60,220,'#9e6234',0,1,'guardaroupa','left','in'],
-  ['Sofá moderno almofadas',200,90,85,'#2b7a85',0,1,'sofa','left','in'],
-  ['Cadeira',45,45,88,'#b5835a',0,1,'cadeira','left','in'],
-  ['Mesa de jantar',160,80,75,'#c9a66b',0,1,'mesa','left','in'],
-  ['Mesa de centro',100,60,40,'#b89b72',0,1,'mesa_centro','left','in'],
-  ['Tapete',200,150,2,'#c2b5a3',0,1,'tapete','left','in'],
-  ['Escrivaninha',120,60,75,'#c9a66b',0,1,'mesa','left','in'],
-  ['TV',120,14,72,'#222629',85,1,'tv','left','in'],
   ['Prateleira',100,28,4,'#c9a66b',150,1,'prateleira','left','in'],
-  ['Armário aéreo maior (basculante + nicho)',120,38,75,'#9c6438',155,1,'armario_maior','left','in'],
-  ['Armário aéreo menor (2 portas)',75,35,68,'#eff1f0',155,1,'armario_menor','left','in'],
   ['Porta reta',80,15,210,'#b08968',0,1,'door','left','in'],
   ['Porta com arco superior',80,15,210,'#b08968',0,1,'arch_door','left','in'],
   ['Abertura em arco (só vão)',90,15,210,'#d4a373',0,1,'arch','left','in'],
@@ -471,23 +689,27 @@ function demo(){
     {id:nid('m'),name:'Cama de casal',x:20,y:20,w:140,d:190,h:50,rot:0,rotDeg:0,color:'#d8b4a0',type:'cama'},
     {id:nid('m'),name:'Guarda-roupa 2 portas (espelho)',x:130,y:240,w:200,d:60,h:220,rot:0,rotDeg:0,color:'#9e6234',type:'guardaroupa'},
     {id:nid('m'),name:'Tapete',x:470,y:155,w:220,d:150,h:2,rot:0,rotDeg:0,color:'#c2b5a3',type:'tapete'},
-    {id:nid('m'),name:'Sofá moderno almofadas',x:480,y:40,w:200,d:90,h:85,rot:0,rotDeg:0,color:'#2b7a85',type:'sofa'},
-    {id:nid('m'),name:'Mesa de centro',x:530,y:180,w:100,d:60,h:40,rot:0,rotDeg:0,color:'#b89b72',type:'mesa_centro'},
+    {id:nid('m'),name:'Sofá moderno almofadas',x:480,y:35,w:200,d:90,h:85,rot:0,rotDeg:0,color:'#2b7a85',type:'sofa'},
+    {id:nid('m'),name:'Mesa redonda compacta',x:705,y:50,w:90,d:90,h:75,rot:0,rotDeg:0,color:'#7c5338',type:'mesa_redonda'},
+    {id:nid('m'),name:'Mesa de jantar (vidro)',x:480,y:240,w:160,d:85,h:75,op:0.68,rot:0,rotDeg:0,color:'#9ad1d4',type:'mesa_jantar'},
     {id:nid('m'),name:'Geladeira duplex inox',x:20,y:320,w:70,d:70,h:180,rot:0,rotDeg:0,color:'#c6cdd3',type:'geladeira'},
     {id:nid('m'),name:'Fogão inox mesa de vidro',x:100,y:320,w:60,d:60,h:90,rot:0,rotDeg:0,color:'#cdd3d8',type:'fogao'},
     {id:nid('m'),name:'Pia / Gabinete (3 gavetas + 2 portas)',x:170,y:320,w:120,d:60,h:85,rot:0,rotDeg:0,color:'#eef0ef',type:'pia'},
     {id:nid('m'),name:'Armário aéreo maior (basculante + nicho)',x:170,y:320,w:120,d:38,h:75,z:155,rot:0,rotDeg:0,color:'#9c6438',type:'armario_maior'},
     {id:nid('m'),name:'Porta com arco superior',x:350,y:120,w:80,d:15,h:210,rot:0,rotDeg:0,color:'#b08968',type:'arch_door',doorSide:'left',doorFlip:'in',doorOpen:'closed'},
     {id:nid('m'),name:'Abertura em arco',x:180,y:310,w:90,d:15,h:210,rot:0,rotDeg:0,color:'#d4a373',type:'arch',doorSide:'left',doorFlip:'in'},
-    {id:nid('m'),name:'Janela com arco superior',x:500,y:0,w:120,d:15,h:120,z:90,rot:0,rotDeg:0,color:'#8ecae6',type:'arch_window',doorSide:'left',doorFlip:'in'},
-    {id:nid('m'),name:'Escada caracol',x:560,y:265,w:120,d:120,h:260,rot:0,rotDeg:0,color:'#606c38',type:'spiral_stairs'}
+    {id:nid('m'),name:'Janela com arco superior',x:500,y:0,w:120,d:15,h:120,z:90,rot:0,rotDeg:0,color:'#8ecae6',type:'arch_window',doorSide:'left',doorFlip:'in'}
   ]};
   st.rooms.forEach(function(r){r.wt=readWt(r.wt);});
   return st;
 }
 function readWt(t){t=t||{};function g(k){return Math.max(0,num(t[k],10));}return {n:g('n'),s:g('s'),w:g('w'),e:g('e')};}
 
-var state={rooms:[],items:[],sel:null,showItems:true,snap:5,edgeSnap:true,wallMode:'trans',cutH:100,wallOp:0.14,wallColor:null,showCeiling:false,dock:'bottom',view:'both'};
+var state={
+  rooms:[],items:[],sel:null,showItems:true,snap:5,edgeSnap:true,
+  wallMode:'trans',cutH:100,wallOp:0.14,wallColor:null,showCeiling:false,
+  dock:'bottom',view:'both',dockLayout:'tabs',activeTab:'tab-rooms',autoTab:true
+};
 var sel=null;
 
 function loadSaved(){
@@ -504,6 +726,8 @@ function loadSaved(){
     state.wallColor=/^#[0-9a-f]{6}$/i.test(d.wallColor||'')?d.wallColor:null;
     if(typeof d.showCeiling==='boolean') state.showCeiling=d.showCeiling;
     if(d.dock==='top'||d.dock==='bottom') state.dock=d.dock;
+    if(d.dockLayout==='tabs'||d.dockLayout==='split') state.dockLayout=d.dockLayout;
+    if(typeof d.autoTab==='boolean') state.autoTab=d.autoTab;
     if(['2d','3d','both'].indexOf(d.view)>=0) state.view=d.view; else if(window.innerWidth<760) state.view='2d';
     return true;
   }catch(e){return false;}
@@ -538,7 +762,12 @@ var saveT=0;
 function save(){
   clearTimeout(saveT);
   saveT=setTimeout(function(){
-    try{localStorage.setItem(KEY,JSON.stringify({rooms:state.rooms,items:state.items,showItems:state.showItems,snap:state.snap,edgeSnap:state.edgeSnap,wallMode:state.wallMode,cutH:state.cutH,wallOp:state.wallOp,wallColor:state.wallColor,showCeiling:state.showCeiling,dock:state.dock,view:state.view}));}catch(e){}
+    try{localStorage.setItem(KEY,JSON.stringify({
+      rooms:state.rooms,items:state.items,showItems:state.showItems,snap:state.snap,
+      edgeSnap:state.edgeSnap,wallMode:state.wallMode,cutH:state.cutH,wallOp:state.wallOp,
+      wallColor:state.wallColor,showCeiling:state.showCeiling,dock:state.dock,
+      dockLayout:state.dockLayout,autoTab:state.autoTab,view:state.view
+    }));}catch(e){}
   },250);
 }
 
@@ -567,7 +796,6 @@ function fp(it){
 function roomOf(it){
   var f=fp(it),cx=it.x+f.w/2,cy=it.y+f.d/2;
   for(var i=0;i<state.rooms.length;i++){var r=state.rooms[i]; if(cx>=r.x&&cx<=r.x+r.w&&cy>=r.y&&cy<=r.y+r.l) return r;}
-  // Tolerância para portas, janelas e aberturas posicionadas exatamente na parede/borda do cômodo
   var openings=['door','arch_door','window','arch_window','arch'];
   if(openings.indexOf(it.type)>=0){
     var pad=18;
@@ -597,7 +825,7 @@ function isItemVisible(it){
   if(!matchedRooms.length) return true;
   return matchedRooms.some(function(r){return r.visible!==false;});
 }
-function isTableKind(k){return k==='mesa'||k==='mesa_centro';}
+function isTableKind(k){return k==='mesa'||k==='mesa_jantar'||k==='mesa_redonda'||k==='escrivaninha'||k==='mesa_centro';}
 function chairTableOverlapAllowed(a,b){
   var ka=detectKind(a), kb=detectKind(b);
   var chair=null, table=null;
@@ -618,6 +846,10 @@ function chairTableOverlapAllowed(a,b){
   var dx=bx-tCx, dy=by-tCy;
   var lx=dx*Math.cos(tang)-dy*Math.sin(tang);
   var ly=dx*Math.sin(tang)+dy*Math.cos(tang);
+  if(detectKind(table)==='mesa_redonda'){
+    var rad=Math.min(table.w, table.d)/2 - 2;
+    return (lx*lx + ly*ly) >= (rad*rad);
+  }
   var backInsideTable=(Math.abs(lx)<table.w/2-2 && Math.abs(ly)<table.d/2-2);
   return !backInsideTable;
 }
@@ -695,6 +927,34 @@ function moveObj(o,t,nx,ny){
   o.x=nx;o.y=ny;
 }
 
+/* Tab Management */
+function switchTab(tabId, shouldPulse){
+  state.activeTab=tabId;
+  document.querySelectorAll('.tab-btn').forEach(function(b){
+    var on=b.getAttribute('data-tab')===tabId;
+    b.classList.toggle('active',on);
+    b.setAttribute('aria-selected',String(on));
+    if(on && shouldPulse){
+      b.classList.remove('pulse');
+      void b.offsetWidth;
+      b.classList.add('pulse');
+    }
+  });
+  document.querySelectorAll('.dock>.panel').forEach(function(p){
+    var pid=p.getAttribute('data-tab-id')||p.id;
+    p.classList.toggle('tab-active',pid===tabId);
+  });
+}
+function setDockLayout(ly){
+  state.dockLayout=ly;
+  $('#dockWrap').setAttribute('data-layout',ly);
+  $('#lyTabs').setAttribute('aria-pressed',String(ly==='tabs'));
+  $('#lySplit').setAttribute('aria-pressed',String(ly==='split'));
+  $('#autoTabWrap').hidden=(ly!=='tabs');
+  if(ly==='tabs') switchTab(state.activeTab||'tab-rooms',false);
+  save();
+}
+
 var rafId=0,need2d=false,needScene=false,needDraw=false;
 function req(o){
   o=o||{}; need2d=need2d||!!o.d2; needScene=needScene||!!o.scene; needDraw=needDraw||!!o.draw;
@@ -770,78 +1030,122 @@ function render2D(){
         var isWindow=(kind==='window'||kind==='arch_window');
         var isArch=(kind==='arch');
         var isDoor=(kind==='door'||kind==='arch_door');
+        var horiz=(r===0||r===2);
 
         out.push('<g data-t="item" data-id="'+it.id+'">');
-        // Quando a porta está aberta 90°, o vão do batente fica translúcido para destacar a folha aberta
-        var jambOpacity=isArch?0.35:(isWindow?0.55:(dOpen?0.24:0.85));
+        var jambOpacity=isArch?0.25:(isWindow?0.28:(dOpen?0.18:0.85));
         out.push('<rect class="'+cls+'" x="'+it.x+'" y="'+it.y+'" width="'+f.w+'" height="'+f.d+'" fill="'+it.color+'" style="fill-opacity:'+jambOpacity+'"/>');
+
+        // Guarnições/batentes laterais arquitetônicos em 2D
+        var jt=Math.min(5, (horiz?f.w:f.d)*0.08);
+        var trimOver=2.2;
+        if(horiz){
+          out.push('<rect x="'+it.x+'" y="'+(it.y-trimOver)+'" width="'+jt+'" height="'+(f.d+trimOver*2)+'" fill="'+it.color+'" stroke="var(--wall)" stroke-width="1" vector-effect="non-scaling-stroke"/>');
+          out.push('<rect x="'+(it.x+f.w-jt)+'" y="'+(it.y-trimOver)+'" width="'+jt+'" height="'+(f.d+trimOver*2)+'" fill="'+it.color+'" stroke="var(--wall)" stroke-width="1" vector-effect="non-scaling-stroke"/>');
+        } else {
+          out.push('<rect x="'+(it.x-trimOver)+'" y="'+it.y+'" width="'+(f.w+trimOver*2)+'" height="'+jt+'" fill="'+it.color+'" stroke="var(--wall)" stroke-width="1" vector-effect="non-scaling-stroke"/>');
+          out.push('<rect x="'+(it.x-trimOver)+'" y="'+(it.y+f.d-jt)+'" width="'+(f.w+trimOver*2)+'" height="'+jt+'" fill="'+it.color+'" stroke="var(--wall)" stroke-width="1" vector-effect="non-scaling-stroke"/>');
+        }
+
         if(isWindow){
-          if(r===1||r===3) out.push('<line x1="'+cx+'" y1="'+it.y+'" x2="'+cx+'" y2="'+(it.y+f.d)+'" stroke="#ffffff" stroke-width="'+(1.5*px)+'"/>');
-          else out.push('<line x1="'+it.x+'" y1="'+cy+'" x2="'+(it.x+f.w)+'" y2="'+cy+'" stroke="#ffffff" stroke-width="'+(1.5*px)+'"/>');
+          // Peitoril saliente + folhas de correr duplas + montante central
+          if(horiz){
+            out.push('<rect x="'+(it.x-2)+'" y="'+(it.y-1.8)+'" width="'+(f.w+4)+'" height="'+(f.d+3.6)+'" fill="none" stroke="var(--wall)" stroke-width="1" vector-effect="non-scaling-stroke" opacity="0.65"/>');
+            out.push('<line x1="'+(it.x+jt)+'" y1="'+(cy-f.d*0.16)+'" x2="'+(cx+1)+'" y2="'+(cy-f.d*0.16)+'" stroke="#ffffff" stroke-width="1.6" vector-effect="non-scaling-stroke"/>');
+            out.push('<line x1="'+(cx-1)+'" y1="'+(cy+f.d*0.16)+'" x2="'+(it.x+f.w-jt)+'" y2="'+(cy+f.d*0.16)+'" stroke="#ffffff" stroke-width="1.6" vector-effect="non-scaling-stroke"/>');
+            out.push('<rect x="'+(cx-1.8)+'" y="'+it.y+'" width="3.6" height="'+f.d+'" fill="var(--wall)" opacity="0.8"/>');
+          } else {
+            out.push('<rect x="'+(it.x-1.8)+'" y="'+(it.y-2)+'" width="'+(f.w+3.6)+'" height="'+(f.d+4)+'" fill="none" stroke="var(--wall)" stroke-width="1" vector-effect="non-scaling-stroke" opacity="0.65"/>');
+            out.push('<line x1="'+(cx-f.w*0.16)+'" y1="'+(it.y+jt)+'" x2="'+(cx-f.w*0.16)+'" y2="'+(cy+1)+'" stroke="#ffffff" stroke-width="1.6" vector-effect="non-scaling-stroke"/>');
+            out.push('<line x1="'+(cx+f.w*0.16)+'" y1="'+(cy-1)+'" x2="'+(cx+f.w*0.16)+'" y2="'+(it.y+f.d-jt)+'" stroke="#ffffff" stroke-width="1.6" vector-effect="non-scaling-stroke"/>');
+            out.push('<rect x="'+it.x+'" y="'+(cy-1.8)+'" width="'+f.w+'" height="3.6" fill="var(--wall)" opacity="0.8"/>');
+          }
+        } else if(isArch){
+          // Linha tracejada dupla indicando arco superior
+          if(horiz){
+            out.push('<line x1="'+(it.x+jt)+'" y1="'+(cy-2)+'" x2="'+(it.x+f.w-jt)+'" y2="'+(cy-2)+'" stroke="var(--wall)" stroke-width="1" stroke-dasharray="3 2" vector-effect="non-scaling-stroke"/>');
+            out.push('<line x1="'+(it.x+jt)+'" y1="'+(cy+2)+'" x2="'+(it.x+f.w-jt)+'" y2="'+(cy+2)+'" stroke="var(--wall)" stroke-width="1" stroke-dasharray="3 2" vector-effect="non-scaling-stroke"/>');
+          } else {
+            out.push('<line x1="'+(cx-2)+'" y1="'+(it.y+jt)+'" x2="'+(cx-2)+'" y2="'+(it.y+f.d-jt)+'" stroke="var(--wall)" stroke-width="1" stroke-dasharray="3 2" vector-effect="non-scaling-stroke"/>');
+            out.push('<line x1="'+(cx+2)+'" y1="'+(it.y+jt)+'" x2="'+(cx+2)+'" y2="'+(it.y+f.d-jt)+'" stroke="var(--wall)" stroke-width="1" stroke-dasharray="3 2" vector-effect="non-scaling-stroke"/>');
+          }
         } else if(isDoor){
-          var arcR=it.w, pathD='', startX=0, startY=0, endX=0, endY=0, sweep=0, hingeX=0, hingeY=0;
+          var arcR=Math.max(10, it.w-jt*2), pathD='', startX=0, startY=0, endX=0, endY=0, sweep=0, hingeX=0, hingeY=0;
           if(r===0){
             if(dSide==='left'){
-              hingeX=it.x; hingeY=dFlip==='in'?it.y:it.y+it.d;
-              startX=it.x; startY=dFlip==='in'?it.y+it.d:it.y;
-              endX=it.x+arcR; endY=hingeY;
-              sweep=dFlip==='in'?1:0;
-            } else {
-              hingeX=it.x+it.w; hingeY=dFlip==='in'?it.y:it.y+it.d;
-              startX=it.x+it.w; startY=dFlip==='in'?it.y+it.d:it.y;
-              endX=it.x; endY=hingeY;
+              hingeX=it.x+jt; hingeY=dFlip==='in'?it.y:it.y+it.d;
+              startX=hingeX; startY=dFlip==='in'?it.y+arcR:it.y-arcR;
+              endX=hingeX+arcR; endY=hingeY;
               sweep=dFlip==='in'?0:1;
+            } else {
+              hingeX=it.x+it.w-jt; hingeY=dFlip==='in'?it.y:it.y+it.d;
+              startX=hingeX; startY=dFlip==='in'?it.y+arcR:it.y-arcR;
+              endX=hingeX-arcR; endY=hingeY;
+              sweep=dFlip==='in'?1:0;
             }
           } else if(r===1){
             if(dSide==='left'){
-              hingeX=dFlip==='in'?it.x:it.x+it.w; hingeY=it.y;
-              startX=dFlip==='in'?it.x+it.w:it.x; startY=it.y;
-              endX=hingeX; endY=it.y+arcR;
-              sweep=dFlip==='in'?0:1;
-            } else {
-              hingeX=dFlip==='in'?it.x:it.x+it.w; hingeY=it.y+it.d;
-              startX=dFlip==='in'?it.x+it.w:it.x; startY=it.y+it.d;
-              endX=hingeX; endY=it.y;
+              hingeX=dFlip==='in'?it.x:it.x+it.w; hingeY=it.y+jt;
+              startX=dFlip==='in'?it.x+arcR:it.x-arcR; startY=hingeY;
+              endX=hingeX; endY=hingeY+arcR;
               sweep=dFlip==='in'?1:0;
+            } else {
+              hingeX=dFlip==='in'?it.x:it.x+it.w; hingeY=it.y+it.d-jt;
+              startX=dFlip==='in'?it.x+arcR:it.x-arcR; startY=hingeY;
+              endX=hingeX; endY=hingeY-arcR;
+              sweep=dFlip==='in'?0:1;
             }
           } else if(r===2){
             if(dSide==='left'){
-              hingeX=it.x+it.w; hingeY=dFlip==='in'?it.y+it.d:it.y;
-              startX=it.x+it.w; startY=dFlip==='in'?it.y:it.y+it.d;
-              endX=it.x+it.w-arcR; endY=hingeY;
-              sweep=dFlip==='in'?1:0;
-            } else {
-              hingeX=it.x; hingeY=dFlip==='in'?it.y+it.d:it.y;
-              startX=it.x; startY=dFlip==='in'?it.y:it.y+it.d;
-              endX=it.x+arcR; endY=hingeY;
+              hingeX=it.x+it.w-jt; hingeY=dFlip==='in'?it.y+it.d:it.y;
+              startX=hingeX; startY=dFlip==='in'?it.y+it.d-arcR:it.y+it.d+arcR;
+              endX=hingeX-arcR; endY=hingeY;
               sweep=dFlip==='in'?0:1;
+            } else {
+              hingeX=it.x+jt; hingeY=dFlip==='in'?it.y+it.d:it.y;
+              startX=hingeX; startY=dFlip==='in'?it.y+it.d-arcR:it.y+it.d+arcR;
+              endX=hingeX+arcR; endY=hingeY;
+              sweep=dFlip==='in'?1:0;
             }
           } else {
             if(dSide==='left'){
-              hingeX=dFlip==='in'?it.x+it.w:it.x; hingeY=it.y+it.d;
-              startX=dFlip==='in'?it.x:it.x+it.w; startY=it.y+it.d;
-              endX=hingeX; endY=it.y+it.d-arcR;
-              sweep=dFlip==='in'?0:1;
-            } else {
-              hingeX=dFlip==='in'?it.x+it.w:it.x; hingeY=it.y;
-              startX=dFlip==='in'?it.x:it.x+it.w; startY=it.y;
-              endX=hingeX; endY=it.y+arcR;
+              hingeX=dFlip==='in'?it.x+it.w:it.x; hingeY=it.y+it.d-jt;
+              startX=dFlip==='in'?it.x+it.w-arcR:it.x+it.w+arcR; startY=hingeY;
+              endX=hingeX; endY=hingeY-arcR;
               sweep=dFlip==='in'?1:0;
+            } else {
+              hingeX=dFlip==='in'?it.x+it.w:it.x; hingeY=it.y+jt;
+              startX=dFlip==='in'?it.x+it.w-arcR:it.x+it.w+arcR; startY=hingeY;
+              endX=hingeX; endY=hingeY+arcR;
+              sweep=dFlip==='in'?0:1;
             }
           }
-          // Arco de varredura tracejado (sempre visível para mostrar o espaço ocupado)
+          // Arco de varredura tracejado
           pathD='M '+startX+' '+startY+' A '+arcR+' '+arcR+' 0 0 '+sweep+' '+endX+' '+endY;
-          out.push('<path d="'+pathD+'" stroke="var(--accent)" stroke-width="1.5" vector-effect="non-scaling-stroke" fill="none" stroke-dasharray="3 3"/>');
-          // Se estiver Aberta 90°, desenha a folha da porta rotacionada 90° partindo da dobradiça
+          out.push('<path d="'+pathD+'" stroke="var(--accent)" stroke-width="1.4" vector-effect="non-scaling-stroke" fill="none" stroke-dasharray="3 3"/>');
+          var leafT=Math.max(4, Math.min(5.5, it.d*0.36));
           if(dOpen){
-            var leafT=Math.max(4, Math.min(6, it.d*0.38));
             var lx0=Math.min(hingeX, startX), ly0=Math.min(hingeY, startY);
             var lw=Math.abs(startX-hingeX), lh=Math.abs(startY-hingeY);
             if(lw<1){ lx0=hingeX-leafT/2; lw=leafT; }
             if(lh<1){ ly0=hingeY-leafT/2; lh=leafT; }
-            out.push('<rect x="'+lx0+'" y="'+ly0+'" width="'+lw+'" height="'+lh+'" fill="'+it.color+'" stroke="var(--wall)" stroke-width="1.5" vector-effect="non-scaling-stroke" style="fill-opacity:0.95"/>');
-            out.push('<circle cx="'+hingeX+'" cy="'+hingeY+'" r="'+Math.max(2.2, 3*px)+'" fill="var(--accent)"/>');
+            out.push('<rect x="'+lx0+'" y="'+ly0+'" width="'+lw+'" height="'+lh+'" fill="'+it.color+'" stroke="var(--wall)" stroke-width="1.4" vector-effect="non-scaling-stroke" style="fill-opacity:0.96"/>');
+            // Maçaneta na ponta da folha aberta
+            var hx=hingeX+(startX-hingeX)*0.84, hy=hingeY+(startY-hingeY)*0.84;
+            out.push('<circle cx="'+hx+'" cy="'+hy+'" r="'+Math.max(2, 2.4*px)+'" fill="var(--wall)"/>');
+          } else {
+            // Folha fechada entre os batentes com maçaneta visível
+            if(horiz){
+              out.push('<rect x="'+(it.x+jt)+'" y="'+(cy-leafT/2)+'" width="'+(f.w-jt*2)+'" height="'+leafT+'" fill="'+it.color+'" stroke="var(--wall)" stroke-width="1.2" vector-effect="non-scaling-stroke"/>');
+              var handleX=(hingeX<cx)?(it.x+f.w-jt-8):(it.x+jt+8);
+              out.push('<line x1="'+handleX+'" y1="'+(cy-leafT*0.95)+'" x2="'+handleX+'" y2="'+(cy+leafT*0.95)+'" stroke="var(--wall)" stroke-width="1.6" vector-effect="non-scaling-stroke"/>');
+            } else {
+              out.push('<rect x="'+(cx-leafT/2)+'" y="'+(it.y+jt)+'" width="'+leafT+'" height="'+(f.d-jt*2)+'" fill="'+it.color+'" stroke="var(--wall)" stroke-width="1.2" vector-effect="non-scaling-stroke"/>');
+              var handleY=(hingeY<cy)?(it.y+f.d-jt-8):(it.y+jt+8);
+              out.push('<line x1="'+(cx-leafT*0.95)+'" y1="'+handleY+'" x2="'+(cx+leafT*0.95)+'" y2="'+handleY+'" stroke="var(--wall)" stroke-width="1.6" vector-effect="non-scaling-stroke"/>');
+            }
           }
+          out.push('<circle cx="'+hingeX+'" cy="'+hingeY+'" r="'+Math.max(2, 2.6*px)+'" fill="var(--accent)"/>');
         }
         out.push('<text class="lbl" x="'+cx+'" y="'+(cy+fs*0.35)+'" text-anchor="middle" font-size="'+fs+'" font-weight="600" fill="'+tc+'">'+esc(it.name)+'</text>');
         out.push('</g>');
@@ -898,6 +1202,26 @@ function render2D(){
         }
         out.push('<text class="lbl" x="'+cx+'" y="'+(cy+fs*0.35)+'" text-anchor="middle" font-size="'+fs+'" font-weight="600" fill="'+tc+'">'+esc(it.name)+'</text>');
         out.push('</g>');
+      } else if(kind==='mesa_redonda'){
+        // Mesa redonda compacta com tampo circular de madeira e base de 3 pés em estrela pontilhados
+        var rad=Math.max(6, Math.min(it.w, it.d)/2);
+        var degR=itemAngle(it);
+        var tfR=degR?(' transform="rotate('+degR+' '+cx+' '+cy+')"'):'';
+        out.push('<g data-t="item" data-id="'+it.id+'">');
+        out.push('<circle class="'+cls+'" cx="'+cx+'" cy="'+cy+'" r="'+rad+'" fill="'+it.color+'" style="fill-opacity:'+(0.92*(it.op==null?1:it.op))+'"/>');
+        out.push('<circle cx="'+cx+'" cy="'+cy+'" r="'+Math.max(3, rad-2.4)+'" fill="none" stroke="'+tc+'" stroke-width="0.9" stroke-opacity="0.35" vector-effect="non-scaling-stroke"/>');
+        // Indicação sutil da coluna central e dos 3 pés de apoio radial (120°)
+        out.push('<g'+tfR+' opacity="0.45">');
+        for(var legI=0; legI<3; legI++){
+          var la=(legI*120 - 90)*Math.PI/180;
+          var lx2=cx+Math.cos(la)*(rad*0.72), ly2=cy+Math.sin(la)*(rad*0.72);
+          out.push('<line x1="'+cx+'" y1="'+cy+'" x2="'+lx2+'" y2="'+ly2+'" stroke="'+tc+'" stroke-width="1.3" stroke-dasharray="3 2" vector-effect="non-scaling-stroke"/>');
+        }
+        out.push('<circle cx="'+cx+'" cy="'+cy+'" r="'+Math.max(2.5, rad*0.1)+'" fill="none" stroke="'+tc+'" stroke-width="1.1" vector-effect="non-scaling-stroke"/>');
+        out.push('</g>');
+        out.push('<text class="lbl" x="'+cx+'" y="'+(showDims?cy-fs*0.15:cy+fs*0.35)+'" text-anchor="middle" font-size="'+fs+'" font-weight="600" fill="'+tc+'">'+esc(it.name)+'</text>');
+        if(showDims) out.push('<text class="lblm" x="'+cx+'" y="'+(cy+fs*1.05)+'" text-anchor="middle" font-size="'+(fs*0.85)+'" fill="'+tc+'">Ø'+fmt(it.w)+'×'+fmt(it.h)+'</text>');
+        out.push('</g>');
       } else {
         var deg=itemAngle(it);
         var rx=cx-it.w/2, ry=cy-it.d/2;
@@ -905,8 +1229,15 @@ function render2D(){
         out.push('<clipPath id="cp-'+it.id+'"><rect x="'+rx+'" y="'+ry+'" width="'+it.w+'" height="'+it.d+'"'+tf+'/></clipPath>');
         out.push('<g data-t="item" data-id="'+it.id+'"><rect class="'+cls+'" x="'+rx+'" y="'+ry+'" width="'+it.w+'" height="'+it.d+'"'+tf+' fill="'+it.color+'" style="fill-opacity:'+(0.9*(it.op==null?1:it.op)*((it.z||0)>0?0.67:1))+'"/>'+
           '<g clip-path="url(#cp-'+it.id+')">');
-        // Detalhe 2D da pia: divisória das gavetas na lateral esquerda e cuba alinhada à direita sobre as 2 portas
-        if(kind==='pia'){
+        if(kind==='mesa_jantar'){
+          // Bisotê do tampo de vidro e travessas metálicas internas pontilhadas em 2D
+          var bev=Math.min(4, it.w*0.04, it.d*0.06);
+          var insX=Math.min(14, it.w*0.12), insY=Math.min(12, it.d*0.15);
+          out.push('<g'+tf+' opacity="0.55">');
+          out.push('<rect x="'+(rx+bev)+'" y="'+(ry+bev)+'" width="'+Math.max(4,it.w-bev*2)+'" height="'+Math.max(4,it.d-bev*2)+'" fill="none" stroke="#ffffff" stroke-width="1.2" vector-effect="non-scaling-stroke"/>');
+          out.push('<rect x="'+(rx+insX)+'" y="'+(ry+insY)+'" width="'+Math.max(4,it.w-insX*2)+'" height="'+Math.max(4,it.d-insY*2)+'" fill="none" stroke="'+tc+'" stroke-width="1.1" stroke-dasharray="4 3" vector-effect="non-scaling-stroke"/>');
+          out.push('</g>');
+        } else if(kind==='pia'){
           var drwRatio=0.34;
           var divX=it.mirror?(rx+it.w*(1-drwRatio)):(rx+it.w*drwRatio);
           var basinW=Math.min(46, it.w*0.38), basinD=Math.min(34, it.d*0.58);
@@ -960,7 +1291,12 @@ function snapAxis(vals,targets,th){
     var g=e.target.closest?e.target.closest('[data-t]'):null;
     if(g){
       var t=g.getAttribute('data-t'),id=g.getAttribute('data-id');
-      if(!isSel(t,id)){sel={t:t,id:id};renderLists();syncInspector();reqAll();}
+      if(!isSel(t,id)){
+        sel={t:t,id:id};
+        renderLists(); syncInspector();
+        if(state.dockLayout==='tabs' && state.autoTab) switchTab('tab-edit',true);
+        reqAll();
+      }
       var o=selObj(),w=toWorld(e);
       drag={t:t,id:id,sx:w.x,sy:w.y,ox:o.x,oy:o.y,moved:false,room:t==='item'?roomOf(o):null,inside:t==='room'?itemsIn(o).map(function(i){return {i:i,ox:i.x,oy:i.y};}):[]};
     }else{
@@ -1036,8 +1372,9 @@ function init3D(){
   cv.appendChild(cnv);
   scene=new THREE.Scene();
   camera=new THREE.PerspectiveCamera(38,1,10,200000);
-  scene.add(new THREE.AmbientLight(0xffffff,0.72));
-  var dl=new THREE.DirectionalLight(0xffffff,0.55); dl.position.set(400,900,300); scene.add(dl);
+  scene.add(new THREE.AmbientLight(0xffffff,0.74));
+  var dl=new THREE.DirectionalLight(0xffffff,0.58); dl.position.set(420,920,340); scene.add(dl);
+  var dl2=new THREE.DirectionalLight(0xffffff,0.22); dl2.position.set(-400,500,-300); scene.add(dl2);
   group=new THREE.Group(); scene.add(group);
   orb.t=new THREE.Vector3();
   var P3=new Map();
@@ -1154,7 +1491,19 @@ function disposeObj(o){o.traverse(function(c){if(c.geometry)c.geometry.dispose()
 function detectKind(it){
   var t=(it.type||'').toLowerCase();
   var nm=(it.name||'').toLowerCase();
-  if(['door','arch_door','arch','window','arch_window','straight_stairs','spiral_stairs','vaso','box_chuveiro','cadeira','tv','prateleira','ar_condicionado','ar_caixa','ventilador','ventilador_teto','pia_banheiro','tapete','mesa_centro','armario_maior','armario_menor'].indexOf(t)>=0) return t;
+  if(['door','arch_door','arch','window','arch_window','straight_stairs','spiral_stairs','vaso','box_chuveiro','cadeira','tv','prateleira','ar_condicionado','ar_caixa','ventilador','ventilador_teto','pia_banheiro','tapete','mesa_centro','mesa_jantar','mesa_redonda','escrivaninha','armario_maior','armario_menor'].indexOf(t)>=0) return t;
+  if(t==='mesa'){
+    if(nm.indexOf('redonda')>=0||nm.indexOf('circular')>=0) return 'mesa_redonda';
+    if(nm.indexOf('escrivaninha')>=0||nm.indexOf('escritório')>=0||nm.indexOf('escritorio')>=0) return 'escrivaninha';
+    return 'mesa_jantar';
+  }
+  if(nm.indexOf('mesa')>=0){
+    if(nm.indexOf('redonda')>=0||nm.indexOf('circular')>=0) return 'mesa_redonda';
+    if(nm.indexOf('centro')>=0||nm.indexOf('mesinha')>=0) return 'mesa_centro';
+    if(nm.indexOf('escrivaninha')>=0) return 'escrivaninha';
+    return 'mesa_jantar';
+  }
+  if(nm.indexOf('escrivaninha')>=0) return 'escrivaninha';
   if(t==='armario'){
     if(nm.indexOf('menor')>=0||nm.indexOf('2 portas')>=0) return 'armario_menor';
     return 'armario_maior';
@@ -1167,7 +1516,6 @@ function detectKind(it){
   if(nm.indexOf('ventilador')>=0||nm.indexOf('circulador')>=0) return 'ventilador';
   if((nm.indexOf('ar-condicionado')>=0||nm.indexOf('ar condicionado')>=0)&&(nm.indexOf('caixa')>=0||nm.indexOf('janela')>=0)) return 'ar_caixa';
   if(nm.indexOf('tapete')>=0||nm.indexOf('passadeira')>=0) return 'tapete';
-  if(nm.indexOf('mesa de centro')>=0||nm.indexOf('mesinha')>=0) return 'mesa_centro';
   if(nm.indexOf('ar-condicionado')>=0||nm.indexOf('ar condicionado')>=0||nm.indexOf('split')>=0) return 'ar_condicionado';
   if(nm.indexOf('banheiro')>=0&&(nm.indexOf('pia')>=0||nm.indexOf('balcão')>=0||nm.indexOf('balcao')>=0||nm.indexOf('espelho')>=0)) return 'pia_banheiro';
   if(t==='bebedouro'||nm.indexOf('bebedouro')>=0||nm.indexOf('garrafão')>=0||nm.indexOf('garrafao')>=0||nm.indexOf('purificador')>=0) return 'bebedouro';
@@ -1183,7 +1531,6 @@ function detectKind(it){
   if(t==='cama'||nm.indexOf('cama')>=0||nm.indexOf('beliche')>=0) return 'cama';
   if(t==='guardaroupa'||nm.indexOf('guarda-roupa')>=0||nm.indexOf('guarda roupa')>=0||nm.indexOf('roupeiro')>=0||nm.indexOf('estante')>=0) return 'guardaroupa';
   if(t==='sofa'||nm.indexOf('sofá')>=0||nm.indexOf('sofa')>=0||nm.indexOf('poltrona')>=0) return 'sofa';
-  if(t==='mesa'||nm.indexOf('mesa')>=0||nm.indexOf('escrivaninha')>=0) return 'mesa';
   return t||'box';
 }
 
@@ -1223,14 +1570,13 @@ function build3D(){
       box(r.w+r.wt.w+r.wt.e, cThick, r.l+r.wt.n+r.wt.s, r.x+(r.w+r.wt.e-r.wt.w)/2, r.h+cThick/2, r.y+(r.l+r.wt.s-r.wt.n)/2, ceilMat, on?cAcc:cEdge, on?0.9:0.25);
     }
     if(state.wallMode==='none'&&!fpMode.active) return;
-    var H=(state.wallMode==='half'&&!fpMode.active)?Math.min(state.cutH,r.h):r.h,wt=r.wt,ow=r.w+wt.w+wt.e,ocx=r.x+(r.w+wt.e-wt.w)/2;
+    var H=(state.wallMode==='half'&&!fpMode.active)?Math.min(state.cutH,r.h):r.h,wt=r.wt,ow=r.w+wt.w+wt.e,ocx=r.x+(r.w+r.wt.e-r.wt.w)/2;
     var wOp=fpMode.active?1:(state.wallOp!=null?state.wallOp:(state.wallMode==='half'?0.55:0.14));
     var outerMat=new THREE.MeshLambertMaterial({color:cWall,transparent:wOp<1,opacity:wOp,depthWrite:wOp>=0.85});
     var hasInner=!!r.wallColor;
     var innerOp=hasInner?Math.max(wOp, fpMode.active?1:0.88):wOp;
     var innerMat=hasInner?new THREE.MeshLambertMaterial({color:new THREE.Color(r.wallColor),transparent:innerOp<1,opacity:innerOp,depthWrite:innerOp>=0.85}):outerMat;
     var ec=on?cAcc:cWall.clone().multiplyScalar(0.6),eo=on?1:Math.max(0.35,Math.min(0.95,wOp+0.35));
-    // BoxGeometry faces: 0:+X(Dir), 1:-X(Esq), 2:+Y(Topo), 3:-Y(Base), 4:+Z(Sul/Baixo), 5:-Z(Norte/Cima)
     function wallMatFor(innerFaceIdx){
       if(!hasInner) return outerMat;
       var arr=[outerMat,outerMat,outerMat,outerMat,outerMat,outerMat];
@@ -1250,7 +1596,7 @@ function build3D(){
       var op=it.op==null?1:it.op;
       var kind=detectKind(it);
       var baseCol=new THREE.Color(it.color);
-      var lightCol=baseCol.clone().lerp(new THREE.Color(0xffffff),0.22);
+      var lightCol=baseCol.clone().lerp(new THREE.Color(0xffffff),0.24);
       var darkCol=baseCol.clone().multiplyScalar(0.68);
       var darkerCol=baseCol.clone().multiplyScalar(0.42);
       var edgeCol=on?cAcc:cEdge;
@@ -1300,74 +1646,183 @@ function build3D(){
         group.add(spiralGroup);
         return;
       }
+
+      /* ABERTURA EM ARCO DETALHADA (guarnições nas duas faces e intradorso curvo) */
       if(kind==='arch'){
-        var jambW=Math.min(6, it.w*0.1);
-        var archH=Math.min(it.w*0.32, it.h*0.22);
+        var jambW=Math.min(5.5, it.w*0.09);
+        var archH=Math.min(it.w*0.36, it.h*0.24);
         var legH=Math.max(10, it.h-archH);
+        var trimOver=1.6, trimW=4.2;
         var ig=new THREE.Group();
+        // Batentes internos
         addPart(ig, jambW, legH, it.d, -it.w/2+jambW/2, legH/2, 0, mkMat(baseCol), edgeCol, edgeOp);
         addPart(ig, jambW, legH, it.d, it.w/2-jambW/2, legH/2, 0, mkMat(baseCol), edgeCol, edgeOp);
-        var segs=7;
+        // Guarnições verticais salientes nas duas faces da parede
+        [-it.d/2-trimOver/2, it.d/2+trimOver/2].forEach(function(fz){
+          addPart(ig, trimW, legH, trimOver, -it.w/2+trimW/2-0.5, legH/2, fz, mkMat(lightCol), edgeCol, 0.45);
+          addPart(ig, trimW, legH, trimOver, it.w/2-trimW/2+0.5, legH/2, fz, mkMat(lightCol), edgeCol, 0.45);
+        });
+        // Segmentos suaves do arco superior + guarnição curva
+        var segs=13;
         for(var k=0;k<segs;k++){
-          var t0=k/segs, t1=(k+1)/segs, tm=(t0+t1)/2;
-          var xOff=(tm-0.5)*(it.w-jambW);
-          var yArch=legH + Math.sin(tm*Math.PI)*archH*0.75;
-          var segW=(it.w/segs)*1.12;
-          var sp=addPart(ig, segW, jambW*0.9, it.d, xOff, yArch, 0, mkMat(lightCol), edgeCol, edgeOp);
-          sp.rotation.z = -Math.cos(tm*Math.PI)*0.45;
+          var tm=(k+0.5)/segs;
+          var xOff=(tm-0.5)*(it.w-jambW*0.7);
+          var yArch=legH + Math.sin(tm*Math.PI)*archH*0.82;
+          var segW=(it.w/segs)*1.16;
+          var angZ=-Math.cos(tm*Math.PI)*0.48;
+          var sp=addPart(ig, segW, jambW*0.95, it.d, xOff, yArch, 0, mkMat(lightCol), edgeCol, edgeOp);
+          sp.rotation.z=angZ;
+          [-it.d/2-trimOver/2, it.d/2+trimOver/2].forEach(function(fz){
+            var tr=addPart(ig, segW*1.04, trimW*0.9, trimOver, xOff, yArch, fz, mkMat(baseCol), null);
+            tr.rotation.z=angZ;
+          });
         }
         ig.rotation.y = -(itemAngle(it)*Math.PI/180);
         ig.position.set(it.x+f.w/2, it.z||0, it.y+f.d/2);
         group.add(ig);
         return;
       }
+
+      /* PORTAS E JANELAS COM ALTA RIQUEZA DE DETALHES */
       if(kind==='door'||kind==='arch_door'||kind==='window'||kind==='arch_window'){
         var ig=new THREE.Group();
-        var frameT=Math.min(5, it.w*0.08);
+        var frameT=Math.min(5, it.w*0.075);
+        var trimOver=1.6, trimW=4.5;
         var isWindow=(kind==='window'||kind==='arch_window');
         var hasArch=(kind==='arch_door'||kind==='arch_window');
-        var archH=hasArch?Math.min(it.w*0.28, it.h*0.2):0;
+        var archH=hasArch?Math.min(it.w*0.32, it.h*0.22):0;
         var bodyH=Math.max(10, it.h-archH);
+
+        // Batente principal (ombreiras esquerda e direita)
         addPart(ig, frameT, bodyH, it.d, -it.w/2+frameT/2, bodyH/2, 0, mkMat(darkCol), edgeCol, edgeOp);
         addPart(ig, frameT, bodyH, it.d, it.w/2-frameT/2, bodyH/2, 0, mkMat(darkCol), edgeCol, edgeOp);
+        // Alisares / guarnições verticais em relevo nas duas faces da parede
+        [-it.d/2-trimOver/2, it.d/2+trimOver/2].forEach(function(fz){
+          addPart(ig, trimW, bodyH, trimOver, -it.w/2+trimW/2-0.6, bodyH/2, fz, mkMat(baseCol), edgeCol, 0.42);
+          addPart(ig, trimW, bodyH, trimOver, it.w/2-trimW/2+0.6, bodyH/2, fz, mkMat(baseCol), edgeCol, 0.42);
+        });
+
         if(!hasArch){
+          // Verga superior do batente + alisar superior
           addPart(ig, it.w, frameT, it.d, 0, it.h-frameT/2, 0, mkMat(darkCol), edgeCol, edgeOp);
+          [-it.d/2-trimOver/2, it.d/2+trimOver/2].forEach(function(fz){
+            addPart(ig, it.w+1.2, trimW, trimOver, 0, it.h-trimW/2+0.6, fz, mkMat(baseCol), edgeCol, 0.42);
+          });
         } else {
-          var segs=7;
+          // Arco superior segmentado suavemente com alisar curvo
+          var segs=13;
           for(var k=0;k<segs;k++){
             var tm=(k+0.5)/segs;
             var xOff=(tm-0.5)*(it.w-frameT*0.6);
-            var yArch=bodyH + Math.sin(tm*Math.PI)*archH*0.75;
-            var sp=addPart(ig, (it.w/segs)*1.15, frameT, it.d, xOff, yArch, 0, mkMat(darkCol), edgeCol, edgeOp);
-            sp.rotation.z = -Math.cos(tm*Math.PI)*0.42;
+            var yArch=bodyH + Math.sin(tm*Math.PI)*archH*0.8;
+            var segW=(it.w/segs)*1.16;
+            var angZ=-Math.cos(tm*Math.PI)*0.45;
+            var sp=addPart(ig, segW, frameT, it.d, xOff, yArch, 0, mkMat(darkCol), edgeCol, edgeOp);
+            sp.rotation.z=angZ;
+            [-it.d/2-trimOver/2, it.d/2+trimOver/2].forEach(function(fz){
+              var tr=addPart(ig, segW*1.04, trimW*0.9, trimOver, xOff, yArch, fz, mkMat(baseCol), null);
+              tr.rotation.z=angZ;
+            });
           }
         }
-        var leafW=Math.max(4, it.w-frameT*2-1);
-        var leafH=Math.max(4, bodyH-frameT-1);
+
+        var leafW=Math.max(4, it.w-frameT*2-0.8);
+        var leafH=Math.max(4, bodyH-frameT-0.8);
+
         if(isWindow){
-          addPart(ig, it.w, frameT, it.d, 0, frameT/2, 0, mkMat(darkCol), edgeCol, edgeOp);
-          var glassMat=mkMat(lightCol, Math.min(op, 0.45));
-          addPart(ig, leafW/2-0.8, leafH-frameT, Math.max(2, it.d*0.25), -leafW/4, frameT+(leafH-frameT)/2, 0, glassMat, edgeCol, 0.4);
-          addPart(ig, leafW/2-0.8, leafH-frameT, Math.max(2, it.d*0.25), leafW/4, frameT+(leafH-frameT)/2, 0, glassMat, edgeCol, 0.4);
+          // Peitoril / soleira saliente na base da janela (projetado para fora dos dois lados)
+          var sillH=Math.min(4.2, frameT*0.9);
+          addPart(ig, it.w+5, sillH, it.d+5.5, 0, sillH/2, 0, mkMat(darkerCol), edgeCol, edgeOp);
+
+          // Caixilho interno (2 folhas de correr sobrepostas com perfis e pinázios divisores)
+          var sashFrameT=2.4;
+          var sashW=leafW*0.52;
+          var sashH=leafH-sillH;
+          var sashCy=sillH + sashH/2;
+          var glassMat=mkMat(lightCol, Math.min(op, 0.36));
+          var sashMat=mkMat(new THREE.Color(0xeef2f3));
+          var latchMat=mkMat(new THREE.Color(0x9aa3a8));
+
+          [-1, 1].forEach(function(side){
+            var sx=side*(leafW/2 - sashW/2);
+            var sz=side*1.3;
+            // Perfis horizontais e verticais de cada folha
+            addPart(ig, sashW, sashFrameT, 2.0, sx, sashCy+sashH/2-sashFrameT/2, sz, sashMat, edgeCol, 0.45);
+            addPart(ig, sashW, sashFrameT, 2.0, sx, sashCy-sashH/2+sashFrameT/2, sz, sashMat, edgeCol, 0.45);
+            addPart(ig, sashFrameT, sashH, 2.0, sx-sashW/2+sashFrameT/2, sashCy, sz, sashMat, edgeCol, 0.45);
+            addPart(ig, sashFrameT, sashH, 2.0, sx+sashW/2-sashFrameT/2, sashCy, sz, sashMat, edgeCol, 0.45);
+            // Vidro translúcido da folha
+            addPart(ig, sashW-sashFrameT*2, sashH-sashFrameT*2, 0.8, sx, sashCy, sz, glassMat, edgeCol, 0.35);
+            // Pinázio / travessa horizontal central no vidro
+            addPart(ig, sashW-sashFrameT*2, 1.4, 1.3, sx, sashCy, sz, sashMat, null);
+          });
+
+          // Fecho / trinco central metálico onde as duas folhas se encontram
+          addPart(ig, 2.2, 7.5, 3.6, 0, sashCy, 0, latchMat, edgeCol, 0.5);
+
+          // Se for janela com arco superior, adiciona bandeira fixa em vidro com raios decorativos
+          if(hasArch && archH>4){
+            var fanH=archH*0.72;
+            addPart(ig, leafW*0.86, fanH*0.68, 0.8, 0, bodyH+fanH*0.32, 0, glassMat, edgeCol, 0.35);
+            [-0.26, 0, 0.26].forEach(function(angR){
+              var spoke=addPart(ig, 1.5, fanH*0.72, 1.8, Math.sin(angR)*leafW*0.24, bodyH+fanH*0.34, 0, sashMat, null);
+              spoke.rotation.z=-angR;
+            });
+          }
         } else {
+          // Porta detalhada com almofadas/painéis em relevo, dobradiças metálicas e maçaneta alavanca
           var isRight=(it.doorSide==='right');
           var isOut=(it.doorFlip==='out');
           var isOpen=(it.doorOpen==='open');
-          var leafT=Math.max(3, it.d*0.35);
-          // Pivô no eixo vertical da dobradiça (alinhado com o 2D: 'in' abre para -Z, 'out' abre para +Z)
+          var leafT=Math.max(3.6, it.d*0.34);
           var hingeX=isRight?(leafW/2):(-leafW/2);
           var hingeZ=isOut?(it.d/2-leafT/2):(-it.d/2+leafT/2);
           var leafPivot=new THREE.Group();
           leafPivot.position.set(hingeX, 0, hingeZ);
           var xDir=isRight?-1:1;
-          addPart(leafPivot, leafW, leafH, leafT, xDir*(leafW/2), leafH/2, 0, mkMat(baseCol, Math.min(op,0.92)), edgeCol, edgeOp);
-          // Maçaneta nos dois lados da folha da porta
-          addPart(leafPivot, 3, 10, leafT+3.5, xDir*(leafW*0.86), Math.min(95, leafH*0.48), 0, mkMat(darkerCol), null);
+          var leafCx=xDir*(leafW/2);
+
+          // Corpo principal da folha da porta
+          addPart(leafPivot, leafW, leafH, leafT, leafCx, leafH/2, 0, mkMat(baseCol, Math.min(op,0.95)), edgeCol, edgeOp);
+
+          // 3 Dobradiças cilíndricas metálicas no lado da dobradiça
+          var metalMat=mkMat(new THREE.Color(0xc5cdd2));
+          var darkMetalMat=mkMat(new THREE.Color(0x525a60));
+          [leafH*0.14, leafH*0.5, leafH*0.86].forEach(function(hy){
+            var hg=new THREE.CylinderGeometry(1.1, 1.1, 6.5, 10);
+            var hm=new THREE.Mesh(hg, metalMat);
+            hm.position.set(xDir*0.6, hy, isOut?leafT/2+0.4:-leafT/2-0.4);
+            leafPivot.add(hm);
+          });
+
+          // Almofadas / molduras decorativas em relevo nas duas faces da folha
+          var panelW=leafW*0.68;
+          if(panelW>14 && leafH>90){
+            var topPanH=leafH*0.36, botPanH=leafH*0.34;
+            var topPanY=leafH*0.72, botPanY=leafH*0.26;
+            [-leafT/2-0.35, leafT/2+0.35].forEach(function(pz){
+              addPart(leafPivot, panelW, topPanH, 0.7, leafCx, topPanY, pz, mkMat(lightCol), edgeCol, 0.35);
+              addPart(leafPivot, panelW*0.82, topPanH*0.82, 0.9, leafCx, topPanY, pz, mkMat(darkCol), null);
+              addPart(leafPivot, panelW, botPanH, 0.7, leafCx, botPanY, pz, mkMat(lightCol), edgeCol, 0.35);
+              addPart(leafPivot, panelW*0.82, botPanH*0.82, 0.9, leafCx, botPanY, pz, mkMat(darkCol), null);
+            });
+          }
+
+          // Conjunto de fechadura (espelho vertical + maçaneta tipo alavanca nos 2 lados)
+          var lockX=xDir*(leafW*0.87);
+          var lockY=Math.min(98, leafH*0.47);
+          [-1, 1].forEach(function(sideZ){
+            var zBase=sideZ*(leafT/2+0.4);
+            // Espelho da fechadura
+            addPart(leafPivot, 3.2, 16, 0.8, lockX, lockY, zBase, metalMat, edgeCol, 0.45);
+            // Pino + alavanca horizontal voltada para o centro da folha
+            addPart(leafPivot, 1.8, 1.8, 3.2, lockX, lockY+3.2, zBase+sideZ*1.6, darkMetalMat, null);
+            addPart(leafPivot, 10.5, 1.6, 1.5, lockX - xDir*4.5, lockY+3.2, zBase+sideZ*3.2, metalMat, edgeCol, 0.4);
+          });
+
           if(isOpen){
-            // Rotação de 90° em torno de Y respeitando lado e sentido (in = -Z, out = +Z)
             var swingAngle=(isRight?-1:1)*(isOut?-Math.PI/2:Math.PI/2);
             leafPivot.rotation.y=swingAngle;
-            // Setor de varredura no piso 3D para visualizar o espaço ocupado aberta
             var startA=isRight?Math.PI:0;
             var thetaLen=Math.PI/2;
             var thetaStart=(isRight!==isOut)?(startA-thetaLen):startA;
@@ -1386,13 +1841,147 @@ function build3D(){
         return;
       }
 
-      /* Móveis detalhados em espaço local (W = it.w, H = it.h, D = it.d, frente = +Z) */
+      /* MÓVEIS DETALHADOS EM ESPAÇO LOCAL (W = it.w, H = it.h, D = it.d, frente = +Z) */
       var ig=new THREE.Group();
       var W=it.w, H=it.h, D=it.d;
       var gap=1.5;
 
-      if(kind==='geladeira'){
-        // Geladeira duplex inox escovado (foto 6): freezer superior, refrigerador inferior, fenda horizontal e puxadores verticais embutidos escuros à esquerda
+      if(kind==='mesa_jantar'){
+        // Mesa de jantar com tampo de vidro bisotado translúcido + estrutura e 4 pés metálicos esguios
+        var glassOp=Math.min(op, 0.46);
+        var glassH=Math.min(2.2, H*0.035);
+        var bev=Math.min(4.5, W*0.04, D*0.06);
+        var glassMat=mkMat(baseCol, glassOp);
+        var glassEdgeMat=mkMat(lightCol, Math.min(op, 0.72));
+        var chromeMat=mkMat(new THREE.Color(0xcfd6db), 1);
+        var darkSteelMat=mkMat(new THREE.Color(0x525a60), 1);
+        var rubberFootMat=mkMat(new THREE.Color(0x1f2326), 1);
+
+        // Tampo principal de vidro temperado + chanfro/bisotê superior
+        addPart(ig, W, glassH*0.72, D, 0, H-glassH*0.36, 0, glassMat, edgeCol, 0.55);
+        addPart(ig, Math.max(8, W-bev*2), glassH*0.32, Math.max(8, D-bev*2), 0, H-glassH*0.16, 0, glassEdgeMat, edgeCol, 0.45);
+
+        // Quadro estrutural metálico recuado sob o tampo de vidro + ventosas/apoios de silicone
+        var insX=Math.min(18, W*0.13);
+        var insZ=Math.min(14, D*0.17);
+        var frameW=Math.max(16, W-insX*2);
+        var frameD=Math.max(16, D-insZ*2);
+        var railH=3.2, railT=2.4;
+        var railY=H-glassH-railH/2-0.6;
+        // Longarinas e travessas metálicas
+        addPart(ig, frameW, railH, railT, 0, railY, -frameD/2+railT/2, chromeMat, edgeCol, 0.4);
+        addPart(ig, frameW, railH, railT, 0, railY, frameD/2-railT/2, chromeMat, edgeCol, 0.4);
+        addPart(ig, railT, railH, frameD-railT*2, -frameW/2+railT/2, railY, 0, chromeMat, edgeCol, 0.4);
+        addPart(ig, railT, railH, frameD-railT*2, frameW/2-railT/2, railY, 0, chromeMat, edgeCol, 0.4);
+        if(frameW>90){
+          addPart(ig, railT*0.9, railH*0.85, frameD-railT*2, 0, railY, 0, darkSteelMat, null);
+        }
+
+        // 4 pés metálicos tubulares/esguios nos cantos da estrutura com sapatas niveladoras pretas
+        var legH=Math.max(10, H-glassH-0.6);
+        var legR=Math.min(2.6, W*0.022, D*0.028);
+        var footH=1.8;
+        var lxOff=frameW/2-legR-0.4, lzOff=frameD/2-legR-0.4;
+        [[-lxOff,-lzOff],[lxOff,-lzOff],[-lxOff,lzOff],[lxOff,lzOff]].forEach(function(pt){
+          // Ventosa/espaçador metálico entre vidro e estrutura
+          var padG=new THREE.CylinderGeometry(legR*1.25, legR*1.25, 0.8, 14);
+          var padM=new THREE.Mesh(padG, darkSteelMat);
+          padM.position.set(pt[0], H-glassH-0.3, pt[1]);
+          ig.add(padM);
+          // Tubo metálico do pé
+          var tubeG=new THREE.CylinderGeometry(legR, legR*0.82, legH-footH, 16);
+          var tubeM=new THREE.Mesh(tubeG, chromeMat);
+          tubeM.position.set(pt[0], footH+(legH-footH)/2, pt[1]);
+          tubeM.add(new THREE.LineSegments(new THREE.EdgesGeometry(tubeG, 28),new THREE.LineBasicMaterial({color:edgeCol,transparent:true,opacity:0.35})));
+          ig.add(tubeM);
+          // Sapata niveladora preta no chão
+          var shoeG=new THREE.CylinderGeometry(legR*0.86, legR*0.95, footH, 14);
+          var shoeM=new THREE.Mesh(shoeG, rubberFootMat);
+          shoeM.position.set(pt[0], footH/2, pt[1]);
+          ig.add(shoeM);
+        });
+
+      } else if(kind==='mesa_redonda'){
+        // Molde fiel à imagem enviada: tampo redondo fino de madeira amadeirada + coluna central de tubos claros que se abrem em 3 pés curvados em estrela (120°) com ponteiras pretas
+        var rad=Math.min(W, D)/2;
+        var topH=Math.min(2.6, H*0.036);
+        var woodTopMat=mkMat(baseCol);
+        var woodRimMat=mkMat(darkCol);
+        var tubeMat=mkMat(new THREE.Color(0xd7d6cf)); // metal claro / creme metálico como na foto
+        var tubeInnerMat=mkMat(new THREE.Color(0x9a9c98));
+        var blackTipMat=mkMat(new THREE.Color(0x1b1e20));
+
+        // Tampo redondo de madeira + borda chanfrada
+        var topG=new THREE.CylinderGeometry(rad, rad*0.992, topH, 36);
+        var topM=new THREE.Mesh(topG, woodTopMat);
+        topM.position.set(0, H-topH/2, 0);
+        topM.add(new THREE.LineSegments(new THREE.EdgesGeometry(topG, 28),new THREE.LineBasicMaterial({color:edgeCol,transparent:true,opacity:0.45})));
+        ig.add(topM);
+
+        // Flange / cruzeta metálica sob o tampo
+        var flangeG=new THREE.CylinderGeometry(rad*0.24, rad*0.14, 2.0, 18);
+        var flangeM=new THREE.Mesh(flangeG, tubeInnerMat);
+        flangeM.position.set(0, H-topH-1.0, 0);
+        ig.add(flangeM);
+
+        // Coluna central formada por 3 tubos verticais unidos na metade superior e abrindo radialmente a 120° na metade inferior até o chão
+        var splitY=H*0.44;
+        var topColY=H-topH-1.5;
+        var colH=Math.max(10, topColY-splitY);
+        var tubeR=Math.max(1.25, Math.min(1.8, rad*0.036));
+        var spreadR=rad*0.76;
+
+        for(var legIdx=0; legIdx<3; legIdx++){
+          var ang=(legIdx*120 - 90)*Math.PI/180;
+          var cosA=Math.cos(ang), sinA=Math.sin(ang);
+          var clusterOff=tubeR*1.05;
+
+          // 1. Segmento vertical superior do tubo (unido ao feixe central)
+          var vTubeG=new THREE.CylinderGeometry(tubeR, tubeR, colH, 12);
+          var vTubeM=new THREE.Mesh(vTubeG, tubeMat);
+          vTubeM.position.set(cosA*clusterOff, splitY+colH/2, sinA*clusterOff);
+          ig.add(vTubeM);
+
+          // 2. Joelho / junção na altura onde os 3 tubos se separam
+          var jointG=new THREE.SphereGeometry(tubeR*1.05, 10, 10);
+          var jointM=new THREE.Mesh(jointG, tubeInnerMat);
+          jointM.position.set(cosA*clusterOff, splitY, sinA*clusterOff);
+          ig.add(jointM);
+
+          // 3. Perna inclinada abrindo radialmente para fora até perto do piso
+          var p0=new THREE.Vector3(cosA*clusterOff, splitY, sinA*clusterOff);
+          var p1=new THREE.Vector3(cosA*(spreadR*0.84), tubeR+1.6, sinA*(spreadR*0.84));
+          var dirV=new THREE.Vector3().subVectors(p1, p0);
+          var lenDiag=dirV.length();
+          var diagG=new THREE.CylinderGeometry(tubeR, tubeR, lenDiag, 12);
+          var diagM=new THREE.Mesh(diagG, tubeMat);
+          diagM.position.copy(p0).addScaledVector(dirV, 0.5);
+          diagM.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dirV.clone().normalize());
+          ig.add(diagM);
+
+          // 4. Extremidade horizontal no chão + ponteira / sapata cilíndrica preta (idêntica à foto)
+          var p2=new THREE.Vector3(cosA*spreadR, tubeR+0.2, sinA*spreadR);
+          var footDir=new THREE.Vector3().subVectors(p2, p1);
+          var footLen=Math.max(3, footDir.length());
+          var footG=new THREE.CylinderGeometry(tubeR*1.04, tubeR*1.08, footLen, 12);
+          var footM=new THREE.Mesh(footG, blackTipMat);
+          footM.position.copy(p1).addScaledVector(footDir, 0.5);
+          footM.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), footDir.clone().normalize());
+          ig.add(footM);
+        }
+
+      } else if(kind==='escrivaninha'||kind==='mesa'){
+        // Escrivaninha / mesa retangular clássica de madeira
+        var topH=Math.min(4.5, H*0.075);
+        var legH=H-topH;
+        var lw=Math.min(5.5, W*0.08, D*0.08);
+        addPart(ig, W, topH, D, 0, H-topH/2, 0, mkMat(lightCol), edgeCol, edgeOp);
+        addPart(ig, W-6, topH*0.9, D-6, 0, H-topH-topH*0.45, 0, mkMat(darkCol), edgeCol, edgeOp);
+        [[-W/2+lw*1.3,-D/2+lw*1.3],[W/2-lw*1.3,-D/2+lw*1.3],[-W/2+lw*1.3,D/2-lw*1.3],[W/2-lw*1.3,D/2-lw*1.3]].forEach(function(pt){
+          addPart(ig, lw, legH, lw, pt[0], legH/2, pt[1], mkMat(darkCol), edgeCol, edgeOp);
+        });
+
+      } else if(kind==='geladeira'){
         var bodyD=D*0.86;
         var doorD=D*0.12;
         var bodyZ=-D/2+bodyD/2;
@@ -1405,20 +1994,16 @@ function build3D(){
         var refH=mainH*0.67 - gap;
         var refY=baseH + refH/2;
         var frzY=baseH + refH + gap*2 + frzH/2;
-        // Duas portas em inox escovado claro
         addPart(ig, W-1.6, refH, doorD, 0, refY, doorZ, mkMat(lightCol), edgeCol, edgeOp);
         addPart(ig, W-1.6, frzH, doorD, 0, frzY, doorZ, mkMat(lightCol), edgeCol, edgeOp);
-        // Puxadores verticais embutidos preto/grafite brilhante na borda esquerda das duas portas (próximos à divisão central)
         var recW=Math.min(8.5, W*0.13);
         var recX=-W/2 + recW/2 + 0.8;
         var recZ=doorZ + doorD/2 - 0.6;
         var handleDark=mkMat(new THREE.Color(0x1f2428));
         var handleTrim=mkMat(new THREE.Color(0x4a5258));
-        // Puxador do freezer (parte inferior da porta superior)
         var frzRecH=frzH*0.72;
         addPart(ig, recW, frzRecH, 1.8, recX, baseH+refH+gap*2+frzRecH/2+1, recZ, handleDark, edgeCol, 0.45);
         addPart(ig, 1.4, frzRecH, 2.2, recX+recW/2, baseH+refH+gap*2+frzRecH/2+1, recZ, handleTrim, null);
-        // Puxador do refrigerador (parte superior da porta inferior)
         var refRecH=refH*0.44;
         addPart(ig, recW, refRecH, 1.8, recX, baseH+refH-refRecH/2-1, recZ, handleDark, edgeCol, 0.45);
         addPart(ig, 1.4, refRecH, 2.2, recX+recW/2, baseH+refH-refRecH/2-1, recZ, handleTrim, null);
@@ -1437,11 +2022,15 @@ function build3D(){
           addPart(ig, lw, legH, lw, pt[0], legH/2, pt[1], mkMat(darkerCol), null);
         });
         addPart(ig, W, headH, headD, 0, headH/2, headZ, mkMat(darkCol), edgeCol, edgeOp);
+        // Almofadado / moldura interna na cabeceira
+        addPart(ig, W-10, headH*0.56, 1.6, 0, headH*0.64, headZ+headD/2+0.6, mkMat(baseCol), edgeCol, 0.35);
         addPart(ig, W, baseH, bedD, 0, legH+baseH/2, bedZ, mkMat(darkCol), edgeCol, edgeOp);
         var mattW=W-4, mattD=bedD-4;
         addPart(ig, mattW, mattH, mattD, 0, legH+baseH+mattH/2+0.5, bedZ, mkMat(lightCol), edgeCol, edgeOp);
         var blanketD=mattD*0.56;
         addPart(ig, mattW+1, 2.5, blanketD, 0, legH+baseH+mattH+1.2, bedZ+mattD/2-blanketD/2, mkMat(baseCol), edgeCol, 0.35);
+        // Dobra superior do lençol
+        addPart(ig, mattW+1.2, 2.8, 12, 0, legH+baseH+mattH+1.5, bedZ+mattD/2-blanketD+6, mkMat(new THREE.Color(0xf4f6f5)), edgeCol, 0.35);
         var pCount=W>=115?2:1;
         var pD=Math.min(36, mattD*0.22);
         var pH=Math.min(9, mattH*0.48);
@@ -1455,7 +2044,6 @@ function build3D(){
         }
 
       } else if(kind==='guardaroupa'){
-        // Guarda-roupa 2 portas de correr baseado na foto 1: moldura robusta em madeira amadeirada, painel esquerdo fosco off-white com friso horizontal, painel direito com espelho central e friso horizontal
         var frameT=Math.min(8, W*0.045, H*0.045);
         var plinthH=Math.min(6, H*0.03);
         var woodMat=mkMat(baseCol);
@@ -1464,16 +2052,12 @@ function build3D(){
         var mirrorMat=mkMat(new THREE.Color(0xc4d8de), Math.min(op, 0.92));
         var alumMat=mkMat(new THREE.Color(0xc5cdd1));
 
-        // Caixa interna e costas do guarda-roupa
         addPart(ig, W-frameT*1.6, H-plinthH-frameT, D-4, 0, plinthH+(H-plinthH-frameT)/2, -1, woodDarkMat, edgeCol, edgeOp);
-        // Rodapé inferior em madeira
         addPart(ig, W, plinthH, D, 0, plinthH/2, 0, woodMat, edgeCol, edgeOp);
-        // Moldura externa robusta (laterais esquerda/direita e chapéu superior)
         addPart(ig, frameT, H-plinthH, D, -W/2+frameT/2, plinthH+(H-plinthH)/2, 0, woodMat, edgeCol, edgeOp);
         addPart(ig, frameT, H-plinthH, D, W/2-frameT/2, plinthH+(H-plinthH)/2, 0, woodMat, edgeCol, edgeOp);
         addPart(ig, W, frameT, D+1.5, 0, H-frameT/2, 0.5, woodMat, edgeCol, edgeOp);
 
-        // Vão interno para as 2 portas de correr
         var innerW=W - frameT*2;
         var innerH=H - plinthH - frameT;
         var baseDoorY=plinthH;
@@ -1482,70 +2066,54 @@ function build3D(){
         var leftZ=D/2 - 3.6;
         var rightZ=D/2 - 1.6;
 
-        // Folha esquerda (recuada no trilho): painel liso off-white/bege claro com perfil puxador vertical em madeira e friso metálico horizontal no meio
         var leftCx=-innerW/2 + doorW/2;
         addPart(ig, doorW, innerH-1, doorD, leftCx, baseDoorY+innerH/2, leftZ, panelMat, edgeCol, edgeOp);
-        // Perfil puxador vertical em madeira na borda direita da porta esquerda
         addPart(ig, 3.8, innerH-1, doorD+0.8, leftCx+doorW/2-1.9, baseDoorY+innerH/2, leftZ+0.3, woodMat, edgeCol, 0.5);
-        // Friso metálico fino dividindo a folha esquerda ao meio
         addPart(ig, doorW-3.8, 1.2, 0.8, leftCx-1.9, baseDoorY+innerH*0.48, leftZ+doorD/2+0.3, alumMat, null);
 
-        // Folha direita (frontal no trilho): moldura clara + grande espelho central com friso metálico horizontal
         var rightCx=innerW/2 - doorW/2;
         addPart(ig, doorW, innerH-1, doorD, rightCx, baseDoorY+innerH/2, rightZ, panelMat, edgeCol, edgeOp);
-        // Perfil puxador vertical em madeira na borda direita
         addPart(ig, 3.8, innerH-1, doorD+0.8, rightCx+doorW/2-1.9, baseDoorY+innerH/2, rightZ+0.3, woodMat, edgeCol, 0.5);
-        // Espelho central alto
         var mirW=doorW*0.76;
         var mirH=innerH*0.78;
         var mirCx=rightCx - 1.2;
         var mirCy=baseDoorY + innerH*0.48;
         addPart(ig, mirW, mirH, 1.0, mirCx, mirCy, rightZ+doorD/2+0.4, mirrorMat, edgeCol, 0.45);
-        // Friso metálico horizontal cruzando o espelho ao meio (como na foto 1)
         addPart(ig, doorW-3.8, 1.2, 0.9, rightCx-1.9, mirCy, rightZ+doorD/2+0.95, alumMat, null);
 
       } else if(kind==='armario_maior'){
-        // Armário aéreo maior baseado na foto 2: módulo duplo com metade superior fechada por porta basculante branca lisa com perfil alumínio inferior e metade inferior em nicho aberto de madeira com divisória central
         var boardT=2.2;
         var woodMat=mkMat(baseCol);
         var woodInnerMat=mkMat(darkCol);
         var whiteDoorMat=mkMat(new THREE.Color(0xf2f4f3));
         var alumMat=mkMat(new THREE.Color(0xc5cdd1));
 
-        // Laterais, topo, base, fundo e divisória vertical central em madeira
         addPart(ig, boardT, H, D, -W/2+boardT/2, H/2, 0, woodMat, edgeCol, edgeOp);
         addPart(ig, boardT, H, D, W/2-boardT/2, H/2, 0, woodMat, edgeCol, edgeOp);
         addPart(ig, W, boardT, D, 0, H-boardT/2, 0, woodMat, edgeCol, edgeOp);
         addPart(ig, W, boardT, D, 0, boardT/2, 0, woodMat, edgeCol, edgeOp);
         addPart(ig, W-boardT*2, H-boardT*2, 1.4, 0, H/2, -D/2+0.7, woodInnerMat, edgeCol, 0.4);
-        // Prateleira horizontal central dividindo nicho inferior e compartimento superior
         var midY=H*0.48;
         addPart(ig, W-boardT*2, boardT, D-1.5, 0, midY, 0.5, woodMat, edgeCol, edgeOp);
-        // Divisória vertical central nos nichos
         addPart(ig, boardT, H-boardT*2, D-2, 0, H/2, 0.2, woodMat, edgeCol, edgeOp);
 
-        // Porta basculante branca lisa cobrindo a metade superior inteira + perfil metálico puxador na borda inferior
         var topDoorH=H - midY - 0.5;
         var topDoorCy=midY + topDoorH/2;
         addPart(ig, W, topDoorH, 2.2, 0, topDoorCy, D/2+1.1, whiteDoorMat, edgeCol, edgeOp);
-        // Perfil puxador de alumínio na borda inferior da porta basculante
         addPart(ig, W, 2.6, 2.8, 0, midY+1.3, D/2+1.4, alumMat, edgeCol, 0.45);
 
       } else if(kind==='armario_menor'){
-        // Armário aéreo menor com 2 portas baseado na foto 9: caixa branca compacta, 2 portas de abrir brancas lisas e puxadores em perfil de alumínio horizontais na base inferior
         var boardT=2.0;
         var bodyMat=mkMat(baseCol);
         var doorMat=mkMat(lightCol);
         var alumMat=mkMat(new THREE.Color(0xc2cacf));
 
-        // Caixa estrutural branca
         addPart(ig, boardT, H, D-2, -W/2+boardT/2, H/2, -1, bodyMat, edgeCol, edgeOp);
         addPart(ig, boardT, H, D-2, W/2-boardT/2, H/2, -1, bodyMat, edgeCol, edgeOp);
         addPart(ig, W, boardT, D-2, 0, H-boardT/2, -1, bodyMat, edgeCol, edgeOp);
         addPart(ig, W, boardT, D-2, 0, boardT/2, -1, bodyMat, edgeCol, edgeOp);
         addPart(ig, W-boardT*2, H-boardT*2, 1.4, 0, H/2, -D/2+0.7, bodyMat, edgeCol, 0.35);
 
-        // 2 portas frontais lisas com vão central e perfil puxador em alumínio na borda inferior de cada porta
         var dw=(W - gap)/2;
         for(var dIdx=0; dIdx<2; dIdx++){
           var dx=(dIdx===0)?(-dw/2 - gap/2):(dw/2 + gap/2);
@@ -1554,7 +2122,6 @@ function build3D(){
         }
 
       } else if(kind==='fogao'){
-        // Fogão inox de piso com mesa de vidro preto temperado (foto 8): 4 bocas com trempes individuais, 5 botões manípulos na frente da mesa e porta do forno ampla em vidro preto fumê com puxador curvo inox
         var baseH=Math.min(5, H*0.06);
         var topGlassH=2.4;
         var bodyH=H-baseH-topGlassH;
@@ -1563,23 +2130,18 @@ function build3D(){
         var blackGlassMat=mkMat(new THREE.Color(0x181c1f));
         var smokedGlassMat=mkMat(new THREE.Color(0x283036), Math.min(op, 0.85));
 
-        // Pés e corpo principal em inox
         addPart(ig, W-4, baseH, D-4, 0, baseH/2, 0, mkMat(darkerCol), edgeCol, edgeOp);
         addPart(ig, W, bodyH, D-2, 0, baseH+bodyH/2, -1, inoxMat, edgeCol, edgeOp);
 
-        // Porta ampla do forno com moldura preta e visor central fumê
         var ovenH=bodyH*0.76;
         var ovenY=baseH + bodyH*0.48;
         addPart(ig, W-4, ovenH, 2.2, 0, ovenY, D/2-1.1, blackGlassMat, edgeCol, edgeOp);
         addPart(ig, W-12, ovenH*0.64, 1.2, 0, ovenY-1, D/2+0.1, smokedGlassMat, edgeCol, 0.4);
-        // Puxador inferior curvo/barra em inox na base da porta do forno
         addPart(ig, W-6, 2.6, 3.2, 0, ovenY-ovenH/2+2.2, D/2+1.2, inoxLightMat, edgeCol, 0.45);
 
-        // Mesa superior de vidro preto temperado (cooktop de vidro)
         var topY=baseH+bodyH+topGlassH/2;
         addPart(ig, W+0.8, topGlassH, D+0.8, 0, topY, 0.4, blackGlassMat, edgeCol, edgeOp);
 
-        // 5 botões manípulos pretos na parte frontal da mesa de vidro (como na foto 8)
         var knobs=5;
         for(var k=0;k<knobs;k++){
           var kx=-W*0.36 + (k/(knobs-1))*(W*0.72);
@@ -1589,20 +2151,17 @@ function build3D(){
           ig.add(km);
         }
 
-        // 4 queimadores e trempes pretas individuais na parte traseira/central da mesa
         var bOffX=W*0.23, bStartZ=-D*0.26, bEndZ=D*0.12;
         [[-bOffX,bStartZ],[bOffX,bStartZ],[-bOffX,bEndZ],[bOffX,bEndZ]].forEach(function(bp){
           var bg=new THREE.CylinderGeometry(Math.min(W,D)*0.11, Math.min(W,D)*0.12, 2.0, 14);
           var bm=new THREE.Mesh(bg, mkMat(new THREE.Color(0x2a2f33)));
           bm.position.set(bp[0], topY+topGlassH/2+0.9, bp[1]);
           ig.add(bm);
-          // Trempe cruzeta em ferro fundido preto
           addPart(ig, Math.min(W,D)*0.32, 2.4, 1.6, bp[0], topY+topGlassH/2+1.4, bp[1], blackGlassMat, null);
           addPart(ig, 1.6, 2.4, Math.min(W,D)*0.32, bp[0], topY+topGlassH/2+1.4, bp[1], blackGlassMat, null);
         });
 
       } else if(kind==='sofa'){
-        // Sofá moderno baseado na foto 7: braços largos retos, assento único inteiro com costuras quadriculadas, encosto baixo e 2 almofadas soltas grandes com costuras quadriculadas
         var legH=Math.min(4, H*0.05);
         var armW=clamp(W*0.12, 12, 24);
         var armH=Math.min(H*0.76, 64);
@@ -1612,19 +2171,14 @@ function build3D(){
         var seatH=Math.min(H*0.48, 42)-legH;
         var innerW=Math.max(24, W-armW*2);
 
-        // Base e pés discretos
         addPart(ig, W-4, legH, D-4, 0, legH/2, 0, mkMat(darkerCol), null);
-        // Braços largos e retos nas duas extremidades
         addPart(ig, armW, armH, D, -W/2+armW/2, legH+armH/2, 0, mkMat(baseCol), edgeCol, edgeOp);
         addPart(ig, armW, armH, D, W/2-armW/2, legH+armH/2, 0, mkMat(baseCol), edgeCol, edgeOp);
-        // Encosto reto traseiro
         addPart(ig, innerW, backH, backD, 0, legH+backH/2, -D/2+backD/2, mkMat(darkCol), edgeCol, edgeOp);
-        // Assento único inteiro
         var seatY=legH+seatH/2;
         var seatZ=backD/2;
         addPart(ig, innerW, seatH, seatD, 0, seatY, seatZ, mkMat(baseCol), edgeCol, edgeOp);
 
-        // Costuras quadriculadas (matelassê) no assento único
         var seamMat=mkMat(lightCol);
         var cols=Math.max(4, Math.round(innerW/26));
         for(var cIdx=1; cIdx<cols; cIdx++){
@@ -1633,7 +2187,6 @@ function build3D(){
         }
         addPart(ig, innerW-4, 0.5, 0.7, 0, legH+seatH+0.2, seatZ, seamMat, null);
 
-        // 2 almofadas soltas grandes apoiadas no encosto com costuras quadriculadas (como na foto 7)
         var pilW=innerW*0.44;
         var pilH=Math.min(42, backH*0.64);
         var pilD=Math.min(16, seatD*0.24);
@@ -1642,7 +2195,6 @@ function build3D(){
         [-innerW*0.24, innerW*0.24].forEach(function(px){
           var pil=addPart(ig, pilW, pilH, pilD, px, pilY, pilZ, mkMat(lightCol), edgeCol, edgeOp);
           pil.rotation.x=-0.16;
-          // Costura vertical e horizontal na almofada
           var stV=addPart(ig, 0.7, pilH-4, pilD+0.4, px, pilY, pilZ, mkMat(darkCol), null);
           stV.rotation.x=-0.16;
           var stH=addPart(ig, pilW-4, 0.7, pilD+0.4, px, pilY, pilZ, mkMat(darkCol), null);
@@ -1650,12 +2202,10 @@ function build3D(){
         });
 
       } else if(kind==='pia'){
-        // Molde de Armário/Gabinete de Pia baseado na foto 5: 3 gavetas com puxadores perfil alumínio horizontais à esquerda (~34%) e 2 portas brancas à direita (~66%), bancada inox com cuba e torneira + filtro
         var baseH=Math.min(6, H*0.07);
         var topH=Math.min(4.2, H*0.05);
         var cabH=H-baseH-topH;
         var alumMat=mkMat(new THREE.Color(0xc2cacf));
-        // Rodapé recuado e caixa estrutural do gabinete
         addPart(ig, W-4, baseH, D-4, 0, baseH/2, -1, mkMat(darkerCol), edgeCol, edgeOp);
         addPart(ig, W-2, cabH, D-3, 0, baseH+cabH/2, -1.5, mkMat(darkCol), edgeCol, edgeOp);
 
@@ -1665,7 +2215,6 @@ function build3D(){
         var drwW=drwTotalW - gap*1.5;
         var drwCx=leftStart + gap + drwW/2;
 
-        // 3 gavetas empilhadas na lateral esquerda com puxadores em perfil de alumínio horizontais no topo de cada frente
         var drwCount=3;
         var drwH=(cabH - gap*(drwCount+1))/drwCount;
         for(var gIdx=0; gIdx<drwCount; gIdx++){
@@ -1674,10 +2223,8 @@ function build3D(){
           addPart(ig, drwW, 2.0, 2.6, drwCx, gy+drwH/2-1.0, D/2-1.6, alumMat, edgeCol, 0.45);
         }
 
-        // Divisória vertical interna entre gaveteiro e módulo das portas
         addPart(ig, 1.6, cabH-1, D-4, leftStart+drwTotalW, baseH+cabH/2, -1.5, mkMat(darkerCol), null);
 
-        // 2 portas de abrir na parte direita (~66% da largura) com puxador perfil horizontal superior
         var doorsAreaStart=leftStart + drwTotalW;
         var doorsAreaW=innerW - drwTotalW;
         var dw=(doorsAreaW - gap*3)/2;
@@ -1687,18 +2234,14 @@ function build3D(){
           addPart(ig, dw, 2.0, 2.6, px, baseH+cabH-gap-1.0, D/2-1.6, alumMat, edgeCol, 0.45);
         }
 
-        // Bancada superior em inox com frontão traseiro e cuba alinhada à direita
         var topY=baseH+cabH+topH/2;
         var inoxMat=mkMat(new THREE.Color(0xdde4e8));
         var inoxRimMat=mkMat(new THREE.Color(0xc5cfd4));
         var basinDarkMat=mkMat(new THREE.Color(0x525d63));
         addPart(ig, W, topH, D, 0, topY, 0, inoxMat, edgeCol, edgeOp);
         addPart(ig, W, 6, 2, 0, topY+topH/2+3, -D/2+1, inoxRimMat, edgeCol, edgeOp);
-
-        // Área seca/escorredor sutil acima das gavetas (esquerda)
         addPart(ig, drwW-2, 0.5, D-10, drwCx, topY+topH/2+0.25, 1, inoxRimMat, edgeCol, 0.35);
 
-        // Cuba de inox alinhada acima das duas portas (direita)
         var basinCx=doorsAreaStart + doorsAreaW/2;
         var basinW=Math.min(52, doorsAreaW*0.72), basinD=Math.min(36, D*0.62);
         addPart(ig, basinW+4, 1.4, basinD+4, basinCx, topY+topH/2+0.7, 2, inoxRimMat, edgeCol, 0.55);
@@ -1707,7 +2250,6 @@ function build3D(){
         var drainM=new THREE.Mesh(drainG, inoxMat);
         drainM.position.set(basinCx, topY+topH/2+1.9, 2);
         ig.add(drainM);
-        // Torneira bica alta + copo de filtro cromado ao lado (como na foto 5)
         addPart(ig, 2.6, 18, 2.6, basinCx+3, topY+topH/2+9, -D*0.32, inoxRimMat, null);
         addPart(ig, 2.4, 2.4, 13, basinCx+3, topY+topH/2+18, -D*0.21, inoxRimMat, null);
         var filterG=new THREE.CylinderGeometry(3.2, 3.2, 16, 14);
@@ -1716,7 +2258,6 @@ function build3D(){
         ig.add(filterM);
 
       } else if(kind==='pia_banheiro'){
-        // Balcão de pia de banheiro estilo mármore com gabinete suspenso, cuba de apoio, torneira e espelho na parede
         var cabBottom=Math.min(22, H*0.12);
         var counterTopY=Math.min(86, H*0.47);
         var slabH=4.2;
@@ -1750,7 +2291,6 @@ function build3D(){
         addPart(ig, mirrorW-5, mirrorH-5, 1.2, 0, mirrorY, mirrorZ+1.1, mkMat(new THREE.Color(0xb8dce8), Math.min(op, 0.85)), edgeCol, 0.4);
 
       } else if(kind==='ar_condicionado'){
-        // Evaporadora de ar-condicionado Split de parede com painel frontal, visor LED e aleta defletora
         var unitD=D;
         addPart(ig, W, H, unitD*0.72, 0, H/2, -unitD*0.14, mkMat(darkCol), edgeCol, edgeOp);
         addPart(ig, W, H*0.86, unitD*0.32, 0, H*0.54, unitD*0.34, mkMat(lightCol), edgeCol, edgeOp);
@@ -1761,7 +2301,6 @@ function build3D(){
         flap.rotation.x=0.38;
 
       } else if(kind==='ar_caixa'){
-        // Ar-condicionado de caixa / janela com gabinete metálico traseiro, moldura frontal, grelha e botões
         var frontD=Math.min(7, D*0.14);
         var backD=D-frontD;
         addPart(ig, W-2, H-2, backD, 0, H/2, -frontD/2, mkMat(darkCol), edgeCol, edgeOp);
@@ -1790,7 +2329,6 @@ function build3D(){
         });
 
       } else if(kind==='ventilador'){
-        // Ventilador de coluna com base circular pesada, haste telescópica, motor e grade protetora com hélice
         var headR=Math.min(W, D)*0.48;
         var baseR=Math.min(W, D)*0.42;
         var baseH=Math.min(5, H*0.04);
@@ -1831,7 +2369,6 @@ function build3D(){
         }
 
       } else if(kind==='ventilador_teto'){
-        // Ventilador de teto com canopla superior, haste, motor central, 3 pás e luminária inferior
         var fanR=Math.min(W, D)*0.48;
         var rodH=Math.max(12, H*0.45);
         var hubY=H-rodH;
@@ -1860,18 +2397,7 @@ function build3D(){
           blade.rotation.x=0.14;
         }
 
-      } else if(kind==='mesa'){
-        var topH=Math.min(5, H*0.08);
-        var legH=H-topH;
-        var lw=Math.min(6, W*0.08, D*0.08);
-        addPart(ig, W, topH, D, 0, H-topH/2, 0, mkMat(lightCol), edgeCol, edgeOp);
-        addPart(ig, W-8, topH*0.8, D-8, 0, H-topH-topH*0.4, 0, mkMat(darkCol), edgeCol, edgeOp);
-        [[-W/2+lw*1.4,-D/2+lw*1.4],[W/2-lw*1.4,-D/2+lw*1.4],[-W/2+lw*1.4,D/2-lw*1.4],[W/2-lw*1.4,D/2-lw*1.4]].forEach(function(pt){
-          addPart(ig, lw, legH, lw, pt[0], legH/2, pt[1], mkMat(darkCol), edgeCol, edgeOp);
-        });
-
       } else if(kind==='mesa_centro'){
-        // Mesa de centro baixa com tampo superior, prateleira inferior e 4 pés robustos
         var topH=Math.min(4, H*0.1);
         var legW=Math.min(5.5, W*0.08, D*0.08);
         addPart(ig, W, topH, D, 0, H-topH/2, 0, mkMat(baseCol), edgeCol, edgeOp);
@@ -1884,7 +2410,6 @@ function build3D(){
         });
 
       } else if(kind==='tapete'){
-        // Tapete plano com borda têxtil e faixas decorativas
         var rugH=Math.max(1.2, Math.min(3, H));
         var border=Math.min(10, W*0.08, D*0.08);
         addPart(ig, W, rugH*0.8, D, 0, rugH*0.4, 0, mkMat(darkCol), edgeCol, edgeOp*0.6);
@@ -1904,38 +2429,31 @@ function build3D(){
         ig.add(drumM);
 
       } else if(kind==='bebedouro'){
-        // Bebedouro de coluna branco com detalhes cinza-taupe no topo e cintura, nicho com 2 torneiras e garrafão com capa (foto 4)
         var jugH=Math.min(44, H*0.34);
         var bodyH=H-jugH;
         var baseH=Math.min(4, bodyH*0.05);
         var taupeMat=mkMat(new THREE.Color(0x9a9189));
         var bodyMat=mkMat(baseCol);
         addPart(ig, W-2, baseH, D-2, 0, baseH/2, 0, mkMat(darkerCol), edgeCol, edgeOp);
-        // Metade inferior da coluna + cinta cinza-taupe + metade superior
         var lowerH=(bodyH-baseH)*0.46;
         var upperH=(bodyH-baseH)*0.50;
         addPart(ig, W, lowerH, D-1.5, 0, baseH+lowerH/2, -0.75, bodyMat, edgeCol, edgeOp);
         addPart(ig, W+0.4, 2.6, D-1.0, 0, baseH+lowerH+1.3, -0.5, taupeMat, edgeCol, 0.45);
         addPart(ig, W, upperH, D-1.5, 0, baseH+lowerH+2.6+upperH/2, -0.75, bodyMat, edgeCol, edgeOp);
-        // Tampo superior cinza-taupe
         addPart(ig, W+0.8, 3.2, D+0.4, 0, bodyH-1.6, 0, taupeMat, edgeCol, edgeOp);
 
-        // Nicho frontal rebaixado com bandeja pingadeira grelhada e duas torneiras
         var recessH=Math.min(24, upperH*0.56);
         var recessY=baseH+lowerH+2.6+recessH/2+2;
         addPart(ig, W*0.72, recessH, 3.2, 0, recessY, D/2-1.4, mkMat(new THREE.Color(0xd5d8d6)), edgeCol, edgeOp);
         addPart(ig, W*0.76, 2.4, 6.5, 0, recessY-recessH/2+1.2, D/2+1.2, taupeMat, edgeCol, edgeOp);
-        // Botão seletor central acima do nicho
         var dialG=new THREE.CylinderGeometry(2.6, 2.6, 1.8, 14);
         var dialM=new THREE.Mesh(dialG, taupeMat);
         dialM.rotation.x=Math.PI/2;
         dialM.position.set(0, recessY+recessH/2+4.5, D/2-0.3);
         ig.add(dialM);
-        // Duas torneiras (natural e gelada)
         addPart(ig, 2.6, 4.5, 4.8, -W*0.16, recessY+recessH/2-2.8, D/2+0.8, mkMat(new THREE.Color(0x2a2f32)), null);
         addPart(ig, 2.6, 4.5, 4.8, W*0.16, recessY+recessH/2-2.8, D/2+0.8, mkMat(new THREE.Color(0x2a2f32)), null);
 
-        // Garrafão superior com capa de tecido claro/esverdeado (foto 4)
         var ringR=Math.min(W,D)*0.40;
         var coverMat=mkMat(new THREE.Color(0xdbe3d3));
         var coverTrimMat=mkMat(new THREE.Color(0x95a888));
@@ -1950,7 +2468,6 @@ function build3D(){
         ig.add(bandM);
 
       } else if(kind==='vaso'){
-        // Vaso sanitário com caixa acoplada, pedestal, bojo, tampa articulada e chuveirinho (ducha higiênica) acoplado
         var mainW=Math.min(W*0.82, 38);
         var xOff=-W*0.08;
         var bowlH=Math.min(41, H*0.54);
@@ -1972,7 +2489,6 @@ function build3D(){
         var btnM=new THREE.Mesh(btnG, mkMat(new THREE.Color(0xb8c2c7)));
         btnM.position.set(xOff, tankTopY+3, tankZ);
         ig.add(btnM);
-        // Chuveirinho (ducha higiênica) acoplado na lateral direita do vaso
         var hoseX=xOff+tankW/2+4.5;
         var chromeMat=mkMat(new THREE.Color(0xc5ced3));
         addPart(ig, 3.2, 4.5, 3.5, hoseX, 46, -D/2+2.5, chromeMat, edgeCol, 0.4);
@@ -1982,34 +2498,24 @@ function build3D(){
         addPart(ig, 2.6, 11, 3.4, hoseX, 48, -D/2+13, chromeMat, edgeCol, 0.5);
 
       } else if(kind==='box_chuveiro'){
-        // Box de banheiro com vidro temperado em apenas 2 lados expostos (+Z e +X) e parede/chuveiro nos outros 2 lados
         var curbH=Math.min(5, H*0.03);
         var frameT=2.6;
         var glassOp=Math.min(op, 0.34);
         var glassMat=mkMat(baseCol, glassOp);
         var frameMat=mkMat(darkerCol);
-        // Base / soleira impermeável
         addPart(ig, W, curbH, D, 0, curbH/2, 0, mkMat(lightCol), edgeCol, edgeOp);
-        // Ralo quadrado no piso
         addPart(ig, 11, 0.8, 11, 0, curbH+0.4, 0, mkMat(darkerCol), edgeCol, 0.5);
-        // Perfis verticais nos 3 cantos dos 2 lados de vidro (-X/+Z, +X/+Z, +X/-Z)
         [[-W/2+frameT/2,D/2-frameT/2],[W/2-frameT/2,D/2-frameT/2],[W/2-frameT/2,-D/2+frameT/2]].forEach(function(pt){
           addPart(ig, frameT, H-curbH, frameT, pt[0], curbH+(H-curbH)/2, pt[1], frameMat, edgeCol, 0.5);
         });
-        // Travessas superiores apenas nos 2 lados de vidro (+Z e +X)
         addPart(ig, W, frameT, frameT, 0, H-frameT/2, D/2-frameT/2, frameMat, edgeCol, 0.5);
         addPart(ig, frameT, frameT, D, W/2-frameT/2, H-frameT/2, 0, frameMat, edgeCol, 0.5);
-        // Painéis de vidro apenas nos 2 lados frontais/laterais (+Z e +X)
         var glassH=H-curbH-frameT;
         var glassY=curbH+glassH/2;
-        // Lado 1 (+Z): folha fixa + porta de correr
         addPart(ig, W*0.48, glassH, 1.4, -W*0.24, glassY, D/2-frameT/2, glassMat, edgeCol, 0.45);
         addPart(ig, W*0.48, glassH, 1.4, W*0.22, glassY, D/2-frameT*1.3, glassMat, edgeCol, 0.45);
-        // Lado 2 (+X): painel lateral fixo
         addPart(ig, 1.4, glassH, D-frameT*2, W/2-frameT/2, glassY, 0, glassMat, edgeCol, 0.45);
-        // Puxador da porta de vidro frontal
         addPart(ig, 2, 18, 4.5, W*0.03, curbH+glassH*0.5, D/2-frameT*1.3, frameMat, null);
-        // Registro do chuveiro na parede traseira (-Z)
         var regY=Math.min(115, H*0.55);
         addPart(ig, 7, 7, 2.5, 0, regY, -D/2+2, frameMat, null);
         var knobG=new THREE.CylinderGeometry(2.5, 2.5, 4, 12);
@@ -2017,7 +2523,6 @@ function build3D(){
         knobM.rotation.x=Math.PI/2;
         knobM.position.set(0, regY, -D/2+4.5);
         ig.add(knobM);
-        // Cano + braço + ducha superior
         var shH=Math.min(H-10, 205);
         addPart(ig, 2.2, shH-regY, 2.2, 0, regY+(shH-regY)/2, -D/2+2, frameMat, null);
         addPart(ig, 2.2, 2.2, 26, 0, shH, -D/2+14, frameMat, null);
@@ -2043,9 +2548,14 @@ function build3D(){
         var postR=addPart(ig, lw*0.9, postH, backD*0.9, W/2-lw*0.8, seatH+postH/2-1, -D/2+backD*0.65, mkMat(darkerCol), edgeCol, edgeOp);
         postL.rotation.x=-0.08;
         postR.rotation.x=-0.08;
-        var backPanelH=Math.max(10, backH*0.56);
-        var bp=addPart(ig, W-lw*0.6, backPanelH, backD, 0, seatH+backH-backPanelH/2-1, -D/2+backD*0.8, mkMat(baseCol), edgeCol, edgeOp);
-        bp.rotation.x=-0.08;
+        // Encosto com travessa superior e ripas verticais
+        var topRailH=Math.max(6, backH*0.2);
+        var topRail=addPart(ig, W-lw*0.5, topRailH, backD, 0, seatH+backH-topRailH/2-1, -D/2+backD*0.85, mkMat(baseCol), edgeCol, edgeOp);
+        topRail.rotation.x=-0.08;
+        [-W*0.22, 0, W*0.22].forEach(function(sx){
+          var slat=addPart(ig, 2.4, backH*0.72, backD*0.65, sx, seatH+backH*0.42, -D/2+backD*0.75, mkMat(lightCol), edgeCol, 0.35);
+          slat.rotation.x=-0.08;
+        });
 
       } else if(kind==='tv'){
         var hasStand=(it.z||0)<110;
@@ -2119,6 +2629,9 @@ function itemRowHtml(i){
 }
 function renderLists(){
   var rl=$('#roomList'),il=$('#itemList');
+  if($('#badgeRooms')) $('#badgeRooms').textContent=state.rooms.length;
+  if($('#badgeItems')) $('#badgeItems').textContent=state.items.length;
+
   var hiddenCount=state.rooms.filter(function(r){return r.visible===false;}).length;
   var showAllBtn=$('#showAllRooms');
   if(showAllBtn) showAllBtn.hidden=(hiddenCount===0);
@@ -2127,7 +2640,6 @@ function renderLists(){
     return '<li class="room-li'+(vis?'':' hidden-room')+'"><input type="checkbox" class="vis-chk" data-vis-id="'+r.id+'"'+(vis?' checked':'')+' title="Mostrar ou ocultar este cômodo" aria-label="Mostrar '+esc(r.name)+'"><button type="button" class="row'+(isSel('room',r.id)?' on':'')+'" data-t="room" data-id="'+r.id+'"><span class="nm">'+esc(r.name)+'</span><span class="mono">'+fmt(r.w)+' × '+fmt(r.l)+'</span></button></li>';
   }).join(''):'<li class="none">Nenhum cômodo.</li>';
 
-  // Lista inteligente de Móveis & Aberturas por cômodo
   var activeRoom=(sel&&sel.t==='room')?selObj():null;
   if(activeRoom){
     var filtered=state.items.filter(function(i){return roomOf(i)===activeRoom;});
@@ -2159,13 +2671,18 @@ function syncPos(){var o=selObj(); if(!o) return; setVal($('#fX'),Math.round(o.x
 function syncInspector(){
   var o=selObj(),has=!!o;
   $('#insEmpty').hidden=has; $('#insForm').hidden=!has;
-  $('#insType').textContent=has?(sel.t==='item'?'elemento':'cômodo'):'seleção';
+  $('#insType').textContent=has?(sel.t==='item'?o.name:'Cômodo: '+o.name):'nenhuma seleção';
+  if($('#tabEditTarget')) $('#tabEditTarget').textContent=has?(sel.t==='item'?'Item':'Cômodo'):'Seleção';
+  if($('#tabEditDot')) $('#tabEditDot').hidden=!has;
   if(!has) return;
   var isItem=sel.t==='item';
   $('#insForm').setAttribute('data-kind', isItem?'item':'room');
   $('#lbL').textContent=isItem?'Profundidade':'Comprimento';
   $('#lbH').textContent=isItem?'Altura':'Pé-direito';
-  $('#fRot').hidden=!isItem; $('#fDiag').hidden=!isItem; $('#fMir').hidden=!isItem; $('#colorWrap').hidden=!isItem; $('#opWrap').hidden=!isItem; $('#wallWrap').hidden=isItem; $('#roomWallColorWrap').hidden=isItem; $('#zWrap').hidden=!isItem; $('#roomWrap').hidden=!isItem; $('#angWrap').hidden=!isItem;
+  $('#fRot').hidden=!isItem; $('#fDiag').hidden=!isItem; $('#fMir').hidden=!isItem;
+  $('#itemStyleWrap').hidden=!isItem; $('#wallWrap').hidden=isItem; $('#roomWallColorWrap').hidden=isItem;
+  $('#zWrap').hidden=!isItem; $('#roomWrap').hidden=!isItem; $('#angWrap').hidden=!isItem;
+  $('#zAngRow').hidden=!isItem;
   
   var isOpening=(isItem&&(o.type==='door'||o.type==='arch_door'||o.type==='arch'));
   var isDoorLeaf=(isItem&&(o.type==='door'||o.type==='arch_door'));
@@ -2212,7 +2729,7 @@ function updateNote(){
   if(sel.t==='room'){
     msg='Área interna '+fmt(o.w*o.l/10000)+' m² · volume '+fmt(o.w*o.l*o.h/1000000)+' m³'+(o.wallColor?' · parede interna '+o.wallColor.toUpperCase():'')+'.';
   }else{
-    var f=fp(o),r=roomOf(o);
+    var r=roomOf(o);
     var openings=['door','arch_door','window','arch_window','arch','straight_stairs','spiral_stairs'];
     if(!r&&state.rooms.length&&openings.indexOf(o.type)<0){msg='Fora de cômodo.';warn=true;}
     else if(o.type==='door'||o.type==='arch_door'){
@@ -2235,7 +2752,7 @@ function focusRoom3D(r){
   orb.r=span*1.75/Math.min(1, camera.aspect||1);
   orb.fitted=true;
 }
-function selectObj(t,id){
+function selectObj(t,id,autoOpenTab){
   if(t==='item'&&!state.showItems){state.showItems=true;$('#tgItems').checked=true;}
   sel={t:t,id:id};
   if(t==='room'){
@@ -2246,7 +2763,11 @@ function selectObj(t,id){
       v2.cy=r.y+r.l/2;
     }
   }
-  renderLists(); syncInspector(); reqAll(); save();
+  renderLists(); syncInspector();
+  if(autoOpenTab!==false && state.dockLayout==='tabs' && state.autoTab){
+    switchTab('tab-edit',true);
+  }
+  reqAll(); save();
 }
 
 function addRoom(){
@@ -2263,7 +2784,7 @@ function addRoom(){
   v2.fitted=false; orb.fitted=false; fit3D(); refreshAll();
 }
 function addItem(){
-  var p=ITEM_PRESETS[parseInt($('#itemPreset').value,10)]||ITEM_PRESETS[11];
+  var p=ITEM_PRESETS[parseInt($('#itemPreset').value,10)]||ITEM_PRESETS[0];
   var customName=$('#itemCustomName').value.trim();
   var iw=Math.max(5,num($('#newItemW').value,p[1]));
   var id=Math.max(5,num($('#newItemD').value,p[2]));
@@ -2293,8 +2814,13 @@ function dupSel(){
 }
 function delSel(){
   var o=selObj(); if(!o) return; checkpoint();
-  var arr=sel.t==='room'?state.rooms:state.items; arr.splice(arr.indexOf(o),1);
-  sel=null; refreshAll();
+  var wasItem=(sel.t==='item');
+  var arr=wasItem?state.items:state.rooms; arr.splice(arr.indexOf(o),1);
+  sel=null;
+  if(state.dockLayout==='tabs'){
+    switchTab(wasItem?'tab-items':'tab-rooms',false);
+  }
+  refreshAll();
 }
 function setItemAngle(o,deg){
   var oldF=fp(o);
@@ -2331,9 +2857,25 @@ function confirmBtn(btn,label,fn){
     clearTimeout(t);armed=false;btn.textContent=label;fn();
   });
 }
+function populateItemPresetSelect(query){
+  var q=(query||'').trim().toLowerCase();
+  var filtered=ITEM_PRESETS.map(function(p,i){return {p:p,i:i};}).filter(function(entry){
+    return !q || entry.p[0].toLowerCase().indexOf(q)>=0 || (entry.p[7]||'').toLowerCase().indexOf(q)>=0;
+  });
+  var selEl=$('#itemPreset');
+  if(!filtered.length){
+    selEl.innerHTML='<option value="0">Nenhum item encontrado</option>';
+    return;
+  }
+  selEl.innerHTML=filtered.map(function(e){
+    return '<option value="'+e.i+'">'+e.p[0]+' ('+e.p[1]+'×'+e.p[2]+'×'+e.p[3]+')</option>';
+  }).join('');
+  var firstP=filtered[0].p;
+  $('#newItemW').value=firstP[1]; $('#newItemD').value=firstP[2]; $('#newItemH').value=firstP[3];
+}
 function fillSelects(){
   $('#roomPreset').innerHTML=ROOM_PRESETS.map(function(p,i){return '<option value="'+i+'">'+p[0]+' ('+p[1]+'×'+p[2]+')</option>';}).join('');
-  $('#itemPreset').innerHTML=ITEM_PRESETS.map(function(p,i){return '<option value="'+i+'">'+p[0]+' ('+p[1]+'×'+p[2]+'×'+p[3]+')</option>';}).join('');
+  populateItemPresetSelect('');
   $('#roomPreset').addEventListener('change',function(e){
     var p=ROOM_PRESETS[parseInt(e.target.value,10)];
     if(p){ $('#newRoomW').value=p[1]; $('#newRoomL').value=p[2]; }
@@ -2341,6 +2883,9 @@ function fillSelects(){
   $('#itemPreset').addEventListener('change',function(e){
     var p=ITEM_PRESETS[parseInt(e.target.value,10)];
     if(p){ $('#newItemW').value=p[1]; $('#newItemD').value=p[2]; $('#newItemH').value=p[3]; }
+  });
+  $('#itemSearch').addEventListener('input',function(e){
+    populateItemPresetSelect(e.target.value);
   });
 }
 function setView(v){
@@ -2359,243 +2904,207 @@ function syncControls(){
   $('#cutH').value=state.cutH; $('#cutWrap').hidden=state.wallMode!=='half';
   var wop=Math.round((state.wallOp!=null?state.wallOp:0.14)*100);
   $('#wallOp').value=wop; $('#wallOpVal').textContent=wop+'%';
-  $('#wallOpWrap').hidden=state.wallMode==='none';
+  $('#wallOpWrap').hidden=(state.wallMode==='none');
   if($('#tgCeiling')) $('#tgCeiling').checked=!!state.showCeiling;
+  if($('#tgAutoTab')) $('#tgAutoTab').checked=!!state.autoTab;
+  setDockLayout(state.dockLayout||'tabs');
+  setDock(state.dock); setView(state.view);
 }
 
 function wire(){
-  $('#roomList').addEventListener('change',function(e){
-    var chk=e.target.closest('.vis-chk');
-    if(!chk) return;
-    var rid=chk.getAttribute('data-vis-id');
-    var r=state.rooms.filter(function(x){return x.id===rid;})[0];
-    if(!r) return;
-    r.visible=chk.checked;
-    if(r.visible) focusRoom3D(r);
-    else if(visibleRooms().length===1) focusRoom3D(visibleRooms()[0]);
-    v2.fitted=false;
-    renderLists(); reqAll(); save();
-  });
-  $('#showAllRooms').addEventListener('click',function(){
-    state.rooms.forEach(function(r){r.visible=true;});
-    v2.fitted=false; orb.fitted=false; fit3D(); renderLists(); reqAll(); save();
-  });
-  $('#roomList').addEventListener('click',function(e){
-    if(e.target.closest('.vis-chk')) return;
-    var b=e.target.closest('[data-t]'); if(b) selectObj(b.dataset.t,b.dataset.id);
-  });
-  $('#itemList').addEventListener('click',function(e){
-    if(e.target.closest('#clearRoomFilter')){
-      sel=null; renderLists(); syncInspector(); reqAll(); return;
-    }
-    var b=e.target.closest('[data-t]'); if(b) selectObj(b.dataset.t,b.dataset.id);
-  });
-  $('#addRoom').addEventListener('click',addRoom);
-  $('#addItem').addEventListener('click',addItem);
-  $('#fDup').addEventListener('click',dupSel);
-  $('#fDel').addEventListener('click',delSel);
-  $('#fRot').addEventListener('click',rotSel);
-  $('#fDiag').addEventListener('click',diagSel);
-  $('#fMir').addEventListener('click',mirrorSel);
-  $('#fOp').addEventListener('input',function(e){
-    var o=selObj(); if(!o||sel.t!=='item') return;
-    o.op=clamp(parseInt(e.target.value,10)/100,0.1,1);
-    $('#opVal').textContent=Math.round(o.op*100)+'%';
-    reqAll(); save();
-  });
-  $('#fAngRange').addEventListener('input',function(e){
-    var o=selObj(); if(!o||sel.t!=='item') return;
-    setItemAngle(o, parseFloat(e.target.value)||0);
-    syncInspector(); reqAll(); save();
-  });
-  $('#fAng').addEventListener('input',function(e){
-    var o=selObj(); if(!o||sel.t!=='item') return;
-    var v=parseFloat(e.target.value); if(!isFinite(v)) return;
-    setItemAngle(o, v);
-    syncInspector(); reqAll(); save();
-  });
-  $('#fAngMinus').addEventListener('click',function(){
-    var o=selObj(); if(!o||sel.t!=='item') return; checkpoint();
-    setItemAngle(o, itemAngle(o)-5);
-    syncInspector(); reqAll(); save();
-  });
-  $('#fAngPlus').addEventListener('click',function(){
-    var o=selObj(); if(!o||sel.t!=='item') return; checkpoint();
-    setItemAngle(o, itemAngle(o)+5);
-    syncInspector(); reqAll(); save();
-  });
-  $('#fRoom').addEventListener('change',function(e){
-    var o=selObj(); if(!o||sel.t!=='item') return;
-    var r=state.rooms.filter(function(x){return x.id===e.target.value;})[0]; if(!r) return;
-    checkpoint();
-    var f=fp(o),px=Math.max(r.x,Math.min(r.x+10,r.x+r.w-f.w)),py=Math.max(r.y,Math.min(r.y+10,r.y+r.l-f.d));
-    o.x=px;o.y=py; refreshAll();
-  });
-  
-  $('#fDoorSide').addEventListener('change',function(e){var o=selObj(); if(!o) return; checkpoint(); o.doorSide=e.target.value; reqAll(); save();});
-  $('#fDoorFlip').addEventListener('change',function(e){var o=selObj(); if(!o) return; checkpoint(); o.doorFlip=e.target.value; reqAll(); save();});
-  $('#fDoorOpen').addEventListener('change',function(e){var o=selObj(); if(!o) return; checkpoint(); o.doorOpen=(e.target.value==='open')?'open':'closed'; updateNote(); reqAll(); save();});
+  fillSelects();
 
+  // Tab bar buttons
+  document.querySelectorAll('.tab-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      switchTab(btn.getAttribute('data-tab'),false);
+    });
+  });
+  $('#lyTabs').addEventListener('click',function(){setDockLayout('tabs');});
+  $('#lySplit').addEventListener('click',function(){setDockLayout('split');});
+  $('#tgAutoTab').addEventListener('change',function(e){state.autoTab=e.target.checked;save();});
+
+  $('#addRoom').addEventListener('click',addRoom); $('#addItem').addEventListener('click',addItem);
+  $('#fRot').addEventListener('click',rotSel); $('#fDiag').addEventListener('click',diagSel); $('#fMir').addEventListener('click',mirrorSel);
+  $('#fDup').addEventListener('click',dupSel); $('#fDel').addEventListener('click',delSel);
   $('#bUndo').addEventListener('click',undo);
-  $('#dBottom').addEventListener('click',function(){setDock('bottom');});
-  $('#dTop').addEventListener('click',function(){setDock('top');});
   $('#v2d').addEventListener('click',function(){setView('2d');});
   $('#v3d').addEventListener('click',function(){setView('3d');});
   $('#vboth').addEventListener('click',function(){setView('both');});
+  $('#dBottom').addEventListener('click',function(){setDock('bottom');});
+  $('#dTop').addEventListener('click',function(){setDock('top');});
   $('#fit2d').addEventListener('click',function(){fit2D();req({d2:true});});
-  $('#fit3d').addEventListener('click',function(){fit3D();});
-  $('#top3d').addEventListener('click',function(){if(fpMode.active)exitRoomFP(false);orb.phi=0.02;orb.theta=0;req({draw:true});});
-  $('#iso3d').addEventListener('click',function(){if(fpMode.active)exitRoomFP(false);orb.phi=0.95;orb.theta=-0.7;req({draw:true});});
-  $('#tgCeiling').addEventListener('change',function(e){state.showCeiling=e.target.checked;req({scene:true});save();});
+  $('#fit3d').addEventListener('click',fit3D);
+  $('#top3d').addEventListener('click',function(){if(fpMode.active)exitRoomFP(false);orb.phi=0.02;req({draw:true});});
+  $('#iso3d').addEventListener('click',function(){if(fpMode.active)exitRoomFP(false);orb.phi=0.95;req({draw:true});});
   $('#enterRoom3d').addEventListener('click',function(){enterRoomFP();});
   $('#exitRoom3d').addEventListener('click',function(){exitRoomFP(true);});
   document.querySelectorAll('[data-fp-move]').forEach(function(btn){
     btn.addEventListener('click',function(){
-      var dir=btn.getAttribute('data-fp-move');
-      if(dir==='fwd') stepFP(1,0);
-      else if(dir==='back') stepFP(-1,0);
-      else if(dir==='left') stepFP(0,-1);
-      else if(dir==='right') stepFP(0,1);
+      var m=btn.getAttribute('data-fp-move');
+      if(m==='fwd') stepFP(1,0);
+      else if(m==='back') stepFP(-1,0);
+      else if(m==='left') stepFP(0,-1);
+      else if(m==='right') stepFP(0,1);
     });
   });
-  $('#tgItems').addEventListener('change',function(e){
-    state.showItems=e.target.checked;
-    if(!state.showItems&&sel&&sel.t==='item'){sel=null;renderLists();syncInspector();}
-    reqAll(); save();
-  });
-  $('#tgEdge').addEventListener('change',function(e){state.edgeSnap=e.target.checked;save();});
+  $('#tgItems').addEventListener('change',function(e){state.showItems=e.target.checked;reqAll();save();});
   $('#snap').addEventListener('change',function(e){state.snap=parseInt(e.target.value,10);save();});
-  $('#wallMode').addEventListener('change',function(e){
-    state.wallMode=e.target.value;
-    $('#cutWrap').hidden=state.wallMode!=='half';
-    $('#wallOpWrap').hidden=state.wallMode==='none';
-    if(state.wallMode==='half'&&state.wallOp<0.3){state.wallOp=0.55;}
-    else if(state.wallMode==='trans'&&state.wallOp>0.4){state.wallOp=0.14;}
-    syncControls(); req({scene:true}); save();
+  $('#tgEdge').addEventListener('change',function(e){state.edgeSnap=e.target.checked;save();});
+  $('#wallMode').addEventListener('change',function(e){state.wallMode=e.target.value;$('#cutWrap').hidden=state.wallMode!=='half';$('#wallOpWrap').hidden=(state.wallMode==='none');req({scene:true});save();});
+  $('#cutH').addEventListener('input',function(e){var v=parseFloat(e.target.value);if(v>=10){state.cutH=v;req({scene:true});save();}});
+  $('#wallOp').addEventListener('input',function(e){var v=parseInt(e.target.value,10);if(isFinite(v)){state.wallOp=clamp(v,5,100)/100;$('#wallOpVal').textContent=v+'%';req({scene:true});save();}});
+  $('#wallColor').addEventListener('input',function(e){state.wallColor=e.target.value;req({scene:true});save();});
+  $('#wallAuto').addEventListener('click',function(){state.wallColor=null;req({scene:true});save();});
+  $('#tgCeiling').addEventListener('change',function(e){state.showCeiling=e.target.checked;req({scene:true});save();});
+
+  $('#showAllRooms').addEventListener('click',function(){
+    checkpoint();
+    state.rooms.forEach(function(r){r.visible=true;});
+    refreshAll();
   });
-  $('#wallOp').addEventListener('input',function(e){
-    var v=clamp(parseInt(e.target.value,10)/100,0.05,1);
-    state.wallOp=v; $('#wallOpVal').textContent=Math.round(v*100)+'%';
-    req({scene:true}); save();
+  $('#roomList').addEventListener('change',function(e){
+    var chk=e.target.closest?e.target.closest('.vis-chk'):null;
+    if(!chk) return;
+    var rid=chk.getAttribute('data-vis-id');
+    var r=state.rooms.filter(function(x){return x.id===rid;})[0];
+    if(!r) return;
+    checkpoint();
+    r.visible=chk.checked;
+    if(!r.visible && sel && ((sel.t==='room'&&sel.id===r.id) || (sel.t==='item'&&roomOf(selObj())===r))){
+      sel=null;
+    }
+    refreshAll();
   });
-  $('#cutH').addEventListener('input',function(e){var v=parseFloat(e.target.value); if(!isFinite(v)||v<10) return; state.cutH=v; req({scene:true}); save();});
-  [['#wN','n'],['#wS','s'],['#wW','w'],['#wE','e']].forEach(function(p){
-    $(p[0]).addEventListener('input',function(e){
-      var o=selObj(),v=parseFloat(e.target.value);
-      if(!o||sel.t!=='room'||!isFinite(v)||v<0) return;
-      o.wt[p[1]]=v; updateNote(); reqAll(); save();
-    });
+  $('#roomList').addEventListener('click',function(e){
+    if(e.target.closest&&e.target.closest('.vis-chk')) return;
+    var b=e.target.closest('[data-id]');
+    if(b) selectObj('room',b.getAttribute('data-id'),true);
   });
-  $('#wEq').addEventListener('click',function(){
-    var o=selObj(); if(!o||sel.t!=='room') return;
-    checkpoint(); var v=o.wt.n; o.wt={n:v,s:v,w:v,e:v}; syncInspector(); reqAll(); save();
+  $('#itemList').addEventListener('click',function(e){
+    if(e.target.closest&&e.target.closest('#clearRoomFilter')){
+      sel=null; renderLists(); syncInspector(); reqAll(); save();
+      return;
+    }
+    var b=e.target.closest('[data-id]');
+    if(b) selectObj('item',b.getAttribute('data-id'),true);
   });
+
+  function bindNum(el,fn){
+    el.addEventListener('input',function(){var o=selObj();if(!o) return;var v=parseFloat(el.value);if(!isFinite(v)) return;checkpointSoon();fn(o,v);renderLists();updateNote();reqAll();save();});
+  }
+  $('#fName').addEventListener('input',function(e){var o=selObj();if(!o) return;checkpointSoon();o.name=e.target.value;$('#insType').textContent=sel.t==='item'?o.name:'Cômodo: '+o.name;renderLists();req({d2:true});save();});
+  bindNum($('#fW'),function(o,v){if(v>=1) o.w=v;});
+  bindNum($('#fL'),function(o,v){if(v>=1){if(sel.t==='item') o.d=v; else o.l=v;}});
+  bindNum($('#fH'),function(o,v){if(v>=1) o.h=v;});
+  bindNum($('#fX'),function(o,v){moveObj(o,sel.t,v,o.y);});
+  bindNum($('#fY'),function(o,v){moveObj(o,sel.t,o.x,v);});
+  bindNum($('#fZ'),function(o,v){if(sel.t==='item') o.z=Math.max(0,v);});
+  $('#fRoom').addEventListener('change',function(e){
+    var o=selObj(); if(!o||sel.t!=='item') return;
+    var r=state.rooms.filter(function(x){return x.id===e.target.value;})[0]; if(!r) return;
+    checkpoint(); var f=fp(o); o.x=r.x+Math.max(0,(r.w-f.w)/2); o.y=r.y+Math.max(0,(r.l-f.d)/2); syncPos(); updateNote(); reqAll(); save();
+  });
+  $('#fDoorSide').addEventListener('change',function(e){var o=selObj();if(!o||sel.t!=='item')return;checkpoint();o.doorSide=e.target.value;reqAll();save();});
+  $('#fDoorFlip').addEventListener('change',function(e){var o=selObj();if(!o||sel.t!=='item')return;checkpoint();o.doorFlip=e.target.value;reqAll();save();});
+  $('#fDoorOpen').addEventListener('change',function(e){var o=selObj();if(!o||sel.t!=='item')return;checkpoint();o.doorOpen=e.target.value;updateNote();reqAll();save();});
+
+  $('#fColor').addEventListener('input',function(e){var o=selObj();if(!o||sel.t!=='item') return;checkpointSoon();o.color=e.target.value;$('#colorHint').hidden=cdist(o.color,wallHex())>=60;reqAll();save();});
   $('#fRoomWallColor').addEventListener('input',function(e){
     var o=selObj(); if(!o||sel.t!=='room') return;
-    o.wallColor=e.target.value; syncInspector(); reqAll(); save();
-  });
-  $('#roomWallSwatches').addEventListener('click',function(e){
-    var sw=e.target.closest('.swatch'); if(!sw) return;
-    var o=selObj(); if(!o||sel.t!=='room') return;
-    checkpoint(); o.wallColor=sw.getAttribute('data-col'); syncInspector(); reqAll(); save();
+    checkpointSoon(); o.wallColor=e.target.value;
+    syncInspector(); reqAll(); save();
   });
   $('#fRoomWallReset').addEventListener('click',function(){
     var o=selObj(); if(!o||sel.t!=='room') return;
-    checkpoint(); o.wallColor=null; syncInspector(); reqAll(); save();
+    checkpoint(); o.wallColor=null;
+    syncInspector(); reqAll(); save();
+  });
+  document.querySelectorAll('#roomWallSwatches .swatch').forEach(function(sw){
+    sw.addEventListener('click',function(){
+      var o=selObj(); if(!o||sel.t!=='room') return;
+      checkpoint(); o.wallColor=sw.getAttribute('data-col');
+      syncInspector(); reqAll(); save();
+    });
+  });
+  $('#fOp').addEventListener('input',function(e){var o=selObj();if(!o||sel.t!=='item') return;checkpointSoon();o.op=parseInt(e.target.value,10)/100;$('#opVal').textContent=e.target.value+'%';reqAll();save();});
+  $('#fAngRange').addEventListener('input',function(e){
+    var o=selObj();if(!o||sel.t!=='item') return;
+    checkpointSoon(); var d=parseFloat(e.target.value)||0; setItemAngle(o,d);
+    $('#fAng').value=Math.round(d); $('#angVal').textContent=Math.round(d)+'°'; syncPos(); reqAll(); save();
+  });
+  $('#fAng').addEventListener('input',function(e){
+    var o=selObj();if(!o||sel.t!=='item') return;
+    var d=parseFloat(e.target.value); if(!isFinite(d)) return;
+    checkpointSoon(); setItemAngle(o,d);
+    var norm=Math.round(itemAngle(o)); $('#fAngRange').value=norm; $('#angVal').textContent=norm+'°'; syncPos(); reqAll(); save();
+  });
+  $('#fAngMinus').addEventListener('click',function(){
+    var o=selObj();if(!o||sel.t!=='item') return;
+    checkpoint(); setItemAngle(o,itemAngle(o)-5); syncInspector(); reqAll(); save();
+  });
+  $('#fAngPlus').addEventListener('click',function(){
+    var o=selObj();if(!o||sel.t!=='item') return;
+    checkpoint(); setItemAngle(o,itemAngle(o)+5); syncInspector(); reqAll(); save();
+  });
+  [['#wN','n'],['#wS','s'],['#wW','w'],['#wE','e']].forEach(function(p){
+    bindNum($(p[0]),function(o,v){if(sel.t==='room'&&v>=0) o.wt[p[1]]=v;});
+  });
+  $('#wEq').addEventListener('click',function(){
+    var o=selObj();if(!o||sel.t!=='room') return;checkpoint();
+    var v=Math.max(0,num($('#wN').value,10));o.wt={n:v,s:v,w:v,e:v};syncInspector();reqAll();save();
   });
 
-  $('#insForm').addEventListener('focusin',function(){checkpoint();});
-  $('#insForm').addEventListener('submit',function(e){e.preventDefault();});
-  $('#fName').addEventListener('input',function(e){var o=selObj(); if(!o) return; o.name=e.target.value; renderLists(); reqAll(); save();});
-  function numField(id,keyFn,min){
-    $(id).addEventListener('input',function(e){
-      var o=selObj(),v=parseFloat(e.target.value); if(!o||!isFinite(v)) return;
-      if(min!==null&&v<min) return;
-      var key=keyFn();
-      if(key==='x'||key==='y'){ if(sel.t==='room'){ moveObj(o,'room',key==='x'?v:o.x,key==='y'?v:o.y); } else o[key]=v; }
-      else o[key]=v;
-      renderLists(); updateNote(); reqAll(); save();
-    });
-  }
-  numField('#fW',function(){return 'w';},1);
-  numField('#fL',function(){return sel.t==='item'?'d':'l';},1);
-  numField('#fH',function(){return 'h';},1);
-  numField('#fZ',function(){return 'z';},0);
-  numField('#fX',function(){return 'x';},null);
-  numField('#fY',function(){return 'y';},null);
-  $('#fColor').addEventListener('input',function(e){var o=selObj(); if(!o||sel.t!=='item') return; o.color=e.target.value; updateNote(); reqAll(); save();});
-  $('#wallColor').addEventListener('input',function(e){state.wallColor=e.target.value; $('#wallAuto').hidden=false; if(sel) updateNote(); req({scene:true}); save();});
-  $('#wallAuto').addEventListener('click',function(){state.wallColor=null; if(sel) updateNote(); req({scene:true}); save();});
-
-  confirmBtn($('#bDemo'),'Carregar exemplo',function(){checkpoint();var d=demo();state.rooms=d.rooms;state.items=d.items;sel=null;v2.fitted=false;orb.fitted=false;fit3D();refreshAll();});
-  confirmBtn($('#bClear'),'Recomeçar',function(){checkpoint();state.rooms=[];state.items=[];sel=null;v2.fitted=false;orb.fitted=false;fit3D();refreshAll();});
+  confirmBtn($('#bDemo'),'Carregar exemplo',function(){checkpoint();applyData(demo());sel=null;v2.fitted=false;orb.fitted=false;fit3D();refreshAll();});
+  confirmBtn($('#bClear'),'Recomeçar do zero',function(){checkpoint();state.rooms=[];state.items=[];sel=null;v2.fitted=false;orb.fitted=false;fit3D();refreshAll();});
   $('#bkOut').addEventListener('click',function(){
-    var ta=$('#bk'); ta.value=JSON.stringify({rooms:state.rooms,items:state.items}); ta.focus(); ta.select();
-    try{navigator.clipboard.writeText(ta.value).then(function(){flash($('#bkOut'),'Copiado');},function(){});}catch(x){}
+    var ta=$('#bk');ta.value=JSON.stringify({rooms:state.rooms,items:state.items});ta.focus();ta.select();
+    try{document.execCommand('copy');}catch(e){}
   });
   $('#bkIn').addEventListener('click',function(){
+    var btn=$('#bkIn');
     try{
-      var d=JSON.parse($('#bk').value);
-      if(!d||!Array.isArray(d.rooms)||!Array.isArray(d.items)) throw new Error('x');
-      checkpoint(); applyData(d); sel=null; v2.fitted=false; orb.fitted=false; fit3D(); refreshAll(); flash($('#bkIn'),'Carregado');
-    }catch(x){flash($('#bkIn'),'Texto inválido');}
+      var d=JSON.parse($('#bk').value); if(!d||!Array.isArray(d.rooms)||!Array.isArray(d.items)) throw 0;
+      checkpoint(); applyData(d); sel=null; v2.fitted=false; orb.fitted=false; fit3D(); refreshAll(); flash(btn,'Carregado');
+    }catch(e){flash(btn,'Texto inválido');}
   });
 
   document.addEventListener('keydown',function(e){
-    var tag=((e.target&&e.target.tagName)||'').toLowerCase();
-    if(tag==='input'||tag==='select'||tag==='textarea') return;
-    if((e.ctrlKey||e.metaKey)&&(e.key==='z'||e.key==='Z')){e.preventDefault();undo();return;}
+    var tag=e.target&&e.target.tagName;
+    if(tag==='INPUT'||tag==='SELECT'||tag==='TEXTAREA') return;
     if(fpMode.active){
       if(e.key==='Escape'){e.preventDefault();exitRoomFP(true);return;}
       if(e.key==='w'||e.key==='W'||e.key==='ArrowUp'){e.preventDefault();stepFP(1,0);return;}
       if(e.key==='s'||e.key==='S'||e.key==='ArrowDown'){e.preventDefault();stepFP(-1,0);return;}
-      if(e.key==='a'||e.key==='A'||e.key==='ArrowLeft'){e.preventDefault();stepFP(0,-1);return;}
-      if(e.key==='d'||e.key==='D'||e.key==='ArrowRight'){e.preventDefault();stepFP(0,1);return;}
+      if(e.key==='a'||e.key==='A'){e.preventDefault();stepFP(0,-1);return;}
+      if(e.key==='d'||e.key==='D'){e.preventDefault();stepFP(0,1);return;}
+      if(e.key==='ArrowLeft'){e.preventDefault();fpMode.yaw+=0.08;req({draw:true});return;}
+      if(e.key==='ArrowRight'){e.preventDefault();fpMode.yaw-=0.08;req({draw:true});return;}
     }
+    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();undo();return;}
     var o=selObj(); if(!o) return;
-    var st=e.shiftKey?10:1;
-    
-    if(e.key==='ArrowLeft'||e.key==='ArrowRight'||e.key==='ArrowUp'||e.key==='ArrowDown'){
+    if(e.key==='Delete'||e.key==='Backspace'){e.preventDefault();delSel();}
+    else if((e.key==='r'||e.key==='R')&&sel.t==='item'){e.preventDefault();rotSel();}
+    else if((e.key==='m'||e.key==='M')&&sel.t==='item'){e.preventDefault();mirrorSel();}
+    else if(e.key.indexOf('Arrow')===0){
       e.preventDefault(); checkpointSoon();
-      
-      if(e.shiftKey && (e.key==='ArrowUp'||e.key==='ArrowDown') && sel.t==='item'){
-        var dz=(e.key==='ArrowUp'?5:-5);
-        o.z=Math.max(0,(o.z||0)+dz);
-        syncInspector(); updateNote(); reqAll(); save();
-        return;
-      }
-      
-      var nx=o.x, ny=o.y;
-      if(e.key==='ArrowLeft') nx-=st;
-      if(e.key==='ArrowRight') nx+=st;
-      if(e.key==='ArrowUp') ny-=st;
-      if(e.key==='ArrowDown') ny+=st;
-      
-      if(sel.t==='item'){var rs=slideItem(o,nx,ny,roomOf(o));nx=rs[0];ny=rs[1];}
-      moveObj(o,sel.t,nx,ny); syncPos(); updateNote(); renderLists(); reqAll(); save();
+      var step=e.shiftKey?1:state.snap,dx=e.key==='ArrowLeft'?-step:e.key==='ArrowRight'?step:0,dy=e.key==='ArrowUp'?-step:e.key==='ArrowDown'?step:0;
+      var nx=o.x+dx,ny=o.y+dy;
+      if(sel.t==='item'){var res=slideItem(o,nx,ny,roomOf(o));nx=res[0];ny=res[1];}
+      moveObj(o,sel.t,nx,ny); syncPos(); updateNote(); reqAll(); save();
     }
-    else if(e.key==='r'||e.key==='R'){ rotSel(); }
-    else if(e.key==='m'||e.key==='M'){ mirrorSel(); }
-    else if(e.key==='Delete'||e.key==='Backspace'){ e.preventDefault(); delSel(); }
   });
-
   new ResizeObserver(function(){req({d2:true});}).observe($('#svg'));
-  var mq=window.matchMedia('(prefers-color-scheme: dark)');
-  if(mq.addEventListener) mq.addEventListener('change',function(){req({scene:true});});
-  new MutationObserver(function(){req({scene:true});}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 }
 
-fillSelects();
-if(!loadSaved()){var d0=demo();state.rooms=d0.rooms;state.items=d0.items;if(window.innerWidth<760) state.view='2d';}
-syncControls();
+if(!loadSaved()) applyData(demo());
 init3D();
 wire();
-renderLists(); syncInspector();
-setView(state.view);
-setDock(state.dock);
-fit3D();
+syncControls();
+renderLists();
+syncInspector();
 reqAll();
 })();
 </script>
-
-</body></html>
+</body>
+</html>
