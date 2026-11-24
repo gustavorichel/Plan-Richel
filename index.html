@@ -547,13 +547,20 @@ input[type=range]{padding:0; accent-color:var(--accent); width:100%; background:
           <div class="card-box wallgrp ins-sec-open" id="doorWrap" hidden>
             <span class="gl" id="openingLabel">Configuração da Porta / Abertura</span>
             <div class="grid3">
-              <label class="field">Lado da dobradiça
+              <label class="field" id="winStyleWrap" hidden>Estilo da janela
+                <select id="fWinStyle">
+                  <option value="green_grille">Verde olímpico (4 folhas + grade)</option>
+                  <option value="white_grid">Branca colonial (quadriculada 4×5)</option>
+                  <option value="modern">Lisa moderna</option>
+                </select>
+              </label>
+              <label class="field" id="doorSideWrap">Lado da dobradiça
                 <select id="fDoorSide">
                   <option value="left">Esquerda / Início</option>
                   <option value="right">Direita / Fim</option>
                 </select>
               </label>
-              <label class="field">Sentido de abertura
+              <label class="field" id="doorFlipWrap">Sentido de abertura
                 <select id="fDoorFlip">
                   <option value="in">Para dentro</option>
                   <option value="out">Para fora</option>
@@ -665,13 +672,16 @@ var ITEM_PRESETS=[
   ['Ventilador de coluna',45,45,135,'#2c3338',0,1,'ventilador','left','in'],
   ['Ventilador de teto',110,110,38,'#d8dee2',222,1,'ventilador_teto','left','in'],
   ['Prateleira',100,28,4,'#c9a66b',150,1,'prateleira','left','in'],
-  ['Porta reta',80,15,210,'#b08968',0,1,'door','left','in'],
-  ['Porta com arco superior',80,15,210,'#b08968',0,1,'arch_door','left','in'],
-  ['Abertura em arco (só vão)',90,15,210,'#d4a373',0,1,'arch','left','in'],
-  ['Janela padrão',120,15,120,'#8ecae6',90,0.5,'window','left','in'],
-  ['Janela com arco superior',120,15,120,'#8ecae6',90,0.5,'arch_window','left','in'],
+  ['Porta reta (almofadada 18 quadros)',80,15,210,'#f4f6f7',0,1,'door','left','in'],
+  ['Porta em arco (almofadada 18 quadros)',80,15,210,'#f4f6f7',0,1,'arch_door','left','in'],
+  ['Abertura em arco (só vão)',90,15,210,'#f4f6f7',0,1,'arch','left','in'],
+  ['Janela verde olímpico (arco + 4 folhas + grade)',130,15,125,'#6b7052',90,0.45,'arch_window','left','in','green_grille'],
+  ['Janela verde olímpico reta (4 folhas + grade)',130,15,120,'#6b7052',90,0.45,'window','left','in','green_grille'],
+  ['Janela branca colonial (arco quadriculado)',115,15,130,'#f4f6f7',90,0.45,'arch_window','left','in','white_grid'],
+  ['Janela branca colonial reta (quadriculada)',115,15,120,'#f4f6f7',90,0.45,'window','left','in','white_grid'],
+  ['Janela padrão lisa',120,15,120,'#8ecae6',90,0.5,'window','left','in','modern'],
   ['Escada reta',90,240,260,'#a3b18a',0,1,'straight_stairs','left','in'],
-  ['Escada caracol',120,120,260,'#606c38',0,1,'spiral_stairs','left','in'],
+  ['Escada caracol ferro forjado (arabescos)',135,135,280,'#222528',0,1,'spiral_stairs','left','in'],
   ['Caixa / Módulo',50,50,50,'#a8b5c4',0,1,'box','left','in']
 ];
 
@@ -682,9 +692,9 @@ function demo(){
   uidN=1;
   var q=nid('r'),s=nid('r'),c=nid('r');
   var st={rooms:[
-    {id:q,name:'Quarto',x:0,y:0,w:350,l:300,h:260,wallColor:'#d8c7a8'},
-    {id:s,name:'Sala',x:360,y:0,w:450,l:400,h:260,wt:{n:10,s:10,w:0,e:10},wallColor:null},
-    {id:c,name:'Cozinha',x:0,y:310,w:350,l:250,h:260,wt:{n:0,s:10,w:10,e:10},wallColor:null}
+    {id:q,name:'Quarto',x:0,y:0,w:350,l:300,h:280,wallColor:'#d8c7a8'},
+    {id:s,name:'Sala',x:360,y:0,w:450,l:400,h:280,wt:{n:10,s:10,w:0,e:10},wallColor:null},
+    {id:c,name:'Cozinha',x:0,y:310,w:350,l:250,h:280,wt:{n:0,s:10,w:10,e:10},wallColor:null}
   ],items:[
     {id:nid('m'),name:'Cama de casal',x:20,y:20,w:140,d:190,h:50,rot:0,rotDeg:0,color:'#d8b4a0',type:'cama'},
     {id:nid('m'),name:'Guarda-roupa 2 portas (espelho)',x:130,y:240,w:200,d:60,h:220,rot:0,rotDeg:0,color:'#9e6234',type:'guardaroupa'},
@@ -692,13 +702,15 @@ function demo(){
     {id:nid('m'),name:'Sofá moderno almofadas',x:480,y:35,w:200,d:90,h:85,rot:0,rotDeg:0,color:'#2b7a85',type:'sofa'},
     {id:nid('m'),name:'Mesa redonda compacta',x:705,y:50,w:90,d:90,h:75,rot:0,rotDeg:0,color:'#7c5338',type:'mesa_redonda'},
     {id:nid('m'),name:'Mesa de jantar (vidro)',x:480,y:240,w:160,d:85,h:75,op:0.68,rot:0,rotDeg:0,color:'#9ad1d4',type:'mesa_jantar'},
+    {id:nid('m'),name:'Escada caracol ferro forjado',x:660,y:255,w:135,d:135,h:280,rot:0,rotDeg:0,color:'#222528',type:'spiral_stairs'},
     {id:nid('m'),name:'Geladeira duplex inox',x:20,y:320,w:70,d:70,h:180,rot:0,rotDeg:0,color:'#c6cdd3',type:'geladeira'},
     {id:nid('m'),name:'Fogão inox mesa de vidro',x:100,y:320,w:60,d:60,h:90,rot:0,rotDeg:0,color:'#cdd3d8',type:'fogao'},
     {id:nid('m'),name:'Pia / Gabinete (3 gavetas + 2 portas)',x:170,y:320,w:120,d:60,h:85,rot:0,rotDeg:0,color:'#eef0ef',type:'pia'},
     {id:nid('m'),name:'Armário aéreo maior (basculante + nicho)',x:170,y:320,w:120,d:38,h:75,z:155,rot:0,rotDeg:0,color:'#9c6438',type:'armario_maior'},
-    {id:nid('m'),name:'Porta com arco superior',x:350,y:120,w:80,d:15,h:210,rot:0,rotDeg:0,color:'#b08968',type:'arch_door',doorSide:'left',doorFlip:'in',doorOpen:'closed'},
-    {id:nid('m'),name:'Abertura em arco',x:180,y:310,w:90,d:15,h:210,rot:0,rotDeg:0,color:'#d4a373',type:'arch',doorSide:'left',doorFlip:'in'},
-    {id:nid('m'),name:'Janela com arco superior',x:500,y:0,w:120,d:15,h:120,z:90,rot:0,rotDeg:0,color:'#8ecae6',type:'arch_window',doorSide:'left',doorFlip:'in'}
+    {id:nid('m'),name:'Porta em arco (almofadada)',x:350,y:120,w:80,d:15,h:210,rot:0,rotDeg:0,color:'#f4f6f7',type:'arch_door',doorSide:'left',doorFlip:'in',doorOpen:'closed'},
+    {id:nid('m'),name:'Abertura em arco',x:180,y:310,w:90,d:15,h:210,rot:0,rotDeg:0,color:'#f4f6f7',type:'arch',doorSide:'left',doorFlip:'in'},
+    {id:nid('m'),name:'Janela verde olímpico (arco)',x:450,y:0,w:130,d:15,h:125,z:90,op:0.45,rot:0,rotDeg:0,color:'#6b7052',type:'arch_window',winStyle:'green_grille',doorSide:'left',doorFlip:'in'},
+    {id:nid('m'),name:'Janela branca colonial (arco)',x:620,y:0,w:115,d:15,h:130,z:90,op:0.45,rot:0,rotDeg:0,color:'#f4f6f7',type:'arch_window',winStyle:'white_grid',doorSide:'left',doorFlip:'in'}
   ]};
   st.rooms.forEach(function(r){r.wt=readWt(r.wt);});
   return st;
@@ -750,7 +762,8 @@ function applyData(d){
       mirror:!!i.mirror,
       color:/^#[0-9a-f]{6}$/i.test(i.color||'')?i.color:'#a8b5c4',
       type:i.type||'box', doorSide:i.doorSide||'left', doorFlip:i.doorFlip||'in',
-      doorOpen:(i.doorOpen==='open')?'open':'closed'
+      doorOpen:(i.doorOpen==='open')?'open':'closed',
+      winStyle:i.winStyle||((i.type==='window'||i.type==='arch_window')?'green_grille':'modern')
     });
   });
   rooms.concat(items).forEach(function(o){var m=/(\d+)$/.exec(o.id); if(m) maxId=Math.max(maxId,parseInt(m[1],10));});
@@ -1048,17 +1061,48 @@ function render2D(){
         }
 
         if(isWindow){
-          // Peitoril saliente + folhas de correr duplas + montante central
+          var wStyle=it.winStyle||'green_grille';
+          // Peitoril saliente + folhas e detalhes conforme o estilo da janela
           if(horiz){
-            out.push('<rect x="'+(it.x-2)+'" y="'+(it.y-1.8)+'" width="'+(f.w+4)+'" height="'+(f.d+3.6)+'" fill="none" stroke="var(--wall)" stroke-width="1" vector-effect="non-scaling-stroke" opacity="0.65"/>');
-            out.push('<line x1="'+(it.x+jt)+'" y1="'+(cy-f.d*0.16)+'" x2="'+(cx+1)+'" y2="'+(cy-f.d*0.16)+'" stroke="#ffffff" stroke-width="1.6" vector-effect="non-scaling-stroke"/>');
-            out.push('<line x1="'+(cx-1)+'" y1="'+(cy+f.d*0.16)+'" x2="'+(it.x+f.w-jt)+'" y2="'+(cy+f.d*0.16)+'" stroke="#ffffff" stroke-width="1.6" vector-effect="non-scaling-stroke"/>');
-            out.push('<rect x="'+(cx-1.8)+'" y="'+it.y+'" width="3.6" height="'+f.d+'" fill="var(--wall)" opacity="0.8"/>');
+            out.push('<rect x="'+(it.x-2.5)+'" y="'+(it.y-2.2)+'" width="'+(f.w+5)+'" height="'+(f.d+4.4)+'" fill="none" stroke="var(--wall)" stroke-width="1" vector-effect="non-scaling-stroke" opacity="0.7"/>');
+            if(wStyle==='green_grille'){
+              // 4 folhas (2 fixas laterais + 2 centrais salientes) + grades pontilhadas
+              var qW=(f.w-jt*2)/4;
+              out.push('<rect x="'+(it.x+jt+qW)+'" y="'+(it.y-1)+'" width="'+(qW*2)+'" height="'+(f.d+2)+'" fill="'+it.color+'" fill-opacity="0.35" stroke="var(--wall)" stroke-width="1.2" vector-effect="non-scaling-stroke"/>');
+              out.push('<line x1="'+cx+'" y1="'+(it.y-1)+'" x2="'+cx+'" y2="'+(it.y+f.d+1)+'" stroke="var(--wall)" stroke-width="1.4" vector-effect="non-scaling-stroke"/>');
+              out.push('<line x1="'+(it.x+jt)+'" y1="'+cy+'" x2="'+(it.x+f.w-jt)+'" y2="'+cy+'" stroke="var(--wall)" stroke-width="1" stroke-dasharray="2 2" vector-effect="non-scaling-stroke"/>');
+            } else if(wStyle==='white_grid'){
+              // Quadrícula colonial 4 colunas
+              var colW=(f.w-jt*2)/4;
+              for(var c=1;c<4;c++){
+                var gx=it.x+jt+colW*c;
+                out.push('<line x1="'+gx+'" y1="'+it.y+'" x2="'+gx+'" y2="'+(it.y+f.d)+'" stroke="var(--wall)" stroke-width="1.2" vector-effect="non-scaling-stroke"/>');
+              }
+              out.push('<line x1="'+(it.x+jt)+'" y1="'+cy+'" x2="'+(it.x+f.w-jt)+'" y2="'+cy+'" stroke="var(--wall)" stroke-width="1" vector-effect="non-scaling-stroke"/>');
+            } else {
+              out.push('<line x1="'+(it.x+jt)+'" y1="'+(cy-f.d*0.16)+'" x2="'+(cx+1)+'" y2="'+(cy-f.d*0.16)+'" stroke="#ffffff" stroke-width="1.6" vector-effect="non-scaling-stroke"/>');
+              out.push('<line x1="'+(cx-1)+'" y1="'+(cy+f.d*0.16)+'" x2="'+(it.x+f.w-jt)+'" y2="'+(cy+f.d*0.16)+'" stroke="#ffffff" stroke-width="1.6" vector-effect="non-scaling-stroke"/>');
+              out.push('<rect x="'+(cx-1.8)+'" y="'+it.y+'" width="3.6" height="'+f.d+'" fill="var(--wall)" opacity="0.8"/>');
+            }
           } else {
-            out.push('<rect x="'+(it.x-1.8)+'" y="'+(it.y-2)+'" width="'+(f.w+3.6)+'" height="'+(f.d+4)+'" fill="none" stroke="var(--wall)" stroke-width="1" vector-effect="non-scaling-stroke" opacity="0.65"/>');
-            out.push('<line x1="'+(cx-f.w*0.16)+'" y1="'+(it.y+jt)+'" x2="'+(cx-f.w*0.16)+'" y2="'+(cy+1)+'" stroke="#ffffff" stroke-width="1.6" vector-effect="non-scaling-stroke"/>');
-            out.push('<line x1="'+(cx+f.w*0.16)+'" y1="'+(cy-1)+'" x2="'+(cx+f.w*0.16)+'" y2="'+(it.y+f.d-jt)+'" stroke="#ffffff" stroke-width="1.6" vector-effect="non-scaling-stroke"/>');
-            out.push('<rect x="'+it.x+'" y="'+(cy-1.8)+'" width="'+f.w+'" height="3.6" fill="var(--wall)" opacity="0.8"/>');
+            out.push('<rect x="'+(it.x-2.2)+'" y="'+(it.y-2.5)+'" width="'+(f.w+4.4)+'" height="'+(f.d+5)+'" fill="none" stroke="var(--wall)" stroke-width="1" vector-effect="non-scaling-stroke" opacity="0.7"/>');
+            if(wStyle==='green_grille'){
+              var qD=(f.d-jt*2)/4;
+              out.push('<rect x="'+(it.x-1)+'" y="'+(it.y+jt+qD)+'" width="'+(f.w+2)+'" height="'+(qD*2)+'" fill="'+it.color+'" fill-opacity="0.35" stroke="var(--wall)" stroke-width="1.2" vector-effect="non-scaling-stroke"/>');
+              out.push('<line x1="'+(it.x-1)+'" y1="'+cy+'" x2="'+(it.x+f.w+1)+'" y2="'+cy+'" stroke="var(--wall)" stroke-width="1.4" vector-effect="non-scaling-stroke"/>');
+              out.push('<line x1="'+cx+'" y1="'+(it.y+jt)+'" x2="'+cx+'" y2="'+(it.y+f.d-jt)+'" stroke="var(--wall)" stroke-width="1" stroke-dasharray="2 2" vector-effect="non-scaling-stroke"/>');
+            } else if(wStyle==='white_grid'){
+              var colD=(f.d-jt*2)/4;
+              for(var c2=1;c2<4;c2++){
+                var gy=it.y+jt+colD*c2;
+                out.push('<line x1="'+it.x+'" y1="'+gy+'" x2="'+(it.x+f.w)+'" y2="'+gy+'" stroke="var(--wall)" stroke-width="1.2" vector-effect="non-scaling-stroke"/>');
+              }
+              out.push('<line x1="'+cx+'" y1="'+(it.y+jt)+'" x2="'+cx+'" y2="'+(it.y+f.d-jt)+'" stroke="var(--wall)" stroke-width="1" vector-effect="non-scaling-stroke"/>');
+            } else {
+              out.push('<line x1="'+(cx-f.w*0.16)+'" y1="'+(it.y+jt)+'" x2="'+(cx-f.w*0.16)+'" y2="'+(cy+1)+'" stroke="#ffffff" stroke-width="1.6" vector-effect="non-scaling-stroke"/>');
+              out.push('<line x1="'+(cx+f.w*0.16)+'" y1="'+(cy-1)+'" x2="'+(cx+f.w*0.16)+'" y2="'+(it.y+f.d-jt)+'" stroke="#ffffff" stroke-width="1.6" vector-effect="non-scaling-stroke"/>');
+              out.push('<rect x="'+it.x+'" y="'+(cy-1.8)+'" width="'+f.w+'" height="3.6" fill="var(--wall)" opacity="0.8"/>');
+            }
           }
         } else if(isArch){
           // Linha tracejada dupla indicando arco superior
@@ -1181,13 +1225,15 @@ function render2D(){
           out.push('<path d="'+arrowPath+'" stroke="var(--accent)" stroke-width="2" vector-effect="non-scaling-stroke" fill="none"/>');
         } else {
           var r2=Math.max(4,Math.min(f.w,f.d)/2);
-          out.push('<circle class="'+cls+'" cx="'+cx+'" cy="'+cy+'" r="'+r2+'" fill="'+it.color+'" style="fill-opacity:0.9"/>');
-          out.push('<circle cx="'+cx+'" cy="'+cy+'" r="'+Math.max(2,r2*0.14)+'" fill="var(--wall)"/>');
+          // Tablado base quadrado com borda preta como na imagem enviada
+          out.push('<rect x="'+(cx-r2)+'" y="'+(cy-r2)+'" width="'+(r2*2)+'" height="'+(r2*2)+'" rx="2" fill="var(--room)" stroke="var(--wall)" stroke-width="1.8" vector-effect="non-scaling-stroke"/>');
+          out.push('<circle class="'+cls+'" cx="'+cx+'" cy="'+cy+'" r="'+(r2*0.92)+'" fill="'+it.color+'" style="fill-opacity:0.86"/>');
+          out.push('<circle cx="'+cx+'" cy="'+cy+'" r="'+Math.max(2.5,r2*0.11)+'" fill="var(--wall)"/>');
           var rotOff=(itemAngle(it)*Math.PI/180);
           var dir=it.mirror?-1:1;
-          for(var a=0; a<12; a++){
-            var ang=(a/12)*Math.PI*2*dir+rotOff;
-            out.push('<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+Math.cos(ang)*r2)+'" y2="'+(cy+Math.sin(ang)*r2)+'" stroke="var(--line)" stroke-width="1" vector-effect="non-scaling-stroke"/>');
+          for(var a=0; a<13; a++){
+            var ang=(a/13)*Math.PI*2*dir+rotOff;
+            out.push('<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+Math.cos(ang)*r2*0.92)+'" y2="'+(cy+Math.sin(ang)*r2*0.92)+'" stroke="var(--line)" stroke-width="1" vector-effect="non-scaling-stroke"/>');
           }
           var arcR=r2*0.62;
           var a0=rotOff, a1=rotOff + dir*(Math.PI*1.35);
@@ -1230,12 +1276,15 @@ function render2D(){
         out.push('<g data-t="item" data-id="'+it.id+'"><rect class="'+cls+'" x="'+rx+'" y="'+ry+'" width="'+it.w+'" height="'+it.d+'"'+tf+' fill="'+it.color+'" style="fill-opacity:'+(0.9*(it.op==null?1:it.op)*((it.z||0)>0?0.67:1))+'"/>'+
           '<g clip-path="url(#cp-'+it.id+')">');
         if(kind==='mesa_jantar'){
-          // Bisotê do tampo de vidro e travessas metálicas internas pontilhadas em 2D
-          var bev=Math.min(4, it.w*0.04, it.d*0.06);
-          var insX=Math.min(14, it.w*0.12), insY=Math.min(12, it.d*0.15);
-          out.push('<g'+tf+' opacity="0.55">');
-          out.push('<rect x="'+(rx+bev)+'" y="'+(ry+bev)+'" width="'+Math.max(4,it.w-bev*2)+'" height="'+Math.max(4,it.d-bev*2)+'" fill="none" stroke="#ffffff" stroke-width="1.2" vector-effect="non-scaling-stroke"/>');
-          out.push('<rect x="'+(rx+insX)+'" y="'+(ry+insY)+'" width="'+Math.max(4,it.w-insX*2)+'" height="'+Math.max(4,it.d-insY*2)+'" fill="none" stroke="'+tc+'" stroke-width="1.1" stroke-dasharray="4 3" vector-effect="non-scaling-stroke"/>');
+          // Bisotê duplo do tampo de vidro, travessas metálicas internas e os 4 pés nos cantos em 2D
+          var bev=Math.min(4.5, it.w*0.04, it.d*0.06);
+          var insX=Math.min(16, it.w*0.13), insY=Math.min(13, it.d*0.16);
+          out.push('<g'+tf+' opacity="0.72">');
+          out.push('<rect x="'+(rx+bev)+'" y="'+(ry+bev)+'" width="'+Math.max(4,it.w-bev*2)+'" height="'+Math.max(4,it.d-bev*2)+'" fill="none" stroke="#ffffff" stroke-width="1.4" vector-effect="non-scaling-stroke"/>');
+          out.push('<rect x="'+(rx+insX)+'" y="'+(ry+insY)+'" width="'+Math.max(4,it.w-insX*2)+'" height="'+Math.max(4,it.d-insY*2)+'" fill="none" stroke="'+tc+'" stroke-width="1.2" stroke-dasharray="4 3" vector-effect="non-scaling-stroke"/>');
+          [[rx+insX+2.5,ry+insY+2.5],[rx+it.w-insX-2.5,ry+insY+2.5],[rx+insX+2.5,ry+it.d-insY-2.5],[rx+it.w-insX-2.5,ry+it.d-insY-2.5]].forEach(function(lp){
+            out.push('<circle cx="'+lp[0]+'" cy="'+lp[1]+'" r="2.8" fill="'+tc+'" opacity="0.85"/>');
+          });
           out.push('</g>');
         } else if(kind==='pia'){
           var drwRatio=0.34;
@@ -1486,75 +1535,127 @@ function stepFP(fwd,strafe){
   fpMode.z=nz;
   req({draw:true});
 }
-function disposeObj(o){o.traverse(function(c){if(c.geometry)c.geometry.dispose(); if(c.material){if(Array.isArray(c.material))c.material.forEach(function(m){m.dispose();});else c.material.dispose();}});}
 
 function detectKind(it){
-  var t=(it.type||'').toLowerCase();
-  var nm=(it.name||'').toLowerCase();
-  if(['door','arch_door','arch','window','arch_window','straight_stairs','spiral_stairs','vaso','box_chuveiro','cadeira','tv','prateleira','ar_condicionado','ar_caixa','ventilador','ventilador_teto','pia_banheiro','tapete','mesa_centro','mesa_jantar','mesa_redonda','escrivaninha','armario_maior','armario_menor'].indexOf(t)>=0) return t;
-  if(t==='mesa'){
-    if(nm.indexOf('redonda')>=0||nm.indexOf('circular')>=0) return 'mesa_redonda';
-    if(nm.indexOf('escrivaninha')>=0||nm.indexOf('escritório')>=0||nm.indexOf('escritorio')>=0) return 'escrivaninha';
-    return 'mesa_jantar';
-  }
-  if(nm.indexOf('mesa')>=0){
-    if(nm.indexOf('redonda')>=0||nm.indexOf('circular')>=0) return 'mesa_redonda';
-    if(nm.indexOf('centro')>=0||nm.indexOf('mesinha')>=0) return 'mesa_centro';
-    if(nm.indexOf('escrivaninha')>=0) return 'escrivaninha';
-    return 'mesa_jantar';
-  }
-  if(nm.indexOf('escrivaninha')>=0) return 'escrivaninha';
-  if(t==='armario'){
-    if(nm.indexOf('menor')>=0||nm.indexOf('2 portas')>=0) return 'armario_menor';
-    return 'armario_maior';
-  }
-  if(nm.indexOf('armário')>=0||nm.indexOf('armario')>=0){
-    if(nm.indexOf('menor')>=0||nm.indexOf('2 portas')>=0) return 'armario_menor';
-    if(nm.indexOf('aéreo')>=0||nm.indexOf('aereo')>=0||nm.indexOf('maior')>=0||nm.indexOf('nicho')>=0||nm.indexOf('basculante')>=0) return 'armario_maior';
-  }
-  if(nm.indexOf('ventilador de teto')>=0||nm.indexOf('teto')>=0&&nm.indexOf('ventilador')>=0) return 'ventilador_teto';
-  if(nm.indexOf('ventilador')>=0||nm.indexOf('circulador')>=0) return 'ventilador';
-  if((nm.indexOf('ar-condicionado')>=0||nm.indexOf('ar condicionado')>=0)&&(nm.indexOf('caixa')>=0||nm.indexOf('janela')>=0)) return 'ar_caixa';
-  if(nm.indexOf('tapete')>=0||nm.indexOf('passadeira')>=0) return 'tapete';
-  if(nm.indexOf('ar-condicionado')>=0||nm.indexOf('ar condicionado')>=0||nm.indexOf('split')>=0) return 'ar_condicionado';
-  if(nm.indexOf('banheiro')>=0&&(nm.indexOf('pia')>=0||nm.indexOf('balcão')>=0||nm.indexOf('balcao')>=0||nm.indexOf('espelho')>=0)) return 'pia_banheiro';
-  if(t==='bebedouro'||nm.indexOf('bebedouro')>=0||nm.indexOf('garrafão')>=0||nm.indexOf('garrafao')>=0||nm.indexOf('purificador')>=0) return 'bebedouro';
-  if(nm.indexOf('vaso')>=0||nm.indexOf('privada')>=0||nm.indexOf('sanitário')>=0||nm.indexOf('sanitario')>=0||nm.indexOf('bacia')>=0) return 'vaso';
-  if(nm.indexOf('box')>=0||nm.indexOf('chuveiro')>=0||nm.indexOf('ducha')>=0) return 'box_chuveiro';
-  if(nm.indexOf('cadeira')>=0||nm.indexOf('banqueta')>=0) return 'cadeira';
-  if(nm==='tv'||nm.indexOf('tv ')===0||nm.indexOf(' tv')>=0||nm.indexOf('televis')>=0||nm.indexOf('monitor')>=0) return 'tv';
-  if(nm.indexOf('prateleira')>=0||nm.indexOf('nicho')>=0) return 'prateleira';
-  if(t==='geladeira'||nm.indexOf('geladeira')>=0||nm.indexOf('refrigerador')>=0||nm.indexOf('freezer')>=0) return 'geladeira';
-  if(t==='fogao'||nm.indexOf('fogão')>=0||nm.indexOf('fogao')>=0||nm.indexOf('cooktop')>=0) return 'fogao';
-  if(t==='pia'||nm.indexOf('pia')>=0||nm.indexOf('bancada')>=0||nm.indexOf('lavatório')>=0) return 'pia';
-  if(t==='maquina'||nm.indexOf('máquina')>=0||nm.indexOf('maquina')>=0||nm.indexOf('lavadora')>=0) return 'maquina';
-  if(t==='cama'||nm.indexOf('cama')>=0||nm.indexOf('beliche')>=0) return 'cama';
-  if(t==='guardaroupa'||nm.indexOf('guarda-roupa')>=0||nm.indexOf('guarda roupa')>=0||nm.indexOf('roupeiro')>=0||nm.indexOf('estante')>=0) return 'guardaroupa';
-  if(t==='sofa'||nm.indexOf('sofá')>=0||nm.indexOf('sofa')>=0||nm.indexOf('poltrona')>=0) return 'sofa';
-  return t||'box';
+  if(it.type && it.type!=='box') return it.type;
+  var n=String(it.name||'').toLowerCase();
+  if(n.indexOf('mesa')>=0 && n.indexOf('redond')>=0) return 'mesa_redonda';
+  if(n.indexOf('mesa')>=0 && n.indexOf('jantar')>=0) return 'mesa_jantar';
+  if(n.indexOf('mesa')>=0 && n.indexOf('centro')>=0) return 'mesa_centro';
+  if(n.indexOf('escrivaninha')>=0 || n.indexOf('mesa')>=0) return 'escrivaninha';
+  if(n.indexOf('cadeira')>=0) return 'cadeira';
+  if(n.indexOf('sof')>=0) return 'sofa';
+  if(n.indexOf('tapete')>=0) return 'tapete';
+  if(n.indexOf('tv')>=0) return 'tv';
+  if(n.indexOf('cama')>=0) return 'cama';
+  if(n.indexOf('guarda')>=0 || n.indexOf('roupeiro')>=0) return 'guardaroupa';
+  if(n.indexOf('geladeira')>=0) return 'geladeira';
+  if(n.indexOf('bebedouro')>=0) return 'bebedouro';
+  if(n.indexOf('fog')>=0) return 'fogao';
+  if(n.indexOf('banheiro')>=0 && n.indexOf('pia')>=0) return 'pia_banheiro';
+  if(n.indexOf('pia')>=0 || n.indexOf('gabinete')>=0) return 'pia';
+  if(n.indexOf('arm')>=0 && n.indexOf('maior')>=0) return 'armario_maior';
+  if(n.indexOf('arm')>=0) return 'armario_menor';
+  if(n.indexOf('m')>=0 && n.indexOf('lavar')>=0) return 'maquina';
+  if(n.indexOf('vaso')>=0) return 'vaso';
+  if(n.indexOf('box')>=0 || n.indexOf('chuveiro')>=0) return 'box_chuveiro';
+  if(n.indexOf('ar-condicionado')>=0 && n.indexOf('caixa')>=0) return 'ar_caixa';
+  if(n.indexOf('ar-condicionado')>=0 || n.indexOf('split')>=0) return 'ar_condicionado';
+  if(n.indexOf('ventilador')>=0 && n.indexOf('teto')>=0) return 'ventilador_teto';
+  if(n.indexOf('ventilador')>=0) return 'ventilador';
+  if(n.indexOf('prateleira')>=0) return 'prateleira';
+  if(n.indexOf('porta')>=0 && n.indexOf('arco')>=0) return 'arch_door';
+  if(n.indexOf('porta')>=0) return 'door';
+  if(n.indexOf('janela')>=0 && n.indexOf('arco')>=0) return 'arch_window';
+  if(n.indexOf('janela')>=0) return 'window';
+  if(n.indexOf('arco')>=0) return 'arch';
+  if(n.indexOf('escada')>=0 && n.indexOf('caracol')>=0) return 'spiral_stairs';
+  if(n.indexOf('escada')>=0) return 'straight_stairs';
+  return it.type||'box';
 }
 
 function build3D(){
-  if(!renderer) return;
-  while(group.children.length){var c=group.children[0];group.remove(c);disposeObj(c);}
-  $('#wallColor').value=wallHex(); $('#wallAuto').hidden=!state.wallColor;
-  var cFloor=new THREE.Color(cssv('--floor3d')),cWall=new THREE.Color(wallHex()),cEdge=new THREE.Color(cssv('--edge3d')),cAcc=new THREE.Color(cssv('--accent'));
-  var cGrid=new THREE.Color(cssv('--grid')),cGrid2=new THREE.Color(cssv('--gridstrong'));
-  var b=bounds(),S=Math.ceil(Math.max(b.w,b.h,600)*2.2/200)*200;
-  var grid=new THREE.GridHelper(S,S/100,cGrid2,cGrid);
-  grid.position.set(Math.round((b.x+b.w/2)/100)*100,-3,Math.round((b.y+b.h/2)/100)*100);
-  group.add(grid);
+  if(!renderer||!group) return;
+  while(group.children.length) group.remove(group.children[0]);
+  var cFloor=new THREE.Color(cssv('--floor3d')||'#e6ebe7');
+  var cWall=new THREE.Color(wallHex());
+  var cEdge=new THREE.Color(cssv('--edge3d')||'#2b3631');
+  var cAcc=new THREE.Color(cssv('--accent')||'#0b7a63');
 
-  function addPart(parent,w,h,d,x,y,z,mat,ec,eo){
+  function addPart(parent,w,h,d,x,y,z,mat,ec,eo,edgeThresh){
     var g=new THREE.BoxGeometry(Math.max(0.4,w),Math.max(0.4,h),Math.max(0.4,d));
     var m=new THREE.Mesh(g,mat);
     m.position.set(x,y,z);
     if(ec){
-      var l=new THREE.LineSegments(new THREE.EdgesGeometry(g),new THREE.LineBasicMaterial({color:ec,transparent:true,opacity:eo==null?0.45:eo}));
+      var l=new THREE.LineSegments(new THREE.EdgesGeometry(g,edgeThresh||1),new THREE.LineBasicMaterial({color:ec,transparent:true,opacity:eo==null?0.45:eo}));
       m.add(l);
     }
     parent.add(m);
     return m;
+  }
+  function addExtruded(parent,shape,depth,x,y,z,mat,ec,eo,curveSegs,edgeThresh){
+    var geo=new THREE.ExtrudeGeometry(shape,{
+      depth:Math.max(0.4,depth),
+      bevelEnabled:false,
+      curveSegments:curveSegs||56,
+      steps:1
+    });
+    geo.translate(0,0,-Math.max(0.4,depth)/2);
+    var m=new THREE.Mesh(geo,mat);
+    m.position.set(x,y,z);
+    if(ec){
+      var l=new THREE.LineSegments(new THREE.EdgesGeometry(geo,edgeThresh||32),new THREE.LineBasicMaterial({color:ec,transparent:true,opacity:eo==null?0.45:eo}));
+      m.add(l);
+    }
+    parent.add(m);
+    return m;
+  }
+  function buildArchRingShape(rxOut,ryOut,rxIn,ryIn,segs){
+    var s=new THREE.Shape();
+    var n=segs||56;
+    s.moveTo(-rxOut,0);
+    for(var i=0;i<=n;i++){
+      var a=Math.PI*(1-i/n);
+      s.lineTo(Math.cos(a)*rxOut,Math.sin(a)*ryOut);
+    }
+    s.lineTo(rxIn,0);
+    for(var j=0;j<=n;j++){
+      var a2=Math.PI*(j/n);
+      s.lineTo(Math.cos(a2)*rxIn,Math.sin(a2)*ryIn);
+    }
+    s.closePath();
+    return s;
+  }
+  function buildArchDiskShape(rx,ry,segs){
+    var s=new THREE.Shape();
+    var n=segs||56;
+    s.moveTo(-rx,0);
+    for(var i=0;i<=n;i++){
+      var a=Math.PI*(1-i/n);
+      s.lineTo(Math.cos(a)*rx,Math.sin(a)*ry);
+    }
+    s.lineTo(rx,0);
+    s.closePath();
+    return s;
+  }
+  function buildArchDoorLeafShape(leafW,bodyH,archRy,hingeDir,segs){
+    // hingeDir: +1 se dobradiça à esquerda (folha vai de 0 a +leafW), -1 se dobradiça à direita (0 a -leafW)
+    var s=new THREE.Shape();
+    var n=segs||56;
+    var x0=hingeDir>0?0:-leafW;
+    var x1=hingeDir>0?leafW:0;
+    var cx=(x0+x1)/2;
+    var rx=leafW/2;
+    s.moveTo(x0,0);
+    s.lineTo(x0,bodyH);
+    for(var i=0;i<=n;i++){
+      var a=Math.PI*(1-i/n);
+      s.lineTo(cx+Math.cos(a)*rx,bodyH+Math.sin(a)*archRy);
+    }
+    s.lineTo(x1,bodyH);
+    s.lineTo(x1,0);
+    s.closePath();
+    return s;
   }
   function box(w,h,d,x,y,z,mat,ec,eo){
     return addPart(group,w,h,d,x,y,z,mat,ec,eo);
@@ -1623,60 +1724,153 @@ function build3D(){
         return;
       }
       if(kind==='spiral_stairs'){
+        // Molde fiel às fotos 1000063717.jpg e 1000063715.jpg:
+        // Base quadrada elevada com borda preta, coluna central preta, degraus metálicos triangulares em leque,
+        // montantes verticais, corrimão helicoidal e arabescos em S/espiral de ferro forjado!
         var cx=it.x+f.w/2, cy=it.y+f.d/2, r=Math.min(f.w,f.d)/2;
         var rotOffset=(itemAngle(it)*Math.PI/180);
-        var dir=it.mirror?-1:1;
-        var spiralGroup=new THREE.Group();
-        var poleGeo=new THREE.CylinderGeometry(4.5, 4.5, it.h, 14);
-        var poleMesh=new THREE.Mesh(poleGeo, mkMat(darkCol));
-        poleMesh.position.set(cx, it.h/2, cy);
-        spiralGroup.add(poleMesh);
-        var stepsC=14;
-        for(var i=0; i<stepsC; i++){
-          var ang=(i/stepsC)*Math.PI*2*dir + rotOffset;
-          var curH=(i/stepsC)*it.h;
-          var stepGeo=new THREE.BoxGeometry(r*0.82, 4.5, 13);
-          var stepMesh=new THREE.Mesh(stepGeo, mkMat(i%2===0?baseCol:lightCol));
-          stepMesh.position.set(cx + Math.cos(ang)*(r*0.42), curH+2.5, cy + Math.sin(ang)*(r*0.42));
-          stepMesh.rotation.y = -ang;
-          stepMesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(stepGeo),new THREE.LineBasicMaterial({color:edgeCol,transparent:true,opacity:0.45})));
-          spiralGroup.add(stepMesh);
+        var spGroup=new THREE.Group();
+        var spDir=it.mirror?-1:1;
+
+        var ironBlack=mkMat(baseCol);
+        var ironDark=mkMat(darkerCol);
+        var platformFloor=mkMat(new THREE.Color(0xd8d3c9));
+
+        // 1. Tablado / base quadrada elevada no piso com borda metálica preta
+        var plinthH=5.5;
+        var baseW=f.w*0.98, baseD=f.d*0.98;
+        addPart(spGroup, baseW, plinthH, baseD, 0, plinthH/2, 0, platformFloor, edgeCol, 0.45);
+        addPart(spGroup, baseW+1.4, 2.2, 2.2, 0, plinthH-0.4, baseD/2, ironBlack, null);
+        addPart(spGroup, baseW+1.4, 2.2, 2.2, 0, plinthH-0.4, -baseD/2, ironBlack, null);
+        addPart(spGroup, 2.2, 2.2, baseD+1.4, baseW/2, plinthH-0.4, 0, ironBlack, null);
+        addPart(spGroup, 2.2, 2.2, baseD+1.4, -baseW/2, plinthH-0.4, 0, ironBlack, null);
+
+        // 2. Coluna central cilíndrica preta até o topo
+        var poleR=Math.max(4.0, r*0.095);
+        var poleG=new THREE.CylinderGeometry(poleR, poleR, it.h, 20);
+        var poleM=new THREE.Mesh(poleG, ironBlack);
+        poleM.position.set(0, it.h/2, 0);
+        spGroup.add(poleM);
+
+        // 3. Degraus em leque trapezoidal/triangular (13 degraus + patamar superior) + balaustrada em ferro forjado
+        var spSteps=13;
+        var usableH=it.h - plinthH;
+        var spStepH=usableH/spSteps;
+        var totalSweep=Math.PI*1.85; // ~333° de giro como na foto
+        var railH=Math.min(92, Math.max(76, usableH*0.33));
+        var railPts=[];
+
+        function buildWedgeStepShape(rIn, rOut, halfAng){
+          var s=new THREE.Shape();
+          var a0=-halfAng, a1=halfAng;
+          s.moveTo(Math.cos(a0)*rIn, Math.sin(a0)*rIn);
+          s.lineTo(Math.cos(a0)*rOut, Math.sin(a0)*rOut);
+          var segs=10;
+          for(var k=1;k<=segs;k++){
+            var ak=a0+(a1-a0)*(k/segs);
+            s.lineTo(Math.cos(ak)*rOut, Math.sin(ak)*rOut);
+          }
+          s.lineTo(Math.cos(a1)*rIn, Math.sin(a1)*rIn);
+          s.closePath();
+          return s;
         }
-        spiralGroup.position.y = (it.z||0);
-        group.add(spiralGroup);
+
+        var stepArcHalf=(totalSweep/spSteps)*0.56;
+        var outerR=r*0.92;
+        var innerR=poleR*0.92;
+
+        for(var sp=0; sp<spSteps; sp++){
+          var ang=rotOffset + spDir*(sp/(spSteps-1))*totalSweep;
+          var treadY=plinthH + spStepH*(sp+1);
+          var isTopLanding=(sp===spSteps-1);
+          var curHalfAng=isTopLanding?(stepArcHalf*1.45):stepArcHalf;
+
+          var stepPivot=new THREE.Group();
+          stepPivot.position.set(0, treadY, 0);
+          stepPivot.rotation.y=-ang;
+
+          // Chapa dobrada do degrau em leque (tampo + espelho frontal + aba traseira)
+          var wedgeShape=buildWedgeStepShape(innerR, outerR, curHalfAng);
+          var wedgeGeo=new THREE.ExtrudeGeometry(wedgeShape,{depth:2.6,bevelEnabled:false,curveSegments:12});
+          wedgeGeo.rotateX(Math.PI/2);
+          var wedgeMesh=new THREE.Mesh(wedgeGeo, ironBlack);
+          wedgeMesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(wedgeGeo, 25),new THREE.LineBasicMaterial({color:edgeCol,transparent:true,opacity:0.45})));
+          stepPivot.add(wedgeMesh);
+
+          // Espelho / aba metálica sob a borda do degrau (como nas fotos)
+          var lipAngle=spDir*curHalfAng*0.85;
+          var lipLen=outerR-innerR;
+          var lipMidR=(innerR+outerR)/2;
+          var lip=addPart(stepPivot, lipLen, 4.2, 1.4, Math.cos(lipAngle)*lipMidR, -2.1, Math.sin(lipAngle)*lipMidR, ironDark, null);
+          lip.rotation.y=-lipAngle;
+
+          // Montante vertical na borda externa do degrau até o corrimão
+          var postR=outerR-1.8;
+          var postH=(sp===0)?(railH+treadY-plinthH):railH;
+          var postCenterY=(sp===0)?(railH/2 - (treadY-plinthH)/2):(railH/2);
+          addPart(stepPivot, 1.8, postH, 1.8, postR, postCenterY, 0, ironBlack, null);
+
+          // Arabescos circulares / volutas em ferro forjado entre os montantes (fiel às fotos!)
+          var scrollZ=spDir*(outerR*0.14);
+          var scrollY1=railH*0.64;
+          var scrollY2=railH*0.30;
+          var ringGeo1=new THREE.TorusGeometry(Math.min(7.5, outerR*0.115), 0.75, 8, 22);
+          var ringM1=new THREE.Mesh(ringGeo1, ironBlack);
+          ringM1.position.set(postR, scrollY1, scrollZ);
+          stepPivot.add(ringM1);
+
+          var ringGeo2=new THREE.TorusGeometry(Math.min(6.2, outerR*0.095), 0.7, 8, 20);
+          var ringM2=new THREE.Mesh(ringGeo2, ironBlack);
+          ringM2.position.set(postR, scrollY2, -scrollZ*0.65);
+          stepPivot.add(ringM2);
+
+          // Barra horizontal intermediária e barra inferior da grade
+          var spanChord=Math.max(12, outerR*(totalSweep/spSteps)*1.08);
+          addPart(stepPivot, 1.4, 1.4, spanChord, postR, railH*0.48, spDir*spanChord*0.35, ironBlack, null);
+          addPart(stepPivot, 1.4, 1.4, spanChord, postR, railH*0.14, spDir*spanChord*0.35, ironBlack, null);
+
+          spGroup.add(stepPivot);
+
+          // Ponto para o tubo contínuo do corrimão helicoidal
+          railPts.push(new THREE.Vector3(Math.cos(ang)*postR, treadY+railH, Math.sin(ang)*postR));
+        }
+
+        // Corrimão helicoidal contínuo acompanhando toda a espiral
+        if(railPts.length>=2){
+          var railCurve=new THREE.CatmullRomCurve3(railPts);
+          var railTubeGeo=new THREE.TubeGeometry(railCurve, 64, 1.9, 10, false);
+          var railTubeMesh=new THREE.Mesh(railTubeGeo, ironBlack);
+          spGroup.add(railTubeMesh);
+        }
+
+        spGroup.position.set(cx, it.z||0, cy);
+        group.add(spGroup);
         return;
       }
-
-      /* ABERTURA EM ARCO DETALHADA (guarnições nas duas faces e intradorso curvo) */
+      /* ABERTURA EM ARCO DETALHADA (geometria vetorial curva contínua de 56 segmentos) */
       if(kind==='arch'){
         var jambW=Math.min(5.5, it.w*0.09);
-        var archH=Math.min(it.w*0.36, it.h*0.24);
+        var archH=Math.min(it.w*0.42, it.h*0.28);
         var legH=Math.max(10, it.h-archH);
         var trimOver=1.6, trimW=4.2;
         var ig=new THREE.Group();
-        // Batentes internos
+        // Pilares / batentes laterais internos
         addPart(ig, jambW, legH, it.d, -it.w/2+jambW/2, legH/2, 0, mkMat(baseCol), edgeCol, edgeOp);
         addPart(ig, jambW, legH, it.d, it.w/2-jambW/2, legH/2, 0, mkMat(baseCol), edgeCol, edgeOp);
-        // Guarnições verticais salientes nas duas faces da parede
+        // Arco superior contínuo e perfeitamente liso (batente curvo)
+        var jambArchShape=buildArchRingShape(it.w/2, archH, Math.max(2, it.w/2-jambW), Math.max(1, archH-jambW*0.92), 60);
+        addExtruded(ig, jambArchShape, it.d, 0, legH, 0, mkMat(lightCol), edgeCol, edgeOp, 60, 32);
+        // Guarnições / alisares laterais e arco moldurado liso nas duas faces da parede
+        var trimRxOut=it.w/2+0.6;
+        var trimRxIn=Math.max(2, it.w/2+0.6-trimW);
+        var trimRyOut=archH+0.6;
+        var trimRyIn=Math.max(1, archH+0.6-trimW*0.92);
+        var trimArchShape=buildArchRingShape(trimRxOut, trimRyOut, trimRxIn, trimRyIn, 60);
         [-it.d/2-trimOver/2, it.d/2+trimOver/2].forEach(function(fz){
-          addPart(ig, trimW, legH, trimOver, -it.w/2+trimW/2-0.5, legH/2, fz, mkMat(lightCol), edgeCol, 0.45);
-          addPart(ig, trimW, legH, trimOver, it.w/2-trimW/2+0.5, legH/2, fz, mkMat(lightCol), edgeCol, 0.45);
+          addPart(ig, trimW, legH, trimOver, -trimRxOut+trimW/2, legH/2, fz, mkMat(baseCol), edgeCol, 0.42);
+          addPart(ig, trimW, legH, trimOver, trimRxOut-trimW/2, legH/2, fz, mkMat(baseCol), edgeCol, 0.42);
+          addExtruded(ig, trimArchShape, trimOver, 0, legH, fz, mkMat(baseCol), edgeCol, 0.42, 60, 32);
         });
-        // Segmentos suaves do arco superior + guarnição curva
-        var segs=13;
-        for(var k=0;k<segs;k++){
-          var tm=(k+0.5)/segs;
-          var xOff=(tm-0.5)*(it.w-jambW*0.7);
-          var yArch=legH + Math.sin(tm*Math.PI)*archH*0.82;
-          var segW=(it.w/segs)*1.16;
-          var angZ=-Math.cos(tm*Math.PI)*0.48;
-          var sp=addPart(ig, segW, jambW*0.95, it.d, xOff, yArch, 0, mkMat(lightCol), edgeCol, edgeOp);
-          sp.rotation.z=angZ;
-          [-it.d/2-trimOver/2, it.d/2+trimOver/2].forEach(function(fz){
-            var tr=addPart(ig, segW*1.04, trimW*0.9, trimOver, xOff, yArch, fz, mkMat(baseCol), null);
-            tr.rotation.z=angZ;
-          });
-        }
         ig.rotation.y = -(itemAngle(it)*Math.PI/180);
         ig.position.set(it.x+f.w/2, it.z||0, it.y+f.d/2);
         group.add(ig);
@@ -1686,138 +1880,329 @@ function build3D(){
       /* PORTAS E JANELAS COM ALTA RIQUEZA DE DETALHES */
       if(kind==='door'||kind==='arch_door'||kind==='window'||kind==='arch_window'){
         var ig=new THREE.Group();
-        var frameT=Math.min(5, it.w*0.075);
-        var trimOver=1.6, trimW=4.5;
+        var frameT=Math.min(5.2, it.w*0.075);
+        var trimOver=1.8, trimW=4.8;
         var isWindow=(kind==='window'||kind==='arch_window');
         var hasArch=(kind==='arch_door'||kind==='arch_window');
-        var archH=hasArch?Math.min(it.w*0.32, it.h*0.22):0;
+        var archH=hasArch?Math.min(it.w*0.40, it.h*0.26):0;
         var bodyH=Math.max(10, it.h-archH);
 
-        // Batente principal (ombreiras esquerda e direita)
+        // Batente principal com rebaixo interno (esquadria realista)
         addPart(ig, frameT, bodyH, it.d, -it.w/2+frameT/2, bodyH/2, 0, mkMat(darkCol), edgeCol, edgeOp);
         addPart(ig, frameT, bodyH, it.d, it.w/2-frameT/2, bodyH/2, 0, mkMat(darkCol), edgeCol, edgeOp);
-        // Alisares / guarnições verticais em relevo nas duas faces da parede
+        // Batente / encosto central do rebaixo da folha
+        addPart(ig, 1.4, bodyH-frameT*0.5, 2.2, -it.w/2+frameT+0.5, bodyH/2, 0, mkMat(darkerCol), edgeCol, 0.35);
+        addPart(ig, 1.4, bodyH-frameT*0.5, 2.2, it.w/2-frameT-0.5, bodyH/2, 0, mkMat(darkerCol), edgeCol, 0.35);
+
+        // Alisares / guarnições verticais escalonadas em relevo nas duas faces da parede
         [-it.d/2-trimOver/2, it.d/2+trimOver/2].forEach(function(fz){
-          addPart(ig, trimW, bodyH, trimOver, -it.w/2+trimW/2-0.6, bodyH/2, fz, mkMat(baseCol), edgeCol, 0.42);
-          addPart(ig, trimW, bodyH, trimOver, it.w/2-trimW/2+0.6, bodyH/2, fz, mkMat(baseCol), edgeCol, 0.42);
+          var outSign=fz>0?1:-1;
+          addPart(ig, trimW, bodyH, trimOver, -it.w/2+trimW/2-0.7, bodyH/2, fz, mkMat(baseCol), edgeCol, 0.45);
+          addPart(ig, trimW, bodyH, trimOver, it.w/2-trimW/2+0.7, bodyH/2, fz, mkMat(baseCol), edgeCol, 0.45);
+          // Friso decorativo interno do alisar
+          addPart(ig, 1.2, bodyH-2, 0.7, -it.w/2+trimW-1.2, bodyH/2, fz+outSign*trimOver*0.45, mkMat(lightCol), edgeCol, 0.3);
+          addPart(ig, 1.2, bodyH-2, 0.7, it.w/2-trimW+1.2, bodyH/2, fz+outSign*trimOver*0.45, mkMat(lightCol), edgeCol, 0.3);
         });
 
         if(!hasArch){
-          // Verga superior do batente + alisar superior
+          // Verga superior do batente + rebaixo superior + alisar superior
           addPart(ig, it.w, frameT, it.d, 0, it.h-frameT/2, 0, mkMat(darkCol), edgeCol, edgeOp);
+          addPart(ig, it.w-frameT*2, 1.4, 2.2, 0, it.h-frameT-0.5, 0, mkMat(darkerCol), edgeCol, 0.35);
           [-it.d/2-trimOver/2, it.d/2+trimOver/2].forEach(function(fz){
-            addPart(ig, it.w+1.2, trimW, trimOver, 0, it.h-trimW/2+0.6, fz, mkMat(baseCol), edgeCol, 0.42);
+            var outSign=fz>0?1:-1;
+            addPart(ig, it.w+1.4, trimW, trimOver, 0, it.h-trimW/2+0.7, fz, mkMat(baseCol), edgeCol, 0.45);
+            addPart(ig, it.w-trimW*1.6, 1.2, 0.7, 0, it.h-trimW+1.2, fz+outSign*trimOver*0.45, mkMat(lightCol), edgeCol, 0.3);
           });
         } else {
-          // Arco superior segmentado suavemente com alisar curvo
-          var segs=13;
-          for(var k=0;k<segs;k++){
-            var tm=(k+0.5)/segs;
-            var xOff=(tm-0.5)*(it.w-frameT*0.6);
-            var yArch=bodyH + Math.sin(tm*Math.PI)*archH*0.8;
-            var segW=(it.w/segs)*1.16;
-            var angZ=-Math.cos(tm*Math.PI)*0.45;
-            var sp=addPart(ig, segW, frameT, it.d, xOff, yArch, 0, mkMat(darkCol), edgeCol, edgeOp);
-            sp.rotation.z=angZ;
-            [-it.d/2-trimOver/2, it.d/2+trimOver/2].forEach(function(fz){
-              var tr=addPart(ig, segW*1.04, trimW*0.9, trimOver, xOff, yArch, fz, mkMat(baseCol), null);
-              tr.rotation.z=angZ;
-            });
-          }
+          // Arco superior vetorial liso contínuo (batente + alisar moldurado curvo de 60 segmentos)
+          var innerRx=Math.max(2, it.w/2-frameT);
+          var innerRy=Math.max(1, archH-frameT*0.92);
+          var frameArchShape=buildArchRingShape(it.w/2, archH, innerRx, innerRy, 60);
+          addExtruded(ig, frameArchShape, it.d, 0, bodyH, 0, mkMat(darkCol), edgeCol, edgeOp, 60, 32);
+
+          var trimRxOut=it.w/2+0.7;
+          var trimRxIn=Math.max(2, trimRxOut-trimW);
+          var trimRyOut=archH+0.7;
+          var trimRyIn=Math.max(1, trimRyOut-trimW*0.92);
+          var trimArchShape=buildArchRingShape(trimRxOut, trimRyOut, trimRxIn, trimRyIn, 60);
+          [-it.d/2-trimOver/2, it.d/2+trimOver/2].forEach(function(fz){
+            addExtruded(ig, trimArchShape, trimOver, 0, bodyH, fz, mkMat(baseCol), edgeCol, 0.45, 60, 32);
+          });
         }
 
         var leafW=Math.max(4, it.w-frameT*2-0.8);
         var leafH=Math.max(4, bodyH-frameT-0.8);
 
         if(isWindow){
-          // Peitoril / soleira saliente na base da janela (projetado para fora dos dois lados)
-          var sillH=Math.min(4.2, frameT*0.9);
-          addPart(ig, it.w+5, sillH, it.d+5.5, 0, sillH/2, 0, mkMat(darkerCol), edgeCol, edgeOp);
+          var wStyle=it.winStyle||'green_grille';
+          // Peitoril / soleira escalonada de mármore com pingadeira nas duas faces da parede
+          var sillH=Math.min(4.4, frameT*0.95);
+          var sillMat=mkMat(new THREE.Color(0xdad7d0));
+          var sillSubMat=mkMat(new THREE.Color(0xbdb9b0));
+          addPart(ig, it.w+7, sillH*0.65, it.d+7.5, 0, sillH*0.68, 0, sillMat, edgeCol, edgeOp);
+          addPart(ig, it.w+5.4, sillH*0.38, it.d+5.6, 0, sillH*0.19, 0, sillSubMat, edgeCol, 0.4);
+          // Trilho / pingadeira inferior da esquadria
+          addPart(ig, leafW+1, 1.6, it.d*0.65, 0, sillH+0.8, 0, mkMat(darkCol), edgeCol, 0.4);
 
-          // Caixilho interno (2 folhas de correr sobrepostas com perfis e pinázios divisores)
-          var sashFrameT=2.4;
-          var sashW=leafW*0.52;
-          var sashH=leafH-sillH;
-          var sashCy=sillH + sashH/2;
-          var glassMat=mkMat(lightCol, Math.min(op, 0.36));
-          var sashMat=mkMat(new THREE.Color(0xeef2f3));
-          var latchMat=mkMat(new THREE.Color(0x9aa3a8));
+          var glassMat=mkMat(new THREE.Color(wStyle==='white_grid'?0x2a353b:0x36463f), Math.min(op, 0.40));
+          var sashMat=mkMat(wStyle==='white_grid'?new THREE.Color(0xf6f8f9):lightCol);
+          var sashDarkMat=mkMat(wStyle==='white_grid'?new THREE.Color(0xd9dfe3):darkCol);
+          var ironMat=mkMat(new THREE.Color(0x252a27));
+          var brassMat=mkMat(new THREE.Color(0xc8b273));
 
-          [-1, 1].forEach(function(side){
-            var sx=side*(leafW/2 - sashW/2);
-            var sz=side*1.3;
-            // Perfis horizontais e verticais de cada folha
-            addPart(ig, sashW, sashFrameT, 2.0, sx, sashCy+sashH/2-sashFrameT/2, sz, sashMat, edgeCol, 0.45);
-            addPart(ig, sashW, sashFrameT, 2.0, sx, sashCy-sashH/2+sashFrameT/2, sz, sashMat, edgeCol, 0.45);
-            addPart(ig, sashFrameT, sashH, 2.0, sx-sashW/2+sashFrameT/2, sashCy, sz, sashMat, edgeCol, 0.45);
-            addPart(ig, sashFrameT, sashH, 2.0, sx+sashW/2-sashFrameT/2, sashCy, sz, sashMat, edgeCol, 0.45);
-            // Vidro translúcido da folha
-            addPart(ig, sashW-sashFrameT*2, sashH-sashFrameT*2, 0.8, sx, sashCy, sz, glassMat, edgeCol, 0.35);
-            // Pinázio / travessa horizontal central no vidro
-            addPart(ig, sashW-sashFrameT*2, 1.4, 1.3, sx, sashCy, sz, sashMat, null);
-          });
+          if(wStyle==='green_grille'){
+            // ESTILO 1: JANELA VERDE OLÍMPICO (4 folhas verticais + baguetes + fecho cremona + grades com arabescos + bandeira radial)
+            var innerH=hasArch?(bodyH-sillH-1.4):(leafH-sillH);
+            var innerCy=sillH + innerH/2;
+            var qW=leafW/4;
+            var sashT=2.4;
 
-          // Fecho / trinco central metálico onde as duas folhas se encontram
-          addPart(ig, 2.2, 7.5, 3.6, 0, sashCy, 0, latchMat, edgeCol, 0.5);
-
-          // Se for janela com arco superior, adiciona bandeira fixa em vidro com raios decorativos
-          if(hasArch && archH>4){
-            var fanH=archH*0.72;
-            addPart(ig, leafW*0.86, fanH*0.68, 0.8, 0, bodyH+fanH*0.32, 0, glassMat, edgeCol, 0.35);
-            [-0.26, 0, 0.26].forEach(function(angR){
-              var spoke=addPart(ig, 1.5, fanH*0.72, 1.8, Math.sin(angR)*leafW*0.24, bodyH+fanH*0.34, 0, sashMat, null);
-              spoke.rotation.z=-angR;
+            // 2 folhas fixas laterais (esquerda e direita) com baguetes internos
+            [-1.5, 1.5].forEach(function(idx){
+              var fx=idx*qW;
+              var fz=-1.0;
+              addPart(ig, qW, sashT, 2.0, fx, innerCy+innerH/2-sashT/2, fz, sashMat, edgeCol, 0.45);
+              addPart(ig, qW, sashT, 2.0, fx, innerCy-innerH/2+sashT/2, fz, sashMat, edgeCol, 0.45);
+              addPart(ig, sashT, innerH, 2.0, fx-qW/2+sashT/2, innerCy, fz, sashMat, edgeCol, 0.45);
+              addPart(ig, sashT, innerH, 2.0, fx+qW/2-sashT/2, innerCy, fz, sashMat, edgeCol, 0.45);
+              // Baguete interno de acabamento do vidro
+              addPart(ig, qW-sashT*2+0.6, 0.9, 2.4, fx, innerCy+innerH/2-sashT, fz, sashDarkMat, null);
+              addPart(ig, qW-sashT*2+0.6, 0.9, 2.4, fx, innerCy-innerH/2+sashT, fz, sashDarkMat, null);
+              addPart(ig, qW-sashT*2, innerH-sashT*2, 0.8, fx, innerCy, fz, glassMat, null);
             });
+
+            // 2 folhas centrais salientes (com perfil mais largo, baguetes e cremona central)
+            [-0.5, 0.5].forEach(function(idx){
+              var cxLeaf=idx*qW;
+              var cz=1.7;
+              var cSashT=2.9;
+              addPart(ig, qW, cSashT, 2.4, cxLeaf, innerCy+innerH/2-cSashT/2, cz, sashMat, edgeCol, 0.5);
+              addPart(ig, qW, cSashT, 2.4, cxLeaf, innerCy-innerH/2+cSashT/2, cz, sashMat, edgeCol, 0.5);
+              addPart(ig, cSashT, innerH, 2.4, cxLeaf-qW/2+cSashT/2, innerCy, cz, sashMat, edgeCol, 0.5);
+              addPart(ig, cSashT, innerH, 2.4, cxLeaf+qW/2-cSashT/2, innerCy, cz, sashMat, edgeCol, 0.5);
+              addPart(ig, qW-cSashT*2, innerH-cSashT*2, 0.8, cxLeaf, innerCy, cz, glassMat, null);
+            });
+            // Cremona / fecho central com haste vertical e maçaneta de giro
+            addPart(ig, 1.0, innerH*0.86, 1.2, 0, innerCy, 2.9, brassMat, null);
+            addPart(ig, 2.2, 9.5, 3.8, 0, innerCy, 1.9, ironMat, edgeCol, 0.45);
+            addPart(ig, 1.4, 6.2, 1.4, 1.8, innerCy-1.5, 3.4, brassMat, null);
+
+            // Grades de proteção externas com travessas horizontais, barras verticais e arabescos/volutas em S
+            addPart(ig, leafW-1, 1.3, 1.3, 0, innerCy+innerH*0.36, -2.7, ironMat, null);
+            addPart(ig, leafW-1, 1.3, 1.3, 0, innerCy-innerH*0.36, -2.7, ironMat, null);
+            [-1.5, -0.5, 0.5, 1.5].forEach(function(colIdx){
+              var gx=colIdx*qW;
+              var gz=-2.7;
+              [-qW*0.22, qW*0.22].forEach(function(bx){
+                addPart(ig, 1.0, innerH-2, 1.0, gx+bx, innerCy, gz, ironMat, null);
+              });
+              // Volutas decorativas em S no centro de cada folha
+              [innerCy+innerH*0.18, innerCy-innerH*0.18].forEach(function(vy){
+                var volG=new THREE.TorusGeometry(Math.min(4.2, qW*0.18), 0.48, 6, 16);
+                var volM=new THREE.Mesh(volG, ironMat);
+                volM.position.set(gx, vy, gz);
+                ig.add(volM);
+              });
+            });
+
+            // Bandeira curva superior radial
+            if(hasArch && archH>4){
+              var fanRx=Math.max(2, it.w/2-frameT-0.3);
+              var fanRy=Math.max(2, archH-frameT*0.92-0.3);
+              addPart(ig, fanRx*2+0.6, 3.0, 3.2, 0, bodyH+0.4, 0, sashMat, edgeCol, 0.45);
+              var fanGlassShape=buildArchDiskShape(fanRx, fanRy, 56);
+              addExtruded(ig, fanGlassShape, 0.9, 0, bodyH+1.2, 0, glassMat, null, 0, 56, 32);
+              var fanRimShape=buildArchRingShape(fanRx, fanRy, Math.max(1, fanRx-2.4), Math.max(1, fanRy-2.4), 56);
+              addExtruded(ig, fanRimShape, 2.4, 0, bodyH+1.2, 0, sashMat, edgeCol, 0.4, 56, 32);
+              var hubG=new THREE.CylinderGeometry(4.2, 4.2, 2.6, 20);
+              var hubM=new THREE.Mesh(hubG, sashMat);
+              hubM.rotation.x=Math.PI/2;
+              hubM.position.set(0, bodyH+2.2, 0);
+              ig.add(hubM);
+              [Math.PI*0.24, Math.PI*0.5, Math.PI*0.76].forEach(function(ang){
+                var ex=Math.cos(ang)*(fanRx-1.2);
+                var ey=Math.sin(ang)*(fanRy-1.2);
+                var len=Math.hypot(ex, ey);
+                var spoke=addPart(ig, 2.1, len, 2.4, ex*0.5, bodyH+1.2+ey*0.5, 0, sashMat, edgeCol, 0.35);
+                spoke.rotation.z=ang-Math.PI/2;
+              });
+            }
+
+          } else if(wStyle==='white_grid'){
+            // ESTILO 2: JANELA BRANCA COLONIAL QUADRICULADA 4×5 COM REQUADRO INTERNO E FECHO CENTRAL
+            var glassCy=sillH + (bodyH-sillH)/2;
+            // Requadro perimetral interno da folha branca
+            addPart(ig, leafW, 2.8, 3.4, 0, sillH+1.4, 0, sashMat, edgeCol, 0.45);
+            if(!hasArch) addPart(ig, leafW, 2.8, 3.4, 0, bodyH-1.4, 0, sashMat, edgeCol, 0.45);
+            addPart(ig, 2.8, bodyH-sillH, 3.4, -leafW/2+1.4, glassCy, 0, sashMat, edgeCol, 0.45);
+            addPart(ig, 2.8, bodyH-sillH, 3.4, leafW/2-1.4, glassCy, 0, sashMat, edgeCol, 0.45);
+
+            // Vidro contínuo atrás da quadrícula branca
+            addPart(ig, leafW-2, bodyH-sillH-2, 0.9, 0, glassCy, 0, glassMat, null);
+            if(hasArch && archH>4){
+              var fRx=Math.max(2, it.w/2-frameT-0.2);
+              var fRy=Math.max(2, archH-frameT*0.92-0.2);
+              var fDisk=buildArchDiskShape(fRx, fRy, 56);
+              addExtruded(ig, fDisk, 0.9, 0, bodyH, 0, glassMat, null, 0, 56, 32);
+              var fRim=buildArchRingShape(fRx, fRy, Math.max(1, fRx-2.6), Math.max(1, fRy-2.6), 56);
+              addExtruded(ig, fRim, 3.4, 0, bodyH, 0, sashMat, edgeCol, 0.42, 56, 32);
+            }
+
+            // Montantes verticais brancos (4 colunas de vidros, com montante central reforçado)
+            var cols=4;
+            var colStep=leafW/cols;
+            for(var c=1; c<cols; c++){
+              var mx=-leafW/2 + c*colStep;
+              var normX=mx/(it.w/2-frameT);
+              var archExtraH=(hasArch && Math.abs(normX)<1)?((archH-frameT)*Math.sqrt(Math.max(0,1-normX*normX))):0;
+              var barH=(bodyH-sillH) + archExtraH;
+              var barThick=(c===2)?3.6:2.6;
+              addPart(ig, barThick, barH, 3.4, mx, sillH+barH/2, 0, sashMat, edgeCol, 0.42);
+            }
+            // Fecho / trinco metálico no montante central
+            addPart(ig, 1.8, 7.5, 4.4, 0, glassCy, 0, ironMat, edgeCol, 0.45);
+
+            // Travessas horizontais brancas (5 linhas de vidros, inclusive dentro do arco)
+            var rows=5;
+            var topRefY=hasArch?(bodyH+archH*0.76):(sillH+leafH-sillH);
+            var rowStep=(topRefY-sillH)/rows;
+            for(var r=1; r<rows; r++){
+              var ry=sillH + r*rowStep;
+              var barW=leafW;
+              if(hasArch && ry>bodyH){
+                var dy=(ry-bodyH)/(archH-frameT);
+                if(dy<0.95) barW=leafW*Math.sqrt(Math.max(0.05, 1-dy*dy));
+              }
+              addPart(ig, barW, 2.6, 3.4, 0, ry, 0, sashMat, edgeCol, 0.42);
+            }
+
+          } else {
+            // ESTILO 3: JANELA MODERNA LISA (2 folhas de correr com puxadores verticais)
+            var sashFrameT=2.6;
+            var sashW=leafW*0.52;
+            var sashH=hasArch?(bodyH-sillH-1.2):(leafH-sillH);
+            var sashCy=sillH + sashH/2;
+            var modGlass=mkMat(lightCol, Math.min(op, 0.36));
+            var modSash=mkMat(new THREE.Color(0xeef2f3));
+            [-1, 1].forEach(function(side){
+              var sx=side*(leafW/2 - sashW/2);
+              var sz=side*1.3;
+              addPart(ig, sashW, sashFrameT, 2.2, sx, sashCy+sashH/2-sashFrameT/2, sz, modSash, edgeCol, 0.45);
+              addPart(ig, sashW, sashFrameT, 2.2, sx, sashCy-sashH/2+sashFrameT/2, sz, modSash, edgeCol, 0.45);
+              addPart(ig, sashFrameT, sashH, 2.2, sx-sashW/2+sashFrameT/2, sashCy, sz, modSash, edgeCol, 0.45);
+              addPart(ig, sashFrameT, sashH, 2.2, sx+sashW/2-sashFrameT/2, sashCy, sz, modSash, edgeCol, 0.45);
+              addPart(ig, sashW-sashFrameT*2, sashH-sashFrameT*2, 0.8, sx, sashCy, sz, modGlass, edgeCol, 0.35);
+              // Puxador embutido na lateral externa de cada folha
+              addPart(ig, 1.4, 12, 3.0, sx+side*(sashW/2-sashFrameT*0.6), sashCy, sz, ironMat, null);
+            });
+            addPart(ig, 2.2, 8.0, 3.8, 0, sashCy, 0, ironMat, edgeCol, 0.5);
+            if(hasArch && archH>4){
+              var fanRx2=Math.max(2, it.w/2-frameT-0.3);
+              var fanRy2=Math.max(2, archH-frameT*0.92-0.3);
+              addPart(ig, fanRx2*2+0.6, 2.8, 3.0, 0, bodyH+0.4, 0, modSash, edgeCol, 0.45);
+              var fanGlassShape2=buildArchDiskShape(fanRx2, fanRy2, 56);
+              addExtruded(ig, fanGlassShape2, 0.9, 0, bodyH+1.2, 0, modGlass, null, 0, 56, 32);
+            }
           }
         } else {
-          // Porta detalhada com almofadas/painéis em relevo, dobradiças metálicas e maçaneta alavanca
+          // PORTA ALMOFADADA DE ALTO PADRÃO (soleira + 3 dobradiças com pino + 18 almofadas chanfradas com filete + fechadura completa)
           var isRight=(it.doorSide==='right');
           var isOut=(it.doorFlip==='out');
           var isOpen=(it.doorOpen==='open');
-          var leafT=Math.max(3.6, it.d*0.34);
+          var leafT=Math.max(4.0, it.d*0.38);
           var hingeX=isRight?(leafW/2):(-leafW/2);
           var hingeZ=isOut?(it.d/2-leafT/2):(-it.d/2+leafT/2);
+
+          // Soleira de mármore / pedra no piso sob o vão da porta
+          addPart(ig, it.w-frameT*1.6, 1.4, it.d+2.2, 0, 0.7, 0, mkMat(new THREE.Color(0xd2cfc8)), edgeCol, 0.35);
+
           var leafPivot=new THREE.Group();
-          leafPivot.position.set(hingeX, 0, hingeZ);
+          leafPivot.position.set(hingeX, 1.4, hingeZ);
           var xDir=isRight?-1:1;
           var leafCx=xDir*(leafW/2);
+          var adjLeafH=Math.max(10, leafH-1.4);
+          var adjBodyH=Math.max(10, bodyH-1.4);
+          var doorArchRy=hasArch?Math.max(2, archH-frameT*0.92-0.6):0;
 
-          // Corpo principal da folha da porta
-          addPart(leafPivot, leafW, leafH, leafT, leafCx, leafH/2, 0, mkMat(baseCol, Math.min(op,0.95)), edgeCol, edgeOp);
+          if(hasArch){
+            var leafArchShape=buildArchDoorLeafShape(leafW, adjBodyH, doorArchRy, xDir, 56);
+            addExtruded(leafPivot, leafArchShape, leafT, 0, 0, 0, mkMat(baseCol, Math.min(op,0.98)), edgeCol, edgeOp, 56, 32);
+          } else {
+            addPart(leafPivot, leafW, adjLeafH, leafT, leafCx, adjLeafH/2, 0, mkMat(baseCol, Math.min(op,0.98)), edgeCol, edgeOp);
+          }
 
-          // 3 Dobradiças cilíndricas metálicas no lado da dobradiça
-          var metalMat=mkMat(new THREE.Color(0xc5cdd2));
-          var darkMetalMat=mkMat(new THREE.Color(0x525a60));
-          [leafH*0.14, leafH*0.5, leafH*0.86].forEach(function(hy){
-            var hg=new THREE.CylinderGeometry(1.1, 1.1, 6.5, 10);
+          // 3 Dobradiças cilíndricas metálicas com abas e pino superior
+          var metalMat=mkMat(new THREE.Color(0xcfd6db));
+          var darkMetalMat=mkMat(new THREE.Color(0x4c545a));
+          var hingeSpanH=hasArch?adjBodyH:adjLeafH;
+          [hingeSpanH*0.14, hingeSpanH*0.5, hingeSpanH*0.86].forEach(function(hy){
+            var hz=isOut?leafT/2+0.5:-leafT/2-0.5;
+            var hg=new THREE.CylinderGeometry(1.15, 1.15, 7.2, 14);
             var hm=new THREE.Mesh(hg, metalMat);
-            hm.position.set(xDir*0.6, hy, isOut?leafT/2+0.4:-leafT/2-0.4);
+            hm.position.set(xDir*0.5, hy, hz);
             leafPivot.add(hm);
+            var capG=new THREE.CylinderGeometry(1.3, 1.3, 1.0, 14);
+            var capM=new THREE.Mesh(capG, darkMetalMat);
+            capM.position.set(xDir*0.5, hy+3.9, hz);
+            leafPivot.add(capM);
           });
 
-          // Almofadas / molduras decorativas em relevo nas duas faces da folha
-          var panelW=leafW*0.68;
-          if(panelW>14 && leafH>90){
-            var topPanH=leafH*0.36, botPanH=leafH*0.34;
-            var topPanY=leafH*0.72, botPanY=leafH*0.26;
-            [-leafT/2-0.35, leafT/2+0.35].forEach(function(pz){
-              addPart(leafPivot, panelW, topPanH, 0.7, leafCx, topPanY, pz, mkMat(lightCol), edgeCol, 0.35);
-              addPart(leafPivot, panelW*0.82, topPanH*0.82, 0.9, leafCx, topPanY, pz, mkMat(darkCol), null);
-              addPart(leafPivot, panelW, botPanH, 0.7, leafCx, botPanY, pz, mkMat(lightCol), edgeCol, 0.35);
-              addPart(leafPivot, panelW*0.82, botPanH*0.82, 0.9, leafCx, botPanY, pz, mkMat(darkCol), null);
+          // 18 Almofadas em relevo (3 colunas × 6 fileiras) com moldura externa + filete interno nas duas faces
+          var nCols=3, nRows=6;
+          var marginX=Math.max(4.5, leafW*0.09);
+          var marginBot=Math.max(8, adjLeafH*0.055);
+          var marginTop=hasArch?Math.max(4, doorArchRy*0.18):Math.max(7, adjLeafH*0.045);
+          var totalSpanH=(hasArch?(adjBodyH+doorArchRy):adjLeafH) - marginBot - marginTop;
+          var gapX=Math.max(2.6, leafW*0.042);
+          var gapY=Math.max(3.0, totalSpanH*0.024);
+          var cellW=(leafW - marginX*2 - gapX*(nCols-1))/nCols;
+          var cellH=(totalSpanH - gapY*(nRows-1))/nRows;
+
+          if(cellW>5 && cellH>8){
+            [-leafT/2-0.45, leafT/2+0.45].forEach(function(pz){
+              var pSign=pz>0?1:-1;
+              for(var rIdx=0; rIdx<nRows; rIdx++){
+                var cyCell=marginBot + cellH/2 + rIdx*(cellH+gapY);
+                for(var cIdx=0; cIdx<nCols; cIdx++){
+                  var relX=-leafW/2 + marginX + cellW/2 + cIdx*(cellW+gapX);
+                  var cxCell=leafCx + relX;
+                  var curCellH=cellH;
+                  var curCy=cyCell;
+
+                  if(hasArch && rIdx===nRows-1){
+                    var normX=Math.abs(relX)/(leafW/2);
+                    var maxArchAtX=adjBodyH + doorArchRy*Math.sqrt(Math.max(0.08, 1-normX*normX)) - 4.2;
+                    var cellBot=cyCell - cellH/2;
+                    curCellH=Math.max(8, maxArchAtX - cellBot);
+                    curCy=cellBot + curCellH/2;
+                  }
+
+                  // Moldura externa chanfrada + miolo elevado + filete central
+                  addPart(leafPivot, cellW, curCellH, 0.85, cxCell, curCy, pz, mkMat(darkCol), edgeCol, 0.42);
+                  addPart(leafPivot, Math.max(2, cellW-2.4), Math.max(3, curCellH-2.4), 1.25, cxCell, curCy, pz+pSign*0.28, mkMat(lightCol), edgeCol, 0.32);
+                  if(cellW>10 && curCellH>12){
+                    addPart(leafPivot, Math.max(2, cellW-5.2), Math.max(3, curCellH-5.2), 1.45, cxCell, curCy, pz+pSign*0.42, mkMat(baseCol), edgeCol, 0.25);
+                  }
+                }
+              }
             });
           }
 
-          // Conjunto de fechadura (espelho vertical + maçaneta tipo alavanca nos 2 lados)
-          var lockX=xDir*(leafW*0.87);
-          var lockY=Math.min(98, leafH*0.47);
+          // Conjunto de fechadura cromada completa (espelho + roseta + miolo + alavanca ergonômica + testa lateral)
+          var lockX=xDir*(leafW*0.90);
+          var lockY=Math.min(101, adjLeafH*0.48);
+          // Testa metálica da fechadura na borda da folha
+          addPart(leafPivot, 0.9, 17, 2.2, xDir*(leafW-0.2), lockY-1.5, 0, metalMat, edgeCol, 0.4);
           [-1, 1].forEach(function(sideZ){
-            var zBase=sideZ*(leafT/2+0.4);
-            // Espelho da fechadura
-            addPart(leafPivot, 3.2, 16, 0.8, lockX, lockY, zBase, metalMat, edgeCol, 0.45);
-            // Pino + alavanca horizontal voltada para o centro da folha
-            addPart(leafPivot, 1.8, 1.8, 3.2, lockX, lockY+3.2, zBase+sideZ*1.6, darkMetalMat, null);
-            addPart(leafPivot, 10.5, 1.6, 1.5, lockX - xDir*4.5, lockY+3.2, zBase+sideZ*3.2, metalMat, edgeCol, 0.4);
+            var zBase=sideZ*(leafT/2+0.65);
+            addPart(leafPivot, 3.2, 16, 0.95, lockX, lockY-1.5, zBase, metalMat, edgeCol, 0.45);
+            addPart(leafPivot, 2.1, 2.4, 2.3, lockX, lockY-5.6, zBase+sideZ*1.1, darkMetalMat, null);
+            var neckG=new THREE.CylinderGeometry(1.1, 1.2, 3.6, 12);
+            var neckM=new THREE.Mesh(neckG, darkMetalMat);
+            neckM.rotation.x=Math.PI/2;
+            neckM.position.set(lockX, lockY+2.6, zBase+sideZ*1.8);
+            leafPivot.add(neckM);
+            addPart(leafPivot, 11.2, 1.7, 1.6, lockX - xDir*4.8, lockY+2.6, zBase+sideZ*3.5, metalMat, edgeCol, 0.42);
           });
 
           if(isOpen){
@@ -1826,11 +2211,11 @@ function build3D(){
             var startA=isRight?Math.PI:0;
             var thetaLen=Math.PI/2;
             var thetaStart=(isRight!==isOut)?(startA-thetaLen):startA;
-            var sweepGeo=new THREE.CircleGeometry(leafW, 24, thetaStart, thetaLen);
+            var sweepGeo=new THREE.CircleGeometry(leafW, 32, thetaStart, thetaLen);
             var sweepMat=new THREE.MeshBasicMaterial({color:cAcc, transparent:true, opacity:0.18, side:THREE.DoubleSide, depthWrite:false});
             var sweepMesh=new THREE.Mesh(sweepGeo, sweepMat);
             sweepMesh.rotation.x=Math.PI/2;
-            sweepMesh.position.set(hingeX, 1.2, hingeZ);
+            sweepMesh.position.set(hingeX, 1.6, hingeZ);
             ig.add(sweepMesh);
           }
           ig.add(leafPivot);
@@ -1847,55 +2232,67 @@ function build3D(){
       var gap=1.5;
 
       if(kind==='mesa_jantar'){
-        // Mesa de jantar com tampo de vidro bisotado translúcido + estrutura e 4 pés metálicos esguios
-        var glassOp=Math.min(op, 0.46);
-        var glassH=Math.min(2.2, H*0.035);
-        var bev=Math.min(4.5, W*0.04, D*0.06);
+        // Mesa de jantar de alto padrão com tampo de vidro temperado bisotado translúcido + estrutura e pés metálicos cromados/escovados
+        var glassOp=Math.min(op, 0.42);
+        var glassH=Math.min(2.4, H*0.036);
+        var bev=Math.min(5.0, W*0.042, D*0.065);
         var glassMat=mkMat(baseCol, glassOp);
-        var glassEdgeMat=mkMat(lightCol, Math.min(op, 0.72));
-        var chromeMat=mkMat(new THREE.Color(0xcfd6db), 1);
-        var darkSteelMat=mkMat(new THREE.Color(0x525a60), 1);
-        var rubberFootMat=mkMat(new THREE.Color(0x1f2326), 1);
+        var glassEdgeMat=mkMat(lightCol, Math.min(op, 0.78));
+        var glassGlossMat=mkMat(new THREE.Color(0xffffff), Math.min(op, 0.24));
+        var chromeMat=mkMat(new THREE.Color(0xd6dde2), 1);
+        var brushedSteelMat=mkMat(new THREE.Color(0x9aa4ab), 1);
+        var darkSteelMat=mkMat(new THREE.Color(0x464e54), 1);
+        var rubberFootMat=mkMat(new THREE.Color(0x1b1e21), 1);
 
-        // Tampo principal de vidro temperado + chanfro/bisotê superior
-        addPart(ig, W, glassH*0.72, D, 0, H-glassH*0.36, 0, glassMat, edgeCol, 0.55);
-        addPart(ig, Math.max(8, W-bev*2), glassH*0.32, Math.max(8, D-bev*2), 0, H-glassH*0.16, 0, glassEdgeMat, edgeCol, 0.45);
+        // Tampo principal de vidro temperado + bisotê superior + borda polida brilhante
+        addPart(ig, W, glassH*0.68, D, 0, H-glassH*0.34, 0, glassMat, edgeCol, 0.58);
+        addPart(ig, Math.max(8, W-bev*2), glassH*0.34, Math.max(8, D-bev*2), 0, H-glassH*0.17, 0, glassEdgeMat, edgeCol, 0.45);
+        addPart(ig, Math.max(10, W-bev*3), 0.35, Math.max(10, D-bev*3), 0, H+0.15, 0, glassGlossMat, null);
 
-        // Quadro estrutural metálico recuado sob o tampo de vidro + ventosas/apoios de silicone
+        // Quadro estrutural metálico recuado sob o tampo de vidro com cantoneiras usinadas
         var insX=Math.min(18, W*0.13);
         var insZ=Math.min(14, D*0.17);
         var frameW=Math.max(16, W-insX*2);
         var frameD=Math.max(16, D-insZ*2);
-        var railH=3.2, railT=2.4;
-        var railY=H-glassH-railH/2-0.6;
-        // Longarinas e travessas metálicas
-        addPart(ig, frameW, railH, railT, 0, railY, -frameD/2+railT/2, chromeMat, edgeCol, 0.4);
-        addPart(ig, frameW, railH, railT, 0, railY, frameD/2-railT/2, chromeMat, edgeCol, 0.4);
-        addPart(ig, railT, railH, frameD-railT*2, -frameW/2+railT/2, railY, 0, chromeMat, edgeCol, 0.4);
-        addPart(ig, railT, railH, frameD-railT*2, frameW/2-railT/2, railY, 0, chromeMat, edgeCol, 0.4);
-        if(frameW>90){
-          addPart(ig, railT*0.9, railH*0.85, frameD-railT*2, 0, railY, 0, darkSteelMat, null);
+        var railH=3.4, railT=2.5;
+        var railY=H-glassH-railH/2-1.1;
+        // Longarinas e travessas metálicas cromadas
+        addPart(ig, frameW, railH, railT, 0, railY, -frameD/2+railT/2, chromeMat, edgeCol, 0.42);
+        addPart(ig, frameW, railH, railT, 0, railY, frameD/2-railT/2, chromeMat, edgeCol, 0.42);
+        addPart(ig, railT, railH, frameD-railT*2, -frameW/2+railT/2, railY, 0, brushedSteelMat, edgeCol, 0.42);
+        addPart(ig, railT, railH, frameD-railT*2, frameW/2-railT/2, railY, 0, brushedSteelMat, edgeCol, 0.42);
+        if(frameW>85){
+          addPart(ig, railT*0.95, railH*0.85, frameD-railT*2, 0, railY, 0, darkSteelMat, edgeCol, 0.35);
         }
 
-        // 4 pés metálicos tubulares/esguios nos cantos da estrutura com sapatas niveladoras pretas
-        var legH=Math.max(10, H-glassH-0.6);
-        var legR=Math.min(2.6, W*0.022, D*0.028);
-        var footH=1.8;
-        var lxOff=frameW/2-legR-0.4, lzOff=frameD/2-legR-0.4;
+        // 4 pés metálicos tubulares com flange superior, ventosa de silicone, anel decorativo e sapata niveladora preta
+        var legH=Math.max(10, H-glassH-1.1);
+        var legR=Math.min(2.7, W*0.023, D*0.03);
+        var footH=2.0;
+        var lxOff=frameW/2-legR-0.3, lzOff=frameD/2-legR-0.3;
         [[-lxOff,-lzOff],[lxOff,-lzOff],[-lxOff,lzOff],[lxOff,lzOff]].forEach(function(pt){
-          // Ventosa/espaçador metálico entre vidro e estrutura
-          var padG=new THREE.CylinderGeometry(legR*1.25, legR*1.25, 0.8, 14);
+          // Ventosa/espaçador metálico com anel de silicone entre vidro e estrutura
+          var padG=new THREE.CylinderGeometry(legR*1.35, legR*1.35, 1.1, 16);
           var padM=new THREE.Mesh(padG, darkSteelMat);
-          padM.position.set(pt[0], H-glassH-0.3, pt[1]);
+          padM.position.set(pt[0], H-glassH-0.55, pt[1]);
           ig.add(padM);
-          // Tubo metálico do pé
-          var tubeG=new THREE.CylinderGeometry(legR, legR*0.82, legH-footH, 16);
+          // Colarinho / flange superior metálico
+          var collarG=new THREE.CylinderGeometry(legR*1.2, legR*1.12, 2.6, 16);
+          var collarM=new THREE.Mesh(collarG, brushedSteelMat);
+          collarM.position.set(pt[0], H-glassH-2.4, pt[1]);
+          ig.add(collarM);
+          // Tubo metálico cromado do pé
+          var tubeG=new THREE.CylinderGeometry(legR, legR*0.8, legH-footH, 18);
           var tubeM=new THREE.Mesh(tubeG, chromeMat);
           tubeM.position.set(pt[0], footH+(legH-footH)/2, pt[1]);
-          tubeM.add(new THREE.LineSegments(new THREE.EdgesGeometry(tubeG, 28),new THREE.LineBasicMaterial({color:edgeCol,transparent:true,opacity:0.35})));
+          tubeM.add(new THREE.LineSegments(new THREE.EdgesGeometry(tubeG, 28),new THREE.LineBasicMaterial({color:edgeCol,transparent:true,opacity:0.38})));
           ig.add(tubeM);
-          // Sapata niveladora preta no chão
-          var shoeG=new THREE.CylinderGeometry(legR*0.86, legR*0.95, footH, 14);
+          // Anel metálico inferior + sapata niveladora preta no chão
+          var ringG=new THREE.CylinderGeometry(legR*0.86, legR*0.86, 1.0, 16);
+          var ringM=new THREE.Mesh(ringG, darkSteelMat);
+          ringM.position.set(pt[0], footH+0.5, pt[1]);
+          ig.add(ringM);
+          var shoeG=new THREE.CylinderGeometry(legR*0.88, legR*0.98, footH, 16);
           var shoeM=new THREE.Mesh(shoeG, rubberFootMat);
           shoeM.position.set(pt[0], footH/2, pt[1]);
           ig.add(shoeM);
@@ -2675,20 +3072,30 @@ function syncInspector(){
   if($('#tabEditTarget')) $('#tabEditTarget').textContent=has?(sel.t==='item'?'Item':'Cômodo'):'Seleção';
   if($('#tabEditDot')) $('#tabEditDot').hidden=!has;
   if(!has) return;
-  var isItem=sel.t==='item';
-  $('#insForm').setAttribute('data-kind', isItem?'item':'room');
-  $('#lbL').textContent=isItem?'Profundidade':'Comprimento';
-  $('#lbH').textContent=isItem?'Altura':'Pé-direito';
-  $('#fRot').hidden=!isItem; $('#fDiag').hidden=!isItem; $('#fMir').hidden=!isItem;
-  $('#itemStyleWrap').hidden=!isItem; $('#wallWrap').hidden=isItem; $('#roomWallColorWrap').hidden=isItem;
-  $('#zWrap').hidden=!isItem; $('#roomWrap').hidden=!isItem; $('#angWrap').hidden=!isItem;
+  var isItem=(sel.t==='item');
+  $('#roomWrap').hidden=!isItem;
   $('#zAngRow').hidden=!isItem;
-  
-  var isOpening=(isItem&&(o.type==='door'||o.type==='arch_door'||o.type==='arch'));
+  $('#itemStyleWrap').hidden=!isItem;
+  $('#roomWallColorWrap').hidden=isItem;
+  $('#wallWrap').hidden=isItem;
+  $('#fRot').hidden=!isItem;
+  $('#fDiag').hidden=!isItem;
+  $('#fMir').hidden=!isItem;
+  $('#lbL').textContent=isItem?'Profundidade':'Comprimento';
+  var isOpening=(isItem&&(o.type==='door'||o.type==='arch_door'||o.type==='arch'||o.type==='window'||o.type==='arch_window'));
+  var isDoorSide=(isItem&&(o.type==='door'||o.type==='arch_door'||o.type==='arch'));
   var isDoorLeaf=(isItem&&(o.type==='door'||o.type==='arch_door'));
+  var isWindowItem=(isItem&&(o.type==='window'||o.type==='arch_window'));
   $('#doorWrap').hidden=!isOpening;
+  $('#winStyleWrap').hidden=!isWindowItem;
+  $('#doorSideWrap').hidden=!isDoorSide;
+  $('#doorFlipWrap').hidden=!isDoorSide;
   $('#doorOpenWrap').hidden=!isDoorLeaf;
-  if(isOpening){
+  $('#openingLabel').textContent=isWindowItem?'Configuração da Janela':'Configuração da Porta / Abertura';
+  if(isWindowItem){
+    setVal($('#fWinStyle'),o.winStyle||'green_grille');
+  }
+  if(isDoorSide){
     setVal($('#fDoorSide'),o.doorSide||'left');
     setVal($('#fDoorFlip'),o.doorFlip||'in');
     if(isDoorLeaf) setVal($('#fDoorOpen'),o.doorOpen==='open'?'open':'closed');
@@ -2714,7 +3121,10 @@ function syncInspector(){
   }
   setVal($('#fName'),o.name); setVal($('#fW'),o.w); setVal($('#fL'),isItem?o.d:o.l); setVal($('#fH'),o.h);
   syncPos();
-  if(isItem) $('#fColor').value=o.color;
+  if(isItem){
+    $('#fColor').value=o.color;
+    $('#colorHint').hidden=cdist(o.color,wallHex())>=60;
+  }
   updateNote();
 }
 function buildRoomSel(o){
@@ -2799,7 +3209,7 @@ function addItem(){
     x:room?room.x+10:0,y:room?room.y+10:0,
     w:iw,d:id,h:ih,z:p[5]||0,op:p[6]||1,rot:0,rotDeg:0,mirror:false,
     color:p[4],type:p[7]||'box',doorSide:p[8]||'left',doorFlip:p[9]||'in',
-    doorOpen:'closed'
+    doorOpen:'closed',winStyle:p[10]||'green_grille'
   };
   state.items.push(it); state.showItems=true; $('#tgItems').checked=true;
   $('#itemCustomName').value='';
@@ -3008,6 +3418,15 @@ function wire(){
   $('#fDoorSide').addEventListener('change',function(e){var o=selObj();if(!o||sel.t!=='item')return;checkpoint();o.doorSide=e.target.value;reqAll();save();});
   $('#fDoorFlip').addEventListener('change',function(e){var o=selObj();if(!o||sel.t!=='item')return;checkpoint();o.doorFlip=e.target.value;reqAll();save();});
   $('#fDoorOpen').addEventListener('change',function(e){var o=selObj();if(!o||sel.t!=='item')return;checkpoint();o.doorOpen=e.target.value;updateNote();reqAll();save();});
+  $('#fWinStyle').addEventListener('change',function(e){
+    var o=selObj();if(!o||sel.t!=='item')return;
+    checkpoint();
+    o.winStyle=e.target.value;
+    if(o.winStyle==='green_grille' && (o.color==='#f4f6f7'||o.color==='#8ecae6')) o.color='#6b7052';
+    else if(o.winStyle==='white_grid' && (o.color==='#6b7052'||o.color==='#8ecae6')) o.color='#f4f6f7';
+    else if(o.winStyle==='modern' && (o.color==='#6b7052'||o.color==='#f4f6f7')) o.color='#8ecae6';
+    syncInspector();reqAll();save();
+  });
 
   $('#fColor').addEventListener('input',function(e){var o=selObj();if(!o||sel.t!=='item') return;checkpointSoon();o.color=e.target.value;$('#colorHint').hidden=cdist(o.color,wallHex())>=60;reqAll();save();});
   $('#fRoomWallColor').addEventListener('input',function(e){
